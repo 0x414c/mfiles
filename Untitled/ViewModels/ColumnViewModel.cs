@@ -7,9 +7,11 @@ using Untitled.Auxilliary;
 
 namespace Untitled.Models {
     public sealed class ColumnViewModel: INotifyPropertyChanged {
-        public ObservableCollection<FSNode> FsNodes { get; set; }
+        public ObservableCollection<FSNodeView> ChildFsNodesViews { get; set; }
+        public ObservableCollection<FSNodeView> ParentFsNodesViews { get; set; }
         public ColumnViewModel () {
-            FsNodes = new ObservableCollection<FSNode> ();
+            ChildFsNodesViews = new ObservableCollection<FSNodeView> ();
+            ParentFsNodesViews = new ObservableCollection<FSNodeView> ();
         }
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]

@@ -1,58 +1,130 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Windows;
 
 
 namespace Untitled.Auxilliary {
-    public abstract class FSNode {
-        public string FullPath { get; set; }
+
+    /**
+     \enum  NodeType
+     \brief Represents filesystem node: drive, directory or file.
+     * Root for an entire Machine, SubRoot for particular Drives,
+     * Internal for Directories, Leaf for Files
+     */
+    public enum NodeType { Root, SubRoot, Internal, Leaf }
+
+    public abstract class BasicFSNode {
         public string Name { get; set; }
+        public NodeType NodeType { get; set; }
+        public string FullPath { get; set; }
         public override string ToString () {
             return Name;
         }
     }
-    public class File : FSNode {
-        public File (string fullPath, string name) {
-            FullPath = fullPath;
-            Name = name;
-        }
-    }
-    public class Directory : FSNode {
-        public Directory (string fullPath, string name) {
-            FullPath = fullPath;
-            Name = name;
-            Children = new ObservableCollection<object> ();
-        }
-        public ObservableCollection<object> Children { get; private set; }
-    }
-    public class Drive : FSNode {
-        public Drive (string name, bool isReady) {
-            Name = name;
-            IsReady = isReady;
-            Children = new ObservableCollection<object> ();
-        }
-        public bool IsReady { get; set; }
-        public ObservableCollection<object> Children { get; private set; }
-    }
-    sealed class ServiceFacade {
-        private static ServiceFacade instance;
-        public static ServiceFacade Instance {
-            get {
-                if (instance == null) {
-                    instance = new ServiceFacade ();
-                    instance.Initialize ();
-                }
-                return instance;
-            }
-        }
-        public ObservableCollection<Drive> Drives { get; private set; }
-        private void Initialize () {
-            Drives = new ObservableCollection<Drive> ();
-            foreach (DriveInfo driveInfo in DriveInfo.GetDrives ()) {
-                Drives.Add (new Drive (driveInfo.Name, driveInfo.IsReady));
-            }
-        }
-    }
-    class FSOps {
 
+    public abstract class InternalFSNode : BasicFSNode {
+        private ObservableCollection<BasicFSNode> _children;
+        public ObservableCollection<BasicFSNode> Children {
+            get {
+                foreach (string directory in System.IO.Directory.GetDirectories (FullPath)) {
+                    DirectoryInfo directoryInfo = new DirectoryInfo (directory);
+                    _children.Add (new Directory (directory, directoryInfo.Name));
+                }
+                foreach (string file in System.IO.Directory.GetFiles (FullPath)) {
+                    FileInfo fileInfo = new FileInfo (file);
+                    _children.Add (new File (file, fileInfo.Name));
+                }
+                return _children;
+            }
+            set { _children = value; }
+        }
+    }
+
+    public class SystemRoot: BasicFSNode {
+        public SystemRoot () {
+            Name = Environment.MachineName;
+            NodeType = NodeType.Root;
+            FullPath = System.Net.Dns.GetHostEntry ("localhost").HostName;
+        }
+        public SystemRoot (string fullPath, string name) {
+            Name = name;
+            NodeType = NodeType.Root;
+            FullPath = fullPath;
+        }
+        public override string ToString () {
+            return String.Format ("{0} ({1})", base.ToString (), FullPath);
+        }
+    }
+
+    public class Drive : InternalFSNode {
+        public bool IsReady { get; set; }
+        public Drive (string fullPath, string name, bool isReady) {
+            Name = name;
+            NodeType = NodeType.SubRoot;
+            FullPath = fullPath;
+            IsReady = isReady;
+            Children = new ObservableCollection<BasicFSNode> ();
+        }                                
+        public override string ToString () {
+            return String.Format ("{0} ({1})", base.ToString (), FullPath);
+        }
+    }
+
+    public class Directory: InternalFSNode {
+        public Directory (string fullPath, string name) {
+            Name = name;
+            NodeType = NodeType.Internal;
+            FullPath = fullPath;
+            Children = new ObservableCollection<BasicFSNode> ();
+        }
+    }
+
+    public class File : BasicFSNode {
+        public File (string fullPath, string name) {
+            Name = name;
+            NodeType = NodeType.Leaf;
+            FullPath = fullPath;
+        }
+    }
+
+    /*
+     public void LoadChildren( Drive d )
+{
+    foreach ( string directory in System.IO.Directory.GetDirectories( d.Name ) )
+    {
+        DirectoryInfo directoryInfo = new DirectoryInfo( directory );
+        d.Children.Add( new Directory( directory, directoryInfo.Name ) );
+    }
+    foreach ( string file in System.IO.Directory.GetFiles( d.Name ) )
+    {
+        FileInfo fileInfo = new FileInfo( file );
+        d.Children.Add( new File( file, fileInfo.Name ) );
+    }
+}
+
+public void LoadChildren( Directory d )
+{
+    foreach ( string directory in System.IO.Directory.GetDirectories( d.FullPath ) )
+    {
+        DirectoryInfo directoryInfo = new DirectoryInfo( directory );
+        d.Children.Add( new Directory( directory, directoryInfo.Name ) );
+    }
+    foreach ( string file in System.IO.Directory.GetFiles( d.FullPath ) )
+    {
+        FileInfo fileInfo = new FileInfo( file );
+        d.Children.Add( new File( file, fileInfo.Name ) );
+    }
+}
+     */
+
+    class FSOps {
+        public static List<Drive> EnumerateDrives () {
+            return DriveInfo.GetDrives ().Select (
+                _ => new Drive (_.Name, _.IsReady ? _.VolumeLabel: "<no label>", _.IsReady)
+            ).ToList ();
+        }
     }
 }

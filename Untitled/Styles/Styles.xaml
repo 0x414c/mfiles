@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:untitled="clr-namespace:Untitled"
                     mc:Ignorable="d">
     
     <Style x:Key="smallicon" TargetType="Path">
@@ -21,5 +22,18 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="driveitem" TargetType="untitled:FSNodeView">
+        <Setter Property="IsEnabled" Value="{Binding IsReady}"/>
+        <!--<Setter Property="DefaultImageSrc" Value="/Images/Drive.png"/>-->
+        <!--<Style.Triggers>
+            <Trigger Property="IsExpanded" Value="True">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="Blue"/>
+                    <Setter Property="FontStyle" Value="Italic"/>
+                </Trigger.Setters>
+            </Trigger>
+        </Style.Triggers>-->
+    </Style>
+
 </ResourceDictionary>

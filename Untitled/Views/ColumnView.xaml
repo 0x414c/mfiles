@@ -7,24 +7,24 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
     
-    <DockPanel MinWidth="64">
-        <ComboBox DockPanel.Dock="Top">
-            <ComboBoxItem/>
+    <DockPanel x:Name="columnViewRoot" MinWidth="64" Height="300">
+        <ComboBox x:Name="parentFsNodesComboBox" DockPanel.Dock="Top">
+            <ComboBox.ItemsSource>
+                <Binding Path="ParentFsNodesViews"/>
+            </ComboBox.ItemsSource>
         </ComboBox>
-        <ScrollViewer DockPanel.Dock="Top">
-            <ListView x:Name="fsNodesList" ItemsSource="{Binding FsNodes}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel x:Name="viewRoot" Margin="0,2,0,2" Height="20">
-                            <Image DockPanel.Dock="Left" x:Name="icon" Width="16" Height="16" Source="/StaticResources/Textfile_818_16x.png" />
-                            <TextBlock DockPanel.Dock="Left" x:Name="name" Margin="0,1,0,0" Text="{Binding FsNode}"></TextBlock>
-                        </DockPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+        <!--<ScrollViewer x:Name="childFsNodesScroller" DockPanel.Dock="Top">-->
+            <ListView x:Name="childFsNodesListView" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="MouseDoubleClick" Handler="listViewItem_MouseDoubleClick" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemsSource>
+                    <Binding Path="ChildFsNodesViews" />
+                </ListView.ItemsSource>
             </ListView>
-            <!--<ListView x:Name="fsNodesList" SelectionMode="Extended" ItemsSource="{Binding FsNodes}">
-            </ListView>-->
-        </ScrollViewer>
+        <!--</ScrollViewer>-->
     </DockPanel>
     
 </UserControl>

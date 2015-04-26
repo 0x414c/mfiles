@@ -4,11 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="20" d:DesignWidth="128">
+             d:DesignHeight="22" d:DesignWidth="128">
 
-    <DockPanel x:Name="viewRoot" Margin="0,2,0,2" Height="20" MouseLeftButtonDown="leftClick">
-        <Image DockPanel.Dock="Left" x:Name="icon" Width="16" Height="16" Source="/StaticResources/Icons/Textfile_818_16x.png" />
-        <TextBlock DockPanel.Dock="Left" x:Name="name" Margin="0,1,0,0" Text="{Binding FsNode}"></TextBlock>
-    </DockPanel>
+    <StackPanel Orientation="Horizontal" x:Name="fsNodeViewRoot" Height="22" Margin="0,0,0,0">
+        <Image DockPanel.Dock="Left" x:Name="icon" Width="16" Height="16" Margin="0,0,0,0" Source="/StaticResources/Icons/Textfile_818_16x.png" />
+        <TextBlock DockPanel.Dock="Left" x:Name="name" Margin="0,2,0,0" Padding="0,0,0,0">
+            <TextBlock.Text>
+                <Binding Path="BasicFsNode" />
+            </TextBlock.Text>
+        </TextBlock>
+    </StackPanel>
     
 </UserControl>

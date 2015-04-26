@@ -101,13 +101,16 @@
                 <MenuItem Header="_Home"/>
                 <MenuItem Header="_System drive"/>
                 <Separator/>
-                <MenuItem Header="_Back"/>
-                <MenuItem Header="_Forward"/>
-                <MenuItem Header="_Up"/>
-                <Separator/>
+                <MenuItem Header="_Favourites">
+                    <MenuItem Header="_Documents"/>
+                </MenuItem>
                 <MenuItem Header="_Recents">
                     <MenuItem Header="_Desktop"/>
                 </MenuItem>
+                <Separator/>
+                <MenuItem Header="_Back"/>
+                <MenuItem Header="_Forward"/>
+                <MenuItem Header="_Up"/>
             </MenuItem>
             <MenuItem Header="_Window">
                 <MenuItem Header="Toggle _Extra Pane"/>

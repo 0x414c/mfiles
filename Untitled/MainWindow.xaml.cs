@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Caliburn.Micro;
 using Untitled.Auxilliary;
 
 
@@ -44,8 +43,8 @@ namespace Untitled {
             Bootstrap ();
         }
 
-        private void Bootstrap () {
-
+        public void Bootstrap () {
+            pane_1_LayoutViewRoot.AddColumnForFSNode (new SystemRoot ());
         }
     }
 }

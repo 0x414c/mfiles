@@ -23,13 +23,14 @@ namespace Untitled {
     /// Interaction logic for MillerColumnsLayout.xaml
     /// </summary>
     public partial class MillerColumnsLayout : UserControl {
+        public MillerColumnsLayoutManager Model { get; set; }
         public MillerColumnsLayout () {
             InitializeComponent ();
-            AddColumn ();
+            Model = new MillerColumnsLayoutManager ();
+            DataContext = Model;
         }
-
-        private void AddColumn () {
-            //columnsStack.Children.Add (new ColumnView ());
+        public void AddColumnForFSNode (BasicFSNode parentBasicFsNode) {
+            Model.ColumnViews.Add (new ColumnView (parentBasicFsNode));
         }
     }
 }

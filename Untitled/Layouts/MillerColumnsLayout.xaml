@@ -7,23 +7,36 @@
              mc:Ignorable="d" 
              d:DesignWidth="600" d:DesignHeight="300">
    
-    <Grid x:Name="columnsStack">
+    <!--<Grid x:Name="columnsStack">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" MinWidth="64"></ColumnDefinition>
-            <!--<ColumnDefinition Width="4"></ColumnDefinition>
+            --><!--<ColumnDefinition Width="4"></ColumnDefinition>
             <ColumnDefinition Width="200" MinWidth="64"></ColumnDefinition>
             <ColumnDefinition Width="4"></ColumnDefinition>
-            <ColumnDefinition Width="300" MinWidth="64"></ColumnDefinition>-->
+            <ColumnDefinition Width="300" MinWidth="64"></ColumnDefinition>--><!--
         </Grid.ColumnDefinitions>
-        <!--Grid.Column="0" Grid.Row="0"-->
+        --><!--Grid.Column="0" Grid.Row="0"--><!--
         <untitled:ColumnView x:Name="columnView_1">
         </untitled:ColumnView>
-        <!--<GridSplitter Grid.Column="1" Grid.Row="0" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+        --><!--<GridSplitter Grid.Column="1" Grid.Row="0" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
         <untitled:ColumnView Grid.Column="2" Grid.Row="0">
         </untitled:ColumnView>
         <GridSplitter Grid.Column="3" Grid.Row="0" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
         <untitled:ColumnView Grid.Column="4" Grid.Row="0">
-        </untitled:ColumnView>-->
-    </Grid>
-    
+        </untitled:ColumnView>--><!--
+    </Grid>-->
+
+    <!--<StackPanel Orientation="Horizontal" x:Name="columnsStack">-->
+    <ItemsControl>
+        <ItemsControl.ItemsSource>
+            <Binding Path="ColumnViews" />
+        </ItemsControl.ItemsSource>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+    <!--</StackPanel>-->
+
 </UserControl>

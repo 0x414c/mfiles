@@ -6,7 +6,7 @@ using Untitled.Auxilliary;
 
 namespace Untitled.Models {
     public class FSNodeViewModel: INotifyPropertyChanged {
-        public FSNode FsNode { get; set; }
+        public BasicFSNode BasicFsNode { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
