@@ -6,8 +6,8 @@
                     mc:Ignorable="d">
     
     <Style x:Key="smallicon" TargetType="Path">
-        <Setter Property="Width" Value="15" />
-        <Setter Property="Height" Value="15" />
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
         <Setter Property="Fill" Value="Black" />
         <Setter Property="Stretch" Value="Uniform" />
     </Style>
@@ -22,10 +22,15 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style x:Key="tbbutton" TargetType="Button">
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
+    </Style>
 
-    <Style x:Key="driveitem" TargetType="untitled:FSNodeView">
+    <!--<Style x:Key="driveitem" TargetType="untitled:FSNodeView">
         <Setter Property="IsEnabled" Value="{Binding IsReady}"/>
-        <!--<Setter Property="DefaultImageSrc" Value="/Images/Drive.png"/>-->
+        --><!--<Setter Property="DefaultImageSrc" Value="/Images/Drive.png"/>-->
         <!--<Style.Triggers>
             <Trigger Property="IsExpanded" Value="True">
                 <Trigger.Setters>
@@ -33,7 +38,7 @@
                     <Setter Property="FontStyle" Value="Italic"/>
                 </Trigger.Setters>
             </Trigger>
-        </Style.Triggers>-->
-    </Style>
+        </Style.Triggers>--><!--
+    </Style>-->
 
 </ResourceDictionary>

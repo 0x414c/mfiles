@@ -7,24 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
     
-    <DockPanel x:Name="columnViewRoot" MinWidth="64" Height="300">
+    <DockPanel x:Name="columnViewRoot" MinWidth="64" MaxWidth="400">
         <ComboBox x:Name="parentFsNodesComboBox" DockPanel.Dock="Top">
             <ComboBox.ItemsSource>
-                <Binding Path="ParentFsNodesViews"/>
+                <Binding Path="ParentFsNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </ComboBox.ItemsSource>
         </ComboBox>
-        <!--<ScrollViewer x:Name="childFsNodesScroller" DockPanel.Dock="Top">-->
-            <ListView x:Name="childFsNodesListView" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView x:Name="childFsNodesListView" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <EventSetter Event="MouseDoubleClick" Handler="listViewItem_MouseDoubleClick" />
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemsSource>
-                    <Binding Path="ChildFsNodesViews" />
+                <Binding Path="ChildFsNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                 </ListView.ItemsSource>
             </ListView>
-        <!--</ScrollViewer>-->
     </DockPanel>
     
 </UserControl>

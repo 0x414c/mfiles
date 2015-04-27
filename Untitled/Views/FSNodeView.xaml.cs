@@ -26,22 +26,14 @@ namespace Untitled {
     /// </summary>
     public partial class FSNodeView : UserControl {
         public FSNodeViewModel Model { get; set; }
+        
         public FSNodeView () {
             InitializeComponent ();
         }
+        
         public FSNodeView (BasicFSNode basicFsNode) : this () {
             Model = new FSNodeViewModel { BasicFsNode = basicFsNode };
             DataContext = Model;
         }
-        //private void viewRoot_MouseDown (object sender, MouseButtonEventArgs e) {
-        //    //if (e.ClickCount == 2) {
-        //    MessageBox.Show ("2");
-        //    //}
-        //}
-        //private void leftClick (object sender, MouseButtonEventArgs e) {
-        //    MessageBox.Show ("L: " + Model.BasicFsNode);
-        //}
-        //private void onMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
-        //}
     }
 }

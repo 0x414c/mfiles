@@ -10,7 +10,7 @@
         <Image DockPanel.Dock="Left" x:Name="icon" Width="16" Height="16" Margin="0,0,0,0" Source="/StaticResources/Icons/Textfile_818_16x.png" />
         <TextBlock DockPanel.Dock="Left" x:Name="name" Margin="0,2,0,0" Padding="0,0,0,0">
             <TextBlock.Text>
-                <Binding Path="BasicFsNode" />
+                <Binding Path="BasicFsNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </TextBlock.Text>
         </TextBlock>
     </StackPanel>

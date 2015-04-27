@@ -43,7 +43,15 @@ namespace Untitled.Auxilliary {
         }
     }
 
-    public class SystemRoot: BasicFSNode {
+    public class SystemRoot: InternalFSNode {
+        private ObservableCollection<BasicFSNode> _children;
+        public ObservableCollection<BasicFSNode> Children {
+            get {
+                _children = new ObservableCollection<BasicFSNode> (FSOps.EnumerateDrives ());
+                return _children;
+            }
+            set { _children = value; }
+        }
         public SystemRoot () {
             Name = Environment.MachineName;
             NodeType = NodeType.Root;
@@ -89,36 +97,6 @@ namespace Untitled.Auxilliary {
             FullPath = fullPath;
         }
     }
-
-    /*
-     public void LoadChildren( Drive d )
-{
-    foreach ( string directory in System.IO.Directory.GetDirectories( d.Name ) )
-    {
-        DirectoryInfo directoryInfo = new DirectoryInfo( directory );
-        d.Children.Add( new Directory( directory, directoryInfo.Name ) );
-    }
-    foreach ( string file in System.IO.Directory.GetFiles( d.Name ) )
-    {
-        FileInfo fileInfo = new FileInfo( file );
-        d.Children.Add( new File( file, fileInfo.Name ) );
-    }
-}
-
-public void LoadChildren( Directory d )
-{
-    foreach ( string directory in System.IO.Directory.GetDirectories( d.FullPath ) )
-    {
-        DirectoryInfo directoryInfo = new DirectoryInfo( directory );
-        d.Children.Add( new Directory( directory, directoryInfo.Name ) );
-    }
-    foreach ( string file in System.IO.Directory.GetFiles( d.FullPath ) )
-    {
-        FileInfo fileInfo = new FileInfo( file );
-        d.Children.Add( new File( file, fileInfo.Name ) );
-    }
-}
-     */
 
     class FSOps {
         public static List<Drive> EnumerateDrives () {

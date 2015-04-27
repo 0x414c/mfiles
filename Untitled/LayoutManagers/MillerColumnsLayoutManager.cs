@@ -9,18 +9,33 @@ using Untitled.Models;
 
 
 namespace Untitled.LayoutManagers {
-    public class MillerColumnsLayoutManager {
-        public ObservableCollection<ColumnView> ColumnViews { get; set; }
+    public class MillerColumnsLayoutManager : INotifyPropertyChanged {
+        private ObservableCollection<ColumnView> _columnViews;
+
+        public ObservableCollection<ColumnView> ColumnViews {
+            get { return _columnViews; }
+            set {
+                if (Equals (value, _columnViews)) {
+                    return;
+                }
+                _columnViews = value;
+                OnPropertyChanged ("ColumnViews");
+            }
+        }
+
         public MillerColumnsLayoutManager () {
             ColumnViews = new ObservableCollection<ColumnView> ();
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;
             if (handler != null) handler (this, new PropertyChangedEventArgs (propertyName));
-        }    
-    }                   
+        }
+    }
+
     public class Utils {
         public static T FindParent<T> (DependencyObject child) where T : DependencyObject {
             //get parent item
@@ -28,7 +43,7 @@ namespace Untitled.LayoutManagers {
             //we've reached the end of the tree
             if (parentObject == null) {
                 return null;
-            }               
+            }
             //check if the parent matches the type we're looking for
             T parent = parentObject as T;
             if (parent != null) {
