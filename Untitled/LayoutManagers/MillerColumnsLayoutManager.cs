@@ -36,7 +36,7 @@ namespace Untitled.LayoutManagers {
         }
     }
 
-    public class Utils {
+    public static class Utils {
         public static T FindParent<T> (DependencyObject child) where T : DependencyObject {
             //get parent item
             DependencyObject parentObject = VisualTreeHelper.GetParent (child);

@@ -24,6 +24,7 @@ namespace Untitled {
     /// </summary>
     public partial class MillerColumnsLayout : UserControl {
         public MillerColumnsLayoutManager Model { get; set; }
+        private int ViewsCounter { get { return  Model.ColumnViews.Count; } }
 
         public MillerColumnsLayout () {
             InitializeComponent ();
@@ -31,13 +32,13 @@ namespace Untitled {
             DataContext = Model;
         }
 
-        public void AddColumnForFSNode (BasicFSNode parentBasicFsNode, ColumnView callerView) {
-            if (parentBasicFsNode.NodeType == NodeType.Leaf) {
+        public void TryAddColumnForFSNode (FSNode parentFsNode, ColumnView callerView) {
+           if (parentFsNode.NodeLevel == NodeLevel.Leaf) {
                 // TODO: try to open file
                 return;
             } else {
-                if (parentBasicFsNode.NodeType == NodeType.SubRoot) {
-                    var asDrive = parentBasicFsNode as Drive;
+                if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
+                    var asDrive = parentFsNode as Drive;
                     if (asDrive != null) {
                         if (!asDrive.IsReady) {
                             // TODO: notify user
@@ -51,26 +52,26 @@ namespace Untitled {
             // TODO: repl. Bottstrapper with smth. else :)
             if (callerView != null) {
                 // Case of sequential browsing
-                if (callerView.ViewId == Model.ColumnViews.Count) {
+                if (callerView.ViewId == ViewsCounter) {
                     //MessageBox.Show (callerView.ViewId + "==" + Model.ColumnViews.Count);
                 } else {
                     // If user selects previous column we need to reflow the layout
                     // (for Views following the Caller)
                     // TODO: if distance is 1, only change the following View next to the Caller
                     // No need!
-                    if (callerView.ViewId < Model.ColumnViews.Count) {
+                    if (callerView.ViewId < ViewsCounter) {
                         //MessageBox.Show (callerView.ViewId + "<" + Model.ColumnViews.Count);
                         Model.ColumnViews =
                             new ObservableCollection<ColumnView> (Model.ColumnViews.Take (callerView.ViewId));
                     } else {
                         // WTF???
-                        if (callerView.ViewId > Model.ColumnViews.Count) {
+                        if (callerView.ViewId > ViewsCounter) {
                             MessageBox.Show (callerView.ViewId + ">" + Model.ColumnViews.Count);
                         }
                     }
                 }
             }
-            Model.ColumnViews.Add (new ColumnView (parentBasicFsNode, Model.ColumnViews.Count + 1));                
+            Model.ColumnViews.Add (new ColumnView (parentFsNode, ViewsCounter + 1));                
             layoutScroller.ScrollToRightEnd ();
         }
     }

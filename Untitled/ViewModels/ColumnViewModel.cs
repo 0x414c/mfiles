@@ -7,34 +7,34 @@ using Untitled.Auxilliary;
 
 namespace Untitled.Models {
     public sealed class ColumnViewModel : INotifyPropertyChanged {
-        private ObservableCollection<FSNodeView> _childFsNodesViews;
-        private ObservableCollection<FSNodeView> _parentFsNodesViews;
+        private ObservableCollection<FSNodeView> _childFSNodesViews;
+        private ObservableCollection<FSNodeView> _parentFSNodesViews;
 
-        public ObservableCollection<FSNodeView> ChildFsNodesViews {
-            get { return _childFsNodesViews; }
+        public ObservableCollection<FSNodeView> ChildFSNodesViews {
+            get { return _childFSNodesViews; }
             set {
-                if (Equals (value, _childFsNodesViews)) {
+                if (Equals (value, _childFSNodesViews)) {
                     return;
                 }
-                _childFsNodesViews = value;
-                OnPropertyChanged ("ChildFsNodesViews");
+                _childFSNodesViews = value;
+                OnPropertyChanged ("ChildFSNodesViews");
             }
         }
 
-        public ObservableCollection<FSNodeView> ParentFsNodesViews {
-            get { return _parentFsNodesViews; }
+        public ObservableCollection<FSNodeView> ParentFSNodesViews {
+            get { return _parentFSNodesViews; }
             set {
-                if (Equals (value, _parentFsNodesViews)) {
+                if (Equals (value, _parentFSNodesViews)) {
                     return;
                 }
-                _parentFsNodesViews = value;
-                OnPropertyChanged ("ParentFsNodesViews");
+                _parentFSNodesViews = value;
+                OnPropertyChanged ("ParentFSNodesViews");
             }
         }
 
         public ColumnViewModel () {
-            ChildFsNodesViews = new ObservableCollection<FSNodeView> ();
-            ParentFsNodesViews = new ObservableCollection<FSNodeView> ();
+            ChildFSNodesViews = new ObservableCollection<FSNodeView> ();
+            ParentFSNodesViews = new ObservableCollection<FSNodeView> ();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

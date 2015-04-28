@@ -6,16 +6,16 @@ using Untitled.Auxilliary;
 
 namespace Untitled.Models {
     public class FSNodeViewModel: INotifyPropertyChanged {
-        private BasicFSNode _basicFsNode;
+        private FSNode _FSNode;
 
-        public BasicFSNode BasicFsNode {
-            get { return _basicFsNode; }
+        public FSNode FSNode {
+            get { return _FSNode; }
             set {
-                if (Equals (value, _basicFsNode)) {
+                if (Equals (value, _FSNode)) {
                     return;
                 }
-                _basicFsNode = value;
-                OnPropertyChanged ("BasicFsNode");
+                _FSNode = value;
+                OnPropertyChanged ("FSNode");
             }
         }
 

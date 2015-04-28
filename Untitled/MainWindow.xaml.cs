@@ -28,7 +28,7 @@ using Untitled.Auxilliary;
     o	Использование механизма исключений для работы с нештатными ситуациями;
     +o	Предпочтительно использовать свойства (возможно, автоматические), а не поля для хранения данных;
     o	Переопределение операций.
-    •	Использование конструкций LINQ для работы с данными.
+    +•	Использование конструкций LINQ для работы с данными.
     •	Работа с файлами, использование стандартных диалогов для их открытия.
     •	Работа любым типом базы данных: SQL-сервер, файл SQL, XML и т.п.       
 */
@@ -44,7 +44,7 @@ namespace Untitled {
         }
 
         public void Bootstrap () {
-            pane_1_LayoutViewRoot.AddColumnForFSNode (new SystemRoot (), null);
+            pane_1_LayoutViewRoot.TryAddColumnForFSNode (new SystemRoot (), null);
         }
     }
 }

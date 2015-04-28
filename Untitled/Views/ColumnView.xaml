@@ -10,7 +10,7 @@
     <DockPanel x:Name="columnViewRoot" MinWidth="64" MaxWidth="400">
         <ComboBox x:Name="parentFsNodesComboBox" DockPanel.Dock="Top">
             <ComboBox.ItemsSource>
-                <Binding Path="ParentFsNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                <Binding Path="ParentFSNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </ComboBox.ItemsSource>
         </ComboBox>
             <ListView x:Name="childFsNodesListView" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -20,7 +20,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemsSource>
-                <Binding Path="ChildFsNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                <Binding Path="ChildFSNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                 </ListView.ItemsSource>
             </ListView>
     </DockPanel>

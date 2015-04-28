@@ -24,45 +24,54 @@ namespace Untitled {
     /// Interaction logic for ColumnView.xaml
     /// </summary>
     public partial class ColumnView : UserControl {
-        public ColumnViewModel Model { get; set; }
-        public int ViewId { get; set; }
+        public ColumnViewModel Model { get; private set; }
+        public int ViewId { get; private set; }
         
         public ColumnView () {
             InitializeComponent ();
         }
 
-        public ColumnView (BasicFSNode parentBasicFsNode, int viewId): this () {
+        public ColumnView (FSNode parentFsNode, int viewId): this () {
             Model = new ColumnViewModel ();
             DataContext = Model;
-            PopulateModel (parentBasicFsNode);
+            RefreshModel (parentFsNode);
             ViewId = viewId;
         }
 
-        private void PopulateModel (BasicFSNode parentBasicFsNode) {
-            Model.ParentFsNodesViews.Add (new FSNodeView (parentBasicFsNode));
+        private void RefreshModel (FSNode parentFsNode) {
+            Model.ParentFSNodesViews.Add (new FSNodeView (parentFsNode));
             parentFsNodesComboBox.SelectedIndex = 0;
-            if (parentBasicFsNode.NodeType == NodeType.Root) {
-                var asSystemRoot = parentBasicFsNode as SystemRoot;
+            
+            //if (parentFsNode.NodeLevel != NodeLevel.Leaf) {
+            //    var asInternalFsNode = parentFsNode as TraversableFSNode;
+            //    if (asInternalFsNode != null) {
+            //        foreach (var childNode in asInternalFsNode.Children) {
+            //            Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
+            //        }
+            //    }
+            //}
+
+            if (parentFsNode.NodeLevel == NodeLevel.Root) {
+                var asSystemRoot = parentFsNode as SystemRoot;
                 if (asSystemRoot != null) {
                     foreach (var childNode in asSystemRoot.Children) {
-                        Model.ChildFsNodesViews.Add (new FSNodeView (childNode));
+                        Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
                     }
-                    //FSOps.EnumerateDrives ().ForEach (_ => Model.ChildFsNodesViews.Add (new FSNodeView (_)));    
                 }
             } else {
-                if (parentBasicFsNode.NodeType == NodeType.SubRoot) {
-                    var asDrive = parentBasicFsNode as Drive;
+                if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
+                    var asDrive = parentFsNode as Drive;
                     if (asDrive != null) {
                         foreach (var childNode in asDrive.Children) {
-                                Model.ChildFsNodesViews.Add (new FSNodeView (childNode));
-                            }
+                            Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
+                        }
                     }
                 } else {
-                    if (parentBasicFsNode.NodeType == NodeType.Internal) {
-                        var asInternal = parentBasicFsNode as InternalFSNode;
+                    if (parentFsNode.NodeLevel == NodeLevel.Internal) {
+                        var asInternal = parentFsNode as TraversableFSNode;
                         if (asInternal != null) {
                             foreach (var childNode in asInternal.Children) {
-                                Model.ChildFsNodesViews.Add (new FSNodeView (childNode));
+                                Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
                             }
                         }
                     }
@@ -73,13 +82,12 @@ namespace Untitled {
         private void listViewItem_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
             ListViewItem listViewItem = sender as ListViewItem;
             if (listViewItem != null) {
-                FSNodeView fsNodeView = listViewItem.Content as FSNodeView;
+                FSNodeView fsNodeView = listViewItem.Content as FSNodeView; 
                 if (fsNodeView != null) {
-                    BasicFSNode basicFsNodeSelected = fsNodeView.Model.BasicFsNode;
-            
+                    FSNode fsNodeSelected = fsNodeView.Model.FSNode;
                     MillerColumnsLayout parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
                     if (parentLayoutMgr != null) {
-                        parentLayoutMgr.AddColumnForFSNode (basicFsNodeSelected, this);
+                        parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, this);
                     }
                 }
             }

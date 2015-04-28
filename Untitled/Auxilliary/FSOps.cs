@@ -7,102 +7,158 @@ using System.Windows;
 
 
 namespace Untitled.Auxilliary {
+    /**
+     \enum  NodeLevel
+     \brief Represents filesystem node: drive, directory or file.
+      Root for an entire Machine, SubRoot for particular Drives,
+      Internal for Directories, Leaf for Files
+     */
+    public enum NodeLevel { Root, SubRoot, Internal, Leaf }
+
 
     /**
-     \enum  NodeType
-     \brief Represents filesystem node: drive, directory or file.
-     * Root for an entire Machine, SubRoot for particular Drives,
-     * Internal for Directories, Leaf for Files
+     \class FSNode    
+     \brief A file system node.
      */
-    public enum NodeType { Root, SubRoot, Internal, Leaf }
+    public abstract class FSNode {
+        public NodeLevel NodeLevel { get; protected set; }
 
-    public abstract class BasicFSNode {
-        public string Name { get; set; }
-        public NodeType NodeType { get; set; }
-        public string FullPath { get; set; }
+        public string Name { get; protected set; }
+
+        public string FullPath { get; protected set; }
+    }
+
+
+    /**
+     \class FileLikeFSNode
+     \brief A file like file system node: Drive, Directory or File.
+      Can be instanced using FileSystemInfo only.
+     */
+    public abstract class FileLikeFSNode : FSNode {
+        public FileSystemInfo FileSystemInfo { get; protected set; }
+
+        public new string Name {
+            get { return FileSystemInfo.Name; }
+        }
+
+        public new string FullPath {
+            get { return FileSystemInfo.FullName; }
+        }
+
         public override string ToString () {
             return Name;
         }
     }
 
-    public abstract class InternalFSNode : BasicFSNode {
-        private ObservableCollection<BasicFSNode> _children;
-        public ObservableCollection<BasicFSNode> Children {
+
+    /**
+     \class TraversableFSNode    
+     \brief A directory like file system node: Drive or Directory
+      that can have Children
+     */
+    public abstract class TraversableFSNode : FileLikeFSNode {
+        public List<FSNode> Children {
             get {
-                foreach (string directory in System.IO.Directory.GetDirectories (FullPath)) {
-                    DirectoryInfo directoryInfo = new DirectoryInfo (directory);
-                    _children.Add (new Directory (directory, directoryInfo.Name));
-                }
-                foreach (string file in System.IO.Directory.GetFiles (FullPath)) {
-                    FileInfo fileInfo = new FileInfo (file);
-                    _children.Add (new File (file, fileInfo.Name));
-                }
-                return _children;
+                //var children = new List<FSNode> ();
+                //foreach (string directory in System.IO.Directory.GetDirectories (FullPath)) {
+                //    DirectoryInfo directoryInfo = new DirectoryInfo (directory);
+                //    children.Add (new Directory (directoryInfo));
+                //    //children.Add (new Directory (directory, directoryInfo.Name));
+                //}
+                //foreach (string file in System.IO.Directory.GetFiles (FullPath)) {
+                //    FileInfo fileInfo = new FileInfo (file);
+                //    children.Add (new File (fileInfo));
+                //    //children.Add (new File (file, fileInfo.Name));
+                //}
+
+                var children = System.IO.Directory.GetDirectories (FullPath)
+                    .Select (directory => new DirectoryInfo (directory))
+                    .Select (directoryInfo => new Directory (directoryInfo)).Cast<FSNode> ().ToList ();
+                children.AddRange (System.IO.Directory.GetFiles (FullPath)
+                    .Select (file => new FileInfo (file))
+                    .Select (fileInfo => new File (fileInfo)).Cast<FSNode> ());
+
+                return children;
             }
-            set { _children = value; }
         }
     }
 
-    public class SystemRoot: InternalFSNode {
-        private ObservableCollection<BasicFSNode> _children;
-        public ObservableCollection<BasicFSNode> Children {
-            get {
-                _children = new ObservableCollection<BasicFSNode> (FSOps.EnumerateDrives ());
-                return _children;
-            }
-            set { _children = value; }
+
+    public class SystemRoot : FSNode {
+        public List<FSNode> Children {
+            get { return new List<FSNode> (FSOps.EnumerateLocalDrives ()); }
         }
-        public SystemRoot () {
-            Name = Environment.MachineName;
-            NodeType = NodeType.Root;
-            FullPath = System.Net.Dns.GetHostEntry ("localhost").HostName;
-        }
+
+        public SystemRoot () : this (System.Net.Dns.GetHostEntry ("localhost").HostName, Environment.MachineName) { }
+
         public SystemRoot (string fullPath, string name) {
             Name = name;
-            NodeType = NodeType.Root;
+            NodeLevel = NodeLevel.Root;
             FullPath = fullPath;
         }
+
         public override string ToString () {
             return String.Format ("{0} ({1})", base.ToString (), FullPath);
         }
     }
 
-    public class Drive : InternalFSNode {
-        public bool IsReady { get; set; }
-        public Drive (string fullPath, string name, bool isReady) {
-            Name = name;
-            NodeType = NodeType.SubRoot;
-            FullPath = fullPath;
-            IsReady = isReady;
-            Children = new ObservableCollection<BasicFSNode> ();
-        }                                
+
+    public class Drive : TraversableFSNode {
+        public DriveInfo DriveInfo { get; private set; }
+
+        public new string Name {
+            get { return DriveInfo.IsReady ? DriveInfo.VolumeLabel : "<no label>"; }
+        }
+
+        public new string FullPath {
+            get { return DriveInfo.Name; }
+        }
+
+        public bool IsReady {
+            get { return DriveInfo.IsReady; }
+        }
+
+        public Drive (DriveInfo driveInfo) {
+            NodeLevel = NodeLevel.SubRoot;
+            FileSystemInfo = driveInfo.RootDirectory;
+            DriveInfo = driveInfo;
+        }
+
         public override string ToString () {
-            return String.Format ("{0} ({1})", base.ToString (), FullPath);
+            return String.Format ("{0} ({1})", Name, FullPath);
         }
     }
 
-    public class Directory: InternalFSNode {
-        public Directory (string fullPath, string name) {
-            Name = name;
-            NodeType = NodeType.Internal;
-            FullPath = fullPath;
-            Children = new ObservableCollection<BasicFSNode> ();
+
+    public class Directory : TraversableFSNode {
+        public Directory (DirectoryInfo directoryInfo) {
+            NodeLevel = NodeLevel.Internal;
+            FileSystemInfo = directoryInfo;
         }
+
+        public Directory (string fullPath, string name) : this (new DirectoryInfo (fullPath)) { }
+
+        //public override string ToString () {
+        //    return String.Format ("{0} ({1})", Name, FullPath);
+        //}
     }
 
-    public class File : BasicFSNode {
-        public File (string fullPath, string name) {
-            Name = name;
-            NodeType = NodeType.Leaf;
-            FullPath = fullPath;
+
+    public class File : FileLikeFSNode {
+        public File (FileInfo fileInfo) {
+            NodeLevel = NodeLevel.Leaf;
+            FileSystemInfo = fileInfo;
         }
+
+        public File (string fullPath, string name) : this (new FileInfo (fullPath)) { }
     }
 
-    class FSOps {
-        public static List<Drive> EnumerateDrives () {
+
+    static class FSOps {
+        public static IEnumerable<Drive> EnumerateLocalDrives () {
             return DriveInfo.GetDrives ().Select (
-                _ => new Drive (_.Name, _.IsReady ? _.VolumeLabel: "<no label>", _.IsReady)
-            ).ToList ();
+                _ => new Drive (_)
+            );
         }
     }
 }

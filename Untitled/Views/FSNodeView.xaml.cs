@@ -31,8 +31,8 @@ namespace Untitled {
             InitializeComponent ();
         }
         
-        public FSNodeView (BasicFSNode basicFsNode) : this () {
-            Model = new FSNodeViewModel { BasicFsNode = basicFsNode };
+        public FSNodeView (FSNode fsNode) : this () {
+            Model = new FSNodeViewModel { FSNode = fsNode };
             DataContext = Model;
         }
     }
