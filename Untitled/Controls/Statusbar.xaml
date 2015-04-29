@@ -4,13 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="24" d:DesignWidth="300">
+             d:DesignHeight="22" d:DesignWidth="300">
     
-    <DockPanel Height="24">
-        <!--<StatusBar VerticalAlignment="Center" HorizontalAlignment="Left" Background="{x:Null}">-->
-            <Button Content="Button" />
-            <Label Content="Ready" />
-        <!--</StatusBar>-->
-    </DockPanel>
+    <!--<DockPanel>-->
+        <StatusBar VerticalAlignment="Center" Background="{x:Null}">
+            <!--<StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel></DockPanel>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>-->
+            <StatusBarItem DockPanel.Dock="Left">
+                <TextBlock x:Name="directoryInfoText" Style="{StaticResource trimbychar}">
+                    <TextBlock.Text>
+                        <Binding Path="" IsAsync="True" UpdateSourceTrigger="PropertyChanged"/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StatusBarItem>
+            <Separator DockPanel.Dock="Left" />
+            <StatusBarItem DockPanel.Dock="Right" Margin="0,0,10,0">
+                <TextBlock x:Name="statusText" Margin="0,-1,0,0" Style="{StaticResource trimbychar}" Text="Ready" />
+            </StatusBarItem>
+            <Separator DockPanel.Dock="Right" />
+            <StatusBarItem>
+                <TextBlock x:Name="extraStatusText" Style="{StaticResource trimbychar}" Text="Ready" />
+            </StatusBarItem>
+        </StatusBar>
+    <!--</DockPanel>-->
     
 </UserControl>

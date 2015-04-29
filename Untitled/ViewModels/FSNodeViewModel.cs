@@ -5,22 +5,26 @@ using Untitled.Auxilliary;
 
 
 namespace Untitled.Models {
-    public class FSNodeViewModel: INotifyPropertyChanged {
-        private FSNode _FSNode;
+    public class FSNodeViewModel : INotifyPropertyChanged {
+        private FSNode _fsNode;
 
         public FSNode FSNode {
-            get { return _FSNode; }
+            get { return _fsNode; }
             set {
-                if (Equals (value, _FSNode)) {
+                if (Equals (value, _fsNode)) {
                     return;
                 }
-                _FSNode = value;
-                OnPropertyChanged ("FSNode");
+                _fsNode = value;
+                OnPropertyChanged ();
             }
         }
 
+        public FSNodeViewModel (FSNode fsNode) {
+            _fsNode = fsNode;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;

@@ -12,14 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Untitled.Controls;
+
 
 namespace Untitled {
     /// <summary>
     /// Interaction logic for Statusbar.xaml
     /// </summary>
     public partial class Statusbar : UserControl {
+        public StatusBarModel Model { get; set; }
+       
         public Statusbar () {
+            Model = new StatusBarModel ();
             InitializeComponent ();
+            DataContext = Model;
         }
     }
 }

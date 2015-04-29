@@ -24,15 +24,15 @@ namespace Untitled {
     /// <summary>
     /// Interaction logic for FSNodeView.xaml
     /// </summary>
-    public partial class FSNodeView : UserControl {
+    public partial class FSNodeView : ContentControl {
         public FSNodeViewModel Model { get; set; }
-        
+
         public FSNodeView () {
             InitializeComponent ();
         }
-        
+
         public FSNodeView (FSNode fsNode) : this () {
-            Model = new FSNodeViewModel { FSNode = fsNode };
+            Model = new FSNodeViewModel (fsNode);
             DataContext = Model;
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Media;
 using Untitled.Annotations;
 using Untitled.Auxilliary;
 using Untitled.Models;
@@ -19,7 +17,7 @@ namespace Untitled.LayoutManagers {
                     return;
                 }
                 _columnViews = value;
-                OnPropertyChanged ("ColumnViews");
+                OnPropertyChanged ();
             }
         }
 
@@ -33,24 +31,6 @@ namespace Untitled.LayoutManagers {
         private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;
             if (handler != null) handler (this, new PropertyChangedEventArgs (propertyName));
-        }
-    }
-
-    public static class Utils {
-        public static T FindParent<T> (DependencyObject child) where T : DependencyObject {
-            //get parent item
-            DependencyObject parentObject = VisualTreeHelper.GetParent (child);
-            //we've reached the end of the tree
-            if (parentObject == null) {
-                return null;
-            }
-            //check if the parent matches the type we're looking for
-            T parent = parentObject as T;
-            if (parent != null) {
-                return parent;
-            } else {
-                return FindParent<T> (parentObject);
-            }
         }
     }
 }

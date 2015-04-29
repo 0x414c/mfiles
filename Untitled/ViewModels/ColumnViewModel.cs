@@ -33,8 +33,8 @@ namespace Untitled.Models {
         }
 
         public ColumnViewModel () {
-            ChildFSNodesViews = new ObservableCollection<FSNodeView> ();
-            ParentFSNodesViews = new ObservableCollection<FSNodeView> ();
+            _childFSNodesViews = new ObservableCollection<FSNodeView> ();
+            _parentFSNodesViews = new ObservableCollection<FSNodeView> ();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -4,14 +4,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:untitled="clr-namespace:Untitled"
                     mc:Ignorable="d">
-    
-    <Style x:Key="smallicon" TargetType="Path">
-        <Setter Property="Width" Value="16" />
-        <Setter Property="Height" Value="16" />
-        <Setter Property="Fill" Value="Black" />
-        <Setter Property="Stretch" Value="Uniform" />
-    </Style>
-    
+
     <Style x:Key="mainwnd" TargetType="Window">
         <Setter Property="Background">
             <Setter.Value>
@@ -22,10 +15,27 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="smallicon" TargetType="Path">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Fill" Value="Black" />
+        <Setter Property="Stretch" Value="Uniform" />
+    </Style>
+
+    <Style x:Key="smallimg" TargetType="Image">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Stretch" Value="Uniform" />
+    </Style>
+
     <Style x:Key="tbbutton" TargetType="Button">
-        <Setter Property="Width" Value="24" />
-        <Setter Property="Height" Value="24" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+
+    <Style x:Key="trimbychar" TargetType="TextBlock">
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
     </Style>
 
     <!--<Style x:Key="driveitem" TargetType="untitled:FSNodeView">

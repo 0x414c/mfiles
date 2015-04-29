@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="24" d:DesignWidth="400">
+             d:DesignHeight="22" d:DesignWidth="400">
 
-    <DockPanel Height="24">
-        <Menu Background="{x:Null}" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="0,-1,0,0">
-            <MenuItem Header="_File">
+    <DockPanel>
+        <Menu Background="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,-1,0,0" FontSize="12">
+            <MenuItem Header="_FileNode">
                 <MenuItem Header="New..."/>
                 <MenuItem Header="_Open" Background="Transparent"/>
                 <MenuItem Header="Open _with..."/>
@@ -86,9 +86,21 @@
                 <MenuItem Header="Zoom _In"/>
                 <MenuItem Header="Zoom _Out"/>
                 <Separator/>
-                <MenuItem Header="_Columns"/>
-                <MenuItem Header="Ic_ons"/>
-                <MenuItem Header="_Tree"/>
+                <MenuItem Header="_Columns">
+                    <MenuItem.Icon>
+                        <Path Style="{StaticResource smallicon}" Data="M25.379999,0L30.405999,0 30.405999,30.406 25.379999,30.406z M12.69,0L17.716,0 17.716,30.406 12.69,30.406z M0,0L5.0259995,0 5.0259995,30.406 0,30.406z" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Ic_ons">
+                    <MenuItem.Icon>
+                        <Path Style="{StaticResource smallicon}" Data="M38.587002,35.294998L64.000002,35.294998 64.000002,60.707998 38.587002,60.707998z M0,35.294998L25.413002,35.294998 25.413002,60.707998 0,60.707998z M38.587002,0L64.000002,0 64.000002,25.412998 38.587002,25.412998z M0,0L25.413002,0 25.413002,25.412998 0,25.412998z"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_List">
+                    <MenuItem.Icon>
+                        <Path Style="{StaticResource smallicon}" Data="M30.707001,52.895L63.441002,52.895 63.441002,58.181999 30.707001,58.181999z M0,47.075001L16.922001,47.075001 16.922001,64 0,64z M30.707001,29.372L63.441002,29.372 63.441002,34.66 30.707001,34.66z M0,23.555L16.922001,23.555 16.922001,40.478001 0,40.478001z M30.707001,5.8150005L63.441002,5.8150005 63.441002,11.103 30.707001,11.103z M0,0L16.922001,0 16.922001,16.921 0,16.921z" ></Path>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="_Sort by">
                     <MenuItem Header="_Text"/>
@@ -116,7 +128,7 @@
                 <MenuItem Header="Toggle _Extra Pane"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="_About"/>
+                <MenuItem Header="_About..."/>
             </MenuItem>
         </Menu>
         <TextBox x:Name="searchTextBox" Width="96" Height="Auto" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Search..."/>

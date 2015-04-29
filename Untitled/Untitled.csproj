@@ -97,7 +97,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Auxilliary\FSNode.cs" />
+    <Compile Include="Controls\StatusBarModel.cs" />
     <Compile Include="LayoutManagers\MillerColumnsLayoutManager.cs" />
+    <Compile Include="Auxilliary\Utils.cs" />
     <Compile Include="Layouts\IconsLayout.xaml.cs">
       <DependentUpon>IconsLayout.xaml</DependentUpon>
     </Compile>
@@ -105,13 +108,15 @@
       <DependentUpon>TreeLayout.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ColumnViewModel.cs" />
-    <Compile Include="ViewModels\FSNodeViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Controls\Statusbar.xaml.cs">
       <DependentUpon>Statusbar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Toolbar.xaml.cs">
       <DependentUpon>Toolbar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FSNodeView.xaml.cs">
+      <DependentUpon>FSNodeView.xaml</DependentUpon>
     </Compile>
     <Page Include="Layouts\IconsLayout.xaml">
       <SubType>Designer</SubType>
@@ -125,10 +130,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FSNodeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -137,13 +138,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModels\FSNodeViewModel.cs" />
     <Compile Include="Views\ColumnView.xaml.cs">
       <DependentUpon>ColumnView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Auxilliary\FSOps.cs" />
-    <Compile Include="Views\FSNodeView.xaml.cs">
-      <DependentUpon>FSNodeView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -165,6 +164,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Toolbar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FSNodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -193,6 +196,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Key_1.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

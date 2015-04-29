@@ -44,7 +44,8 @@ namespace Untitled {
         }
 
         public void Bootstrap () {
-            pane_1_LayoutViewRoot.TryAddColumnForFSNode (new SystemRoot (), null);
+            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new SystemRootNode (), 0);
+            pane_1_LayoutViewRoot.TryAddColumnForFSNode (new DirectoryNode (new DirectoryInfo (@"C:\Windows")), 0);
         }
     }
 }

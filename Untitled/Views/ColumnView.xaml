@@ -6,23 +6,23 @@
              xmlns:untitled="clr-namespace:Untitled"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
-    
-    <DockPanel x:Name="columnViewRoot" MinWidth="64" MaxWidth="400">
+
+    <DockPanel x:Name="columnViewRoot" MinWidth="64">
         <ComboBox x:Name="parentFsNodesComboBox" DockPanel.Dock="Top">
             <ComboBox.ItemsSource>
                 <Binding Path="ParentFSNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </ComboBox.ItemsSource>
         </ComboBox>
-            <ListView x:Name="childFsNodesListView" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <EventSetter Event="MouseDoubleClick" Handler="listViewItem_MouseDoubleClick" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemsSource>
+        <ListView x:Name="childFsNodesListView" BorderThickness="1,0,1,1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="listViewItem_MouseDoubleClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemsSource>
                 <Binding Path="ChildFSNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-                </ListView.ItemsSource>
-            </ListView>
+            </ListView.ItemsSource>
+        </ListView>
     </DockPanel>
-    
+
 </UserControl>

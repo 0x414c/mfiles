@@ -25,34 +25,25 @@ namespace Untitled {
     /// </summary>
     public partial class ColumnView : UserControl {
         public ColumnViewModel Model { get; private set; }
+
         public int ViewId { get; private set; }
-        
+
         public ColumnView () {
             InitializeComponent ();
         }
 
-        public ColumnView (FSNode parentFsNode, int viewId): this () {
+        public ColumnView (FSNode parentFsNode, int viewId) : this () {
             Model = new ColumnViewModel ();
             DataContext = Model;
-            RefreshModel (parentFsNode);
             ViewId = viewId;
         }
 
-        private void RefreshModel (FSNode parentFsNode) {
+        public void RefreshChildrenViews (FSNode parentFsNode) {
             Model.ParentFSNodesViews.Add (new FSNodeView (parentFsNode));
             parentFsNodesComboBox.SelectedIndex = 0;
-            
-            //if (parentFsNode.NodeLevel != NodeLevel.Leaf) {
-            //    var asInternalFsNode = parentFsNode as TraversableFSNode;
-            //    if (asInternalFsNode != null) {
-            //        foreach (var childNode in asInternalFsNode.Children) {
-            //            Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
-            //        }
-            //    }
-            //}
 
             if (parentFsNode.NodeLevel == NodeLevel.Root) {
-                var asSystemRoot = parentFsNode as SystemRoot;
+                var asSystemRoot = FSOps.TryGetConcreteNode<SystemRootNode> (parentFsNode);
                 if (asSystemRoot != null) {
                     foreach (var childNode in asSystemRoot.Children) {
                         Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
@@ -60,7 +51,7 @@ namespace Untitled {
                 }
             } else {
                 if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
-                    var asDrive = parentFsNode as Drive;
+                    var asDrive = FSOps.TryGetConcreteNode<DriveNode> (parentFsNode);
                     if (asDrive != null) {
                         foreach (var childNode in asDrive.Children) {
                             Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
@@ -68,7 +59,7 @@ namespace Untitled {
                     }
                 } else {
                     if (parentFsNode.NodeLevel == NodeLevel.Internal) {
-                        var asInternal = parentFsNode as TraversableFSNode;
+                        var asInternal = FSOps.TryGetConcreteNode<TraversableFSNode> (parentFsNode);
                         if (asInternal != null) {
                             foreach (var childNode in asInternal.Children) {
                                 Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
@@ -82,12 +73,12 @@ namespace Untitled {
         private void listViewItem_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
             ListViewItem listViewItem = sender as ListViewItem;
             if (listViewItem != null) {
-                FSNodeView fsNodeView = listViewItem.Content as FSNodeView; 
+                FSNodeView fsNodeView = listViewItem.Content as FSNodeView;
                 if (fsNodeView != null) {
                     FSNode fsNodeSelected = fsNodeView.Model.FSNode;
                     MillerColumnsLayout parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
                     if (parentLayoutMgr != null) {
-                        parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, this);
+                        parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, this.ViewId);
                     }
                 }
             }
