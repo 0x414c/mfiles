@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Untitled.Properties {
+namespace Files.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

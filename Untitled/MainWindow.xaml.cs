@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Untitled.Auxilliary;
+using Files.Auxilliary;
 
 
 /*
@@ -33,7 +33,8 @@ using Untitled.Auxilliary;
     •	Работа любым типом базы данных: SQL-сервер, файл SQL, XML и т.п.       
 */
 
-namespace Untitled {
+
+namespace Files {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -43,9 +44,10 @@ namespace Untitled {
             Bootstrap ();
         }
 
-        public void Bootstrap () {
-            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new SystemRootNode (), 0);
-            pane_1_LayoutViewRoot.TryAddColumnForFSNode (new DirectoryNode (new DirectoryInfo (@"C:\Windows")), 0);
+        private void Bootstrap () {
+            pane_1_LayoutViewRoot.TryAddColumnForFSNode (new SystemRootNode (), 0);
+            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new DirectoryNode (new DirectoryInfo (@"C:\Windows")), 0);
+            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new DirectoryNode (new DirectoryInfo (@"C:\Windows\System32")), 0);
         }
     }
 }

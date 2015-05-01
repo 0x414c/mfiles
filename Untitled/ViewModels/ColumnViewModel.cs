@@ -1,14 +1,32 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
-using Untitled.Annotations;
-using Untitled.Auxilliary;
+using System.Windows;
+using Files.Annotations;
+using Files.Auxilliary;
 
 
-namespace Untitled.Models {
+namespace Files.Models {
     public sealed class ColumnViewModel : INotifyPropertyChanged {
+        private FSNode _parentFsNode;
         private ObservableCollection<FSNodeView> _childFSNodesViews;
         private ObservableCollection<FSNodeView> _parentFSNodesViews;
+        private FileSystemWatcher _fileSystemWatcher;
+
+        public FSNode ParentFSNode {
+            get { return _parentFsNode; }
+            set {
+                if (Equals (value, _parentFsNode)) {
+                    return;
+                }                            
+                _parentFsNode = value;
+                ReinitWatcher (_parentFsNode);
+                RefreshChildrenViews (_parentFsNode);
+                OnPropertyChanged ();
+            }
+        }
 
         public ObservableCollection<FSNodeView> ChildFSNodesViews {
             get { return _childFSNodesViews; }
@@ -17,7 +35,7 @@ namespace Untitled.Models {
                     return;
                 }
                 _childFSNodesViews = value;
-                OnPropertyChanged ("ChildFSNodesViews");
+                OnPropertyChanged ();
             }
         }
 
@@ -28,13 +46,101 @@ namespace Untitled.Models {
                     return;
                 }
                 _parentFSNodesViews = value;
-                OnPropertyChanged ("ParentFSNodesViews");
+                OnPropertyChanged ();
             }
         }
 
-        public ColumnViewModel () {
-            _childFSNodesViews = new ObservableCollection<FSNodeView> ();
-            _parentFSNodesViews = new ObservableCollection<FSNodeView> ();
+
+        private FileSystemWatcher FileSystemWatcher {
+            get { return _fileSystemWatcher; }
+            set { _fileSystemWatcher = value; }
+        }
+
+        //[STAThread]
+        public void RefreshChildrenViews (FSNode parentFsNode) {
+            //if (!Equals (Model.ParentFSNode, parentFsNode)) {
+            
+            ParentFSNodesViews.Clear ();
+            
+            ParentFSNodesViews.Add (new FSNodeView (parentFsNode));
+
+            //parentFsNodesComboBox.SelectedIndex = 0;
+            ChildFSNodesViews.Clear ();
+            
+            if (parentFsNode.NodeLevel == NodeLevel.Root) {
+                var asSystemRoot = FSOps.TryGetConcreteNode<SystemRootNode> (parentFsNode);
+                if (asSystemRoot != null) {
+                    foreach (var childNode in asSystemRoot.Children) {
+                        ChildFSNodesViews.Add (new FSNodeView (childNode));
+                    }
+                }
+            } else {
+                if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
+                    var asDrive = FSOps.TryGetConcreteNode<DriveNode> (parentFsNode);
+                    if (asDrive != null) {
+                        foreach (var childNode in asDrive.Children) {
+                            ChildFSNodesViews.Add (new FSNodeView (childNode));
+                        }
+                    }
+                } else {
+                    if (parentFsNode.NodeLevel == NodeLevel.Internal) {
+                        var asInternal = FSOps.TryGetConcreteNode<TraversableFSNode> (parentFsNode);
+                        if (asInternal != null) {
+                            foreach (var childNode in asInternal.Children) {
+                                ChildFSNodesViews.Add (new FSNodeView (childNode));
+                            }
+                        }
+                    }
+                }
+            }
+            //}
+        }
+
+        private ColumnViewModel () {
+            ChildFSNodesViews = new ObservableCollection<FSNodeView> ();
+            ParentFSNodesViews = new ObservableCollection<FSNodeView> ();
+        }
+
+        public ColumnViewModel (FSNode parentFSNode) : this () {
+            ParentFSNode = parentFSNode;
+        }
+
+        private void ReinitWatcher (FSNode parentFSNode) {
+            if (parentFSNode.NodeLevel == NodeLevel.SubRoot || parentFSNode.NodeLevel == NodeLevel.Internal) {
+                if (parentFSNode.NodeLevel == NodeLevel.SubRoot) {
+                    var asDrive = FSOps.TryGetConcreteNode<DriveNode> (parentFSNode);
+                    // TODO:
+                    if (asDrive.IsReady) {
+                        FileSystemWatcher = new FileSystemWatcher (asDrive.FullPath);
+                    } else {
+                        return;
+                    }          
+                } else {
+                    var asDirectory = FSOps.TryGetConcreteNode<DirectoryNode> (parentFSNode);
+                    if (asDirectory.IsAccessible) {
+                        FileSystemWatcher = new FileSystemWatcher (asDirectory.FullPath);
+                    } else {
+                        return;
+                    }
+                }
+
+                FileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastAccess | NotifyFilters.LastWrite;
+                //FileSystemWatcher.Changed += OnChanged;
+                //FileSystemWatcher.Created += OnChanged;
+                //FileSystemWatcher.Deleted += OnChanged;
+                FileSystemWatcher.Renamed += OnChanged;
+                FileSystemWatcher.EnableRaisingEvents = true;
+                FileSystemWatcher.IncludeSubdirectories = false;
+            }
+        }
+
+        // TODO: temporary solution
+        public void OnChanged (object source, FileSystemEventArgs e) {
+            Application.Current.Dispatcher.Invoke (
+                delegate {
+                    RefreshChildrenViews (ParentFSNode);
+                }
+            );
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -44,5 +150,7 @@ namespace Untitled.Models {
             var handler = PropertyChanged;
             if (handler != null) handler (this, new PropertyChangedEventArgs (propertyName));
         }
+
+        
     }
 }

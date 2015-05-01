@@ -1,25 +1,39 @@
-﻿<UserControl x:Class="Untitled.MillerColumnsLayout"
+﻿<UserControl x:Name="millerColumnsLayout"
+             x:Class="Files.MillerColumnsLayout"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:untitled="clr-namespace:Untitled"
+             xmlns:untitled="clr-namespace:Files"
              mc:Ignorable="d" 
              d:DesignWidth="600" d:DesignHeight="300">
 
-    <ScrollViewer x:Name="layoutScroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="True">
+    <ScrollViewer x:Name="layoutScroller" 
+                  HorizontalScrollBarVisibility="Visible"
+                  VerticalScrollBarVisibility="Disabled">
+        
         <ItemsControl>
+            <!--<ItemsControl.ItemTemplate>
+                <untitled:ColumnView />
+            </ItemsControl.ItemTemplate>-->
+            <!--<ItemsControl.ItemTemplateSelector>
+                
+            </ItemsControl.ItemTemplateSelector>-->
+            
             <ItemsControl.ItemsSource>
                 <Binding Path="ColumnViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </ItemsControl.ItemsSource>
+            
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
+                    <!--<StackPanel Orientation="Horizontal"/>-->
                     <!--<Grid></Grid>-->
-                    <!--<DockPanel></DockPanel>-->
+                    <DockPanel />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            
         </ItemsControl>
+        
     </ScrollViewer>
 
 </UserControl>

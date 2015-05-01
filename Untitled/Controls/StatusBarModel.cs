@@ -5,10 +5,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Untitled.Annotations;
+using Files.Annotations;
 
 
-namespace Untitled.Controls {
+namespace Files.Controls {
     public class StatusBarModel {
         public int ItemsCount {
             get { return 99; }
@@ -19,7 +19,8 @@ namespace Untitled.Controls {
         }
 
         public override string ToString () {
-            return String.Format ("{0} items, {1} available", ItemsCount, AvailableSpace);
+            return "{0} items, {1} available";
+            //return String.Format ("{0} items, {1} available", ItemsCount, AvailableSpace);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

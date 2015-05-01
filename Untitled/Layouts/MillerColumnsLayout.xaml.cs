@@ -13,65 +13,93 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Untitled.Auxilliary;
-using Untitled.LayoutManagers;
-using Untitled.Models;
+using Files.Auxilliary;
+using Files.LayoutManagers;
+using Files.Models;
 
 
-namespace Untitled {
+namespace Files {
     /// <summary>
     /// Interaction logic for MillerColumnsLayout.xaml
     /// </summary>
     public partial class MillerColumnsLayout : UserControl {
-        public MillerColumnsLayoutManager Model { get; set; }
-        
-        private int ViewsCounter { get { return Model.ColumnViews.Count; } }
+        /**
+         \property  public MillerColumnsLayoutManager Model        
+         \brief Gets or sets the model that acts as backing store for children Views.        
+         \return    The model.
+         */
+        public MillerColumnsLayoutManager Model { get; private set; }
+
+        /**
+         \property  public int ViewsCounter        
+         \brief Gets the views counter.            
+         \return    The views counter.
+         */
+        public int ViewsCounter { get { return Model.ColumnViews.Count; } }
 
         public MillerColumnsLayout () {
             InitializeComponent ();
+                        
             Model = new MillerColumnsLayoutManager ();
             DataContext = Model;
         }
 
-        public void TryAddColumnForFSNode (FSNode parentFsNode, int callerViewId) {
-           if (parentFsNode.NodeLevel == NodeLevel.Leaf) {
+        public void TryAddColumnForFSNode (FSNode fsNodeToAdd, int columnViewId) {
+            // Try to determine what Action is needed
+            if (fsNodeToAdd.NodeLevel == NodeLevel.Leaf) {
                 // TODO: try to open file
-                return;
+                var asFile = FSOps.TryGetConcreteNode<FileNode> (fsNodeToAdd);
+                if (asFile != null) {
+                    MessageBox.Show ("File: " + asFile);
+
+                    return;
+                }
+
             } else {
-                if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
-                    var asDrive = FSOps.TryGetConcreteNode<DriveNode> (parentFsNode);
+                if (fsNodeToAdd.NodeLevel == NodeLevel.SubRoot) {
+                    var asDrive = FSOps.TryGetConcreteNode<DriveNode> (fsNodeToAdd);
                     if (asDrive != null) {
                         if (!asDrive.IsReady) {
                             // TODO: notify user
-                            MessageBox.Show ("DriveNode isn't ready!");
+                            MessageBox.Show ("DriveNode: " + asDrive + " isn't ready!");
+
                             return;
                         }
                     }
-                }
-            }
-            // If caller is actual view not Bootstrapper
-            // TODO: repl. Bottstrapper with smth. else :)
-            if (callerViewId != 0) {
-                // Case of sequential browsing
-                if (callerViewId == ViewsCounter) {
-                    //MessageBox.Show (callerView.ViewId + "==" + Model.ColumnViews.Count);
+
                 } else {
-                    // If user selects previous column we need to reflow the layout
-                    // (for Views following the Caller)
-                    // TODO: if distance is 1, only change the following View next to the Caller
-                    if (callerViewId < ViewsCounter) {
-                        //MessageBox.Show (callerView.ViewId + "<" + Model.ColumnViews.Count);
-                        Model.ColumnViews = new ObservableCollection<ColumnView> (Model.ColumnViews.Take (callerViewId));
-                    } else {
-                        // WTF???
-                        if (callerViewId > ViewsCounter) {
-                            MessageBox.Show (callerViewId + ">" + Model.ColumnViews.Count);
+                    if (fsNodeToAdd.NodeLevel == NodeLevel.Internal) {
+                        var asDirectory = FSOps.TryGetConcreteNode<DirectoryNode> (fsNodeToAdd);
+                        if (asDirectory != null) {
+                            if (!asDirectory.IsAccessible) {
+                                // TODO: notify user
+                                MessageBox.Show ("DirectoryNode: " + asDirectory + " isn't ready!");
+
+                                return;
+                            }
                         }
                     }
                 }
             }
-            Model.ColumnViews.Add (new ColumnView (parentFsNode, ViewsCounter + 1));
-            Model.ColumnViews.Last ().RefreshChildrenViews (parentFsNode);    
+
+            // If user selects previous column we need to reflow the layout
+            // (for Views following the Caller)
+
+            // In case of previous column selected
+            // Remove columns from end; skip Caller and its Parents
+            // and reuse Caller later to display new contents
+            if (columnViewId + 1 < ViewsCounter) {
+                Model.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+            } else {
+                // If we need another column
+                if (columnViewId == ViewsCounter) {
+                    Model.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
+                }
+            }
+
+            Model.ColumnViews.Last ().Model.ParentFSNode = fsNodeToAdd;
+            //Model.ColumnViews.Last ().Model.RefreshChildrenViews (fsNodeToAdd);
+            
             layoutScroller.ScrollToRightEnd ();
         }
     }

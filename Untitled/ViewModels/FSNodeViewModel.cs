@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Untitled.Annotations;
-using Untitled.Auxilliary;
+using Files.Annotations;
+using Files.Auxilliary;
 
 
-namespace Untitled.Models {
+namespace Files.Models {
     public class FSNodeViewModel : INotifyPropertyChanged {
         private FSNode _fsNode;
 

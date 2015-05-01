@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 
 
-namespace Untitled.Auxilliary {
+namespace Files.Auxilliary {
     static class FSOps {
         public static IEnumerable<DriveNode> EnumerateLocalDrives () {
             return DriveInfo.GetDrives ().Select (

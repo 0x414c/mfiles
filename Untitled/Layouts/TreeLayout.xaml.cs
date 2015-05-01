@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Untitled.Layouts {
+namespace Files.Layouts {
     /// <summary>
     /// Interaction logic for TreeLayout.xaml
     /// </summary>

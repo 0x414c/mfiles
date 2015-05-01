@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Untitled {
+namespace Files {
     /// <summary>
     /// Interaction logic for Menubar.xaml
     /// </summary>

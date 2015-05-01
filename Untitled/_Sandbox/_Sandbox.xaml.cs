@@ -13,12 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Files {
+namespace Files.Sandbox {
     /// <summary>
-    /// Interaction logic for Toolbar.xaml
+    /// Interaction logic for _Sandbox.xaml
     /// </summary>
-    public partial class Toolbar : UserControl {
-        public Toolbar () {
+    public partial class _Sandbox : UserControl {
+        public _Sandbox () {
             InitializeComponent ();
         }
     }

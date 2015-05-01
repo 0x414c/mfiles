@@ -14,74 +14,74 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Untitled.Auxilliary;
-using Untitled.LayoutManagers;
-using Untitled.Models;
+using Files.Auxilliary;
+using Files.LayoutManagers;
+using Files.Models;
 
 
-namespace Untitled {
+namespace Files {
     /// <summary>
     /// Interaction logic for ColumnView.xaml
     /// </summary>
     public partial class ColumnView : UserControl {
         public ColumnViewModel Model { get; private set; }
 
-        public int ViewId { get; private set; }
+        public int ViewId { get; set; }
 
-        public ColumnView () {
+        private ColumnView () {
             InitializeComponent ();
         }
 
+        // TODO: use DataTemplate, determine between File List, File Preview, Error Notif.
         public ColumnView (FSNode parentFsNode, int viewId) : this () {
-            Model = new ColumnViewModel ();
+            Model = new ColumnViewModel (parentFsNode);
             DataContext = Model;
             ViewId = viewId;
         }
 
-        public void RefreshChildrenViews (FSNode parentFsNode) {
-            Model.ParentFSNodesViews.Add (new FSNodeView (parentFsNode));
-            parentFsNodesComboBox.SelectedIndex = 0;
-
-            if (parentFsNode.NodeLevel == NodeLevel.Root) {
-                var asSystemRoot = FSOps.TryGetConcreteNode<SystemRootNode> (parentFsNode);
-                if (asSystemRoot != null) {
-                    foreach (var childNode in asSystemRoot.Children) {
-                        Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
-                    }
-                }
-            } else {
-                if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
-                    var asDrive = FSOps.TryGetConcreteNode<DriveNode> (parentFsNode);
-                    if (asDrive != null) {
-                        foreach (var childNode in asDrive.Children) {
-                            Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
-                        }
-                    }
-                } else {
-                    if (parentFsNode.NodeLevel == NodeLevel.Internal) {
-                        var asInternal = FSOps.TryGetConcreteNode<TraversableFSNode> (parentFsNode);
-                        if (asInternal != null) {
-                            foreach (var childNode in asInternal.Children) {
-                                Model.ChildFSNodesViews.Add (new FSNodeView (childNode));
-                            }
+        private void listViewItem_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
+            var listViewItem = sender as ListViewItem;
+            if (listViewItem != null) {
+                MessageBox.Show ("dc");
+                // TODO: open in new tab for Traversable / run for File
+                if (Equals (childFsNodesListView.SelectedItem as ListViewItem, listViewItem)) {
+                    var fsNodeView = listViewItem.Content as FSNodeView;
+                    if (fsNodeView != null) {
+                        var fsNodeSelected = fsNodeView.Model.FSNode;
+                        var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
+                        if (parentLayoutMgr != null) {
+                            parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
                         }
                     }
                 }
             }
         }
 
-        private void listViewItem_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
-            ListViewItem listViewItem = sender as ListViewItem;
-            if (listViewItem != null) {
-                FSNodeView fsNodeView = listViewItem.Content as FSNodeView;
+        private void listView_onSelectionChanged (object sender, SelectionChangedEventArgs e) {
+            //MessageBox.Show ("sel");
+            var listView = sender as ListView;
+            if (listView != null) {
+                var fsNodeView = listView.SelectedItem as FSNodeView;
                 if (fsNodeView != null) {
-                    FSNode fsNodeSelected = fsNodeView.Model.FSNode;
-                    MillerColumnsLayout parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
+                    var fsNodeSelected = fsNodeView.Model.FSNode;
+                    var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
                     if (parentLayoutMgr != null) {
-                        parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, this.ViewId);
+                        parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
                     }
                 }
             }
+        }
+
+        // TODO:
+        private void listView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
+            var asListView = sender as ListView;
+            if (asListView != null) {
+                asListView.UnselectAll ();
+            }
+            //var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
+            //if (parentLayoutMgr != null) {
+            //    parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
+            //}    
         }
     }
 }

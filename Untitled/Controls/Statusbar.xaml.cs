@@ -12,10 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Untitled.Controls;
+using Files.Controls;
 
 
-namespace Untitled {
+namespace Files {
     /// <summary>
     /// Interaction logic for Statusbar.xaml
     /// </summary>

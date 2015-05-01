@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Untitled.Annotations;
-using Untitled.Auxilliary;
-using Untitled.Models;
+using Files.Annotations;
+using Files.Auxilliary;
+using Files.Models;
 
 
-namespace Untitled.LayoutManagers {
+namespace Files.LayoutManagers {
     public class MillerColumnsLayoutManager : INotifyPropertyChanged {
         private ObservableCollection<ColumnView> _columnViews;
 

@@ -15,19 +15,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Untitled.Annotations;
-using Untitled.Auxilliary;
-using Untitled.Models;
+using Files.Auxilliary;
+using Files.Models;
+using Files.Annotations;
 
 
-namespace Untitled {
+namespace Files {
     /// <summary>
     /// Interaction logic for FSNodeView.xaml
     /// </summary>
     public partial class FSNodeView : ContentControl {
-        public FSNodeViewModel Model { get; set; }
+        public FSNodeViewModel Model { get; private set; }
 
-        public FSNodeView () {
+        private FSNodeView () {
             InitializeComponent ();
         }
 

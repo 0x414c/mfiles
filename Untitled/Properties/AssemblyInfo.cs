@@ -4,13 +4,14 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Files")]
 [assembly: AssemblyDescription("Miller columns-based file manager")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Unatomic")]
+[assembly: AssemblyCompany ("Unatomic prods.")]
 [assembly: AssemblyProduct("Files")]
 [assembly: AssemblyCopyright("Copyright © Alexey Gorishny 2015")]
 [assembly: AssemblyTrademark("")]
@@ -54,3 +55,4 @@ using System.Windows;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute ("en")]
+[assembly: GuidAttribute ("F68C4BE4-0A28-46B9-AB8B-DB9D7DD22109")]

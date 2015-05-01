@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 
-namespace Untitled.Auxilliary {
+namespace Files.Auxilliary {
     /**
      \enum  NodeLevel
      \brief Represents filesystem node: drive, directory or file.
@@ -32,11 +34,11 @@ namespace Untitled.Auxilliary {
     public abstract class FileLikeFSNode : FSNode {
         public FileSystemInfo FileSystemInfo { get; protected set; }
 
-        public new string Name {
+        public string Name {
             get { return FileSystemInfo.Name; }
         }
 
-        public new string FullPath {
+        public string FullPath {
             get { return FileSystemInfo.FullName; }
         }
 
@@ -47,22 +49,56 @@ namespace Untitled.Auxilliary {
 
     /**
      \class TraversableFSNode    
-     \brief A directory like file system node: DriveNode or DirectoryNode   that can have Children
+     \brief A directory like file system node: DriveNode or DirectoryNode that can have Children
      */
     public abstract class TraversableFSNode : FileLikeFSNode {
+        public bool IsAccessible {
+            get {
+                return Directory.Exists (FullPath);
+
+                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                //if (asDirectoryInfo != null) {
+                //    try {
+                //        asDirectoryInfo.EnumerateFileSystemInfos ();
+                //    } catch (Exception exception) {
+                //        MessageBox.Show (exception.Message);
+
+                //        return false;
+                //    }
+                //}
+                //return true;
+            }
+        }
         public LinkedList<FSNode> Children {
             get {
                 var children = new LinkedList<FSNode> ();
-                foreach (string directory in System.IO.Directory.GetDirectories (FullPath)) {
-                    DirectoryInfo directoryInfo = new DirectoryInfo (directory);
-                    children.AddLast (new DirectoryNode (directoryInfo));
-                    //children.Add (new DirectoryNode (directory, directoryInfo.Name));
+                
+                // TODO: UnauthorizedAccessException
+
+                //if (IsAccessible) {
+                //    var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                //    if (asDirectoryInfo != null) {
+                //        foreach (var fileSystemInfo in asDirectoryInfo.EnumerateFileSystemInfos ()) {
+                //            children.AddLast (new);
+                //        }
+                //    }
+                //}
+
+                try {
+                    foreach (string directory in Directory.GetDirectories (FullPath)) {
+                        DirectoryInfo directoryInfo = new DirectoryInfo (directory);
+                        children.AddLast (new DirectoryNode (directoryInfo));
+                    }
+
+                    foreach (string file in Directory.GetFiles (FullPath)) {
+                        FileInfo fileInfo = new FileInfo (file);
+                        children.AddLast (new FileNode (fileInfo));
+                    }
+                } catch (Exception exception) {
+                    MessageBox.Show (exception.Message);
                 }
-                foreach (string file in System.IO.Directory.GetFiles (FullPath)) {
-                    FileInfo fileInfo = new FileInfo (file);
-                    children.AddLast (new FileNode (fileInfo));
-                    //children.Add (new FileNode (file, fileInfo.Name));
-                }
+
+                return children;
 
                 //var children = System.IO.DirectoryNode.GetDirectories (FullPath)
                 //    .Select (directory => new DirectoryInfo (directory))
@@ -70,10 +106,17 @@ namespace Untitled.Auxilliary {
                 //children.AddRange (System.IO.DirectoryNode.GetFiles (FullPath)
                 //    .Select (file => new FileInfo (file))
                 //    .Select (fileInfo => new FileNode (fileInfo)).Cast<FSNode> ());
-
-                return children;
             }
         }
+
+        // TODO:
+        //public FSNode Parent {
+        //    get {
+        //        // Directory.GetDirectoryRoot(dir)
+        //        // Directory.GetCurrentDirectory()
+        //        return new DirectoryNode (new DirectoryInfo (Path.Combine (FullPath + "\\..")));
+        //    }
+        //}
     }
 
     public class SystemRootNode : FSNode {
@@ -97,16 +140,26 @@ namespace Untitled.Auxilliary {
     public class DriveNode : TraversableFSNode {
         public DriveInfo DriveInfo { get; private set; }
 
-        public new string Name {
+        public string Name {
             get { return DriveInfo.IsReady ? DriveInfo.VolumeLabel : "<no label>"; }
         }
 
-        public new string FullPath {
+        public string FullPath {
             get { return DriveInfo.Name; }
         }
 
         public bool IsReady {
             get { return DriveInfo.IsReady; }
+        }
+
+        public LinkedList<FSNode> Children {
+            get {
+                if (IsReady) {
+                    return base.Children;
+                } else {
+                    return new LinkedList<FSNode> ();
+                }
+            }
         }
 
         public DriveNode (DriveInfo driveInfo) {
