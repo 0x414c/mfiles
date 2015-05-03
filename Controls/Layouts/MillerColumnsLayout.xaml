@@ -1,0 +1,38 @@
+﻿<UserControl x:Name="millerColumnsLayout"
+             x:Class="Controls.Layouts.MillerColumnsLayout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignWidth="600" d:DesignHeight="300">
+
+    <ScrollViewer x:Name="layoutScroller" 
+                  HorizontalScrollBarVisibility="Visible"
+                  VerticalScrollBarVisibility="Disabled">
+        
+        <ItemsControl>
+            <!--<ItemsControl.ItemTemplate>
+                <untitled:ColumnView />
+            </ItemsControl.ItemTemplate>-->
+            <!--<ItemsControl.ItemTemplateSelector>
+                
+            </ItemsControl.ItemTemplateSelector>-->
+            
+            <ItemsControl.ItemsSource>
+                <Binding Path="ColumnViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+            </ItemsControl.ItemsSource>
+            
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <!--<StackPanel Orientation="Horizontal"/>-->
+                    <!--<Grid></Grid>-->
+                    <DockPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            
+        </ItemsControl>
+        
+    </ScrollViewer>
+
+</UserControl>
