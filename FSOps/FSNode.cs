@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Windows;
 
 
 namespace FSOps {
     /**
-     \enum  NodeLevel
+     \enum  TypeTag
      \brief Represents filesystem node: drive, directory or file.
       Root for an entire Machine, SubRoot for particular Drives,
       Internal for Directories, Leaf for Files
      */
-    public enum NodeLevel { Root, SubRoot, Internal, Leaf }
+    public enum TypeTag { Root, SubRoot, Internal, Leaf }
 
 
     /**
@@ -19,7 +22,7 @@ namespace FSOps {
      \brief A file system node.
      */
     public abstract class FSNode {
-        public NodeLevel NodeLevel { get; set; }
+        public TypeTag TypeTag { get; set; }
 
         public string Name { get; set; }
 
@@ -38,11 +41,11 @@ namespace FSOps {
     public abstract class FileLikeFSNode : FSNode {
         public FileSystemInfo FileSystemInfo { get; set; }
 
-        public string Name {
+        public new string Name {
             get { return FileSystemInfo.Name; }
         }
 
-        public string FullPath {
+        public new string FullPath {
             get { return FileSystemInfo.FullName; }
         }
 
@@ -50,68 +53,154 @@ namespace FSOps {
             return Name;
         }
 
-        public TraversableFSNode Parent {
+        public bool IsAccessible {
             get {
-                var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
-                if (asDirectoryInfo != null) {
-                    return new DirectoryNode (asDirectoryInfo.Parent);
-                } else {
-                    var asFileInfo = FileSystemInfo as FileInfo;
-                    if (asFileInfo != null) {
-                        if (asFileInfo.Directory != null) {
-                            return new DirectoryNode (asFileInfo.Directory.Parent);
-                        } else {
-                            return null;
-                        }
-                    } else {
-                        return null;
-                    }
-                }
+                throw new NotImplementedException ();
+            }
+        }
+
+        // TODO:
+        public DirectoryLikeFSNode Parent {
+            get {
+                throw new NotImplementedException ();
+
+                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                //if (asDirectoryInfo != null) {
+                //    return new DirectoryNode (asDirectoryInfo.Parent);
+                //} else {
+                //    var asFileInfo = FileSystemInfo as FileInfo;
+                //    if (asFileInfo != null) {
+                //        if (asFileInfo.Directory != null) {
+                //            return new DirectoryNode (asFileInfo.Directory.Parent);
+                //        } else {
+                //            return null;
+                //        }
+                //    } else {
+                //        return null;
+                //    }
+                //}
             }
         }
     }
 
 
     /**
-     \class TraversableFSNode    
+     \class DirectoryLikeFSNode    
      \brief A directory-like file system node: DriveNode or DirectoryNode that can have Children
      */
-    public abstract class TraversableFSNode : FileLikeFSNode {
-        // TODO:
+    public abstract class DirectoryLikeFSNode : FileLikeFSNode {
+        // TODO: check ACLs
         public bool IsAccessible {
             get {
-                var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
-                
-                if (asDirectoryInfo != null) {
-                    try {
-                        asDirectoryInfo.GetFileSystemInfos ();
-                    } catch (Exception exception) {
-                        MessageBox.Show (exception.Message);
+                throw new NotImplementedException ();
 
-                        return false;
-                    }
-                }
+                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                //if (asDirectoryInfo != null) {
+                //    try {
+                //        asDirectoryInfo.EnumerateFileSystemInfos ();
+                //    } catch (Exception exception) {
+                //        MessageBox.Show (exception.GetType () + exception.Message);
+                //        return false;
+                //    }
+                //} else {
+                //    return false;
+                //}                                                                  
+                //return true;
 
-                return true;
+                //public enum FileSystemRights {
+                //    ReadData = 1,
+                //    ListDirectory = ReadData,
+                //    WriteData = 2,
+                //    CreateFiles = WriteData,
+                //    AppendData = 4,
+                //    CreateDirectories = AppendData,
+                //    ReadExtendedAttributes = 8,
+                //    WriteExtendedAttributes = 16,
+                //    ExecuteFile = 32,
+                //    Traverse = ExecuteFile,
+                //    DeleteSubdirectoriesAndFiles = 64,
+                //    ReadAttributes = 128,
+                //    WriteAttributes = 256,
+                //    Delete = 65536,
+                //    ReadPermissions = 131072,
+                //    ChangePermissions = 262144,
+                //    TakeOwnership = 524288,
+                //    Synchronize = 1048576,
+                //    FullControl = Synchronize | TakeOwnership | ChangePermissions | ReadPermissions | Delete | WriteAttributes | ReadAttributes | DeleteSubdirectoriesAndFiles | Traverse | WriteExtendedAttributes | ReadExtendedAttributes | CreateDirectories | CreateFiles | ListDirectory,
+                //    Read = ReadPermissions | ReadAttributes | ReadExtendedAttributes | ListDirectory,
+                //    ReadAndExecute = Read | Traverse,
+                //    Write = WriteAttributes | WriteExtendedAttributes | CreateDirectories | CreateFiles,
+                //    Modify = Write | ReadAndExecute | Delete,
+                //}
+
+
+                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                //if (asDirectoryInfo != null) {
+                    //var readAllowed = false;
+                    //var readDenied = false;
+
+                    //var ACL = asDirectoryInfo.GetAccessControl (AccessControlSections.Access);
+                    //var accessRules = ACL.GetAccessRules (true, true, typeof (SecurityIdentifier));
+
+                    //foreach (FileSystemAccessRule rule in accessRules) {
+                    //    if ((FileSystemRights.Read & rule.FileSystemRights) != FileSystemRights.Read) {
+                    //        continue;
+                    //    }
+
+                    //    switch (rule.AccessControlType) {
+                    //        case AccessControlType.Allow:
+                    //            readAllowed = true;
+                    //            break;
+                    //        case AccessControlType.Deny:
+                    //            readDenied = true;
+                    //            break;
+                    //    }
+                    //}
+
+                    //return readAllowed && !readDenied;
+                //} else {
+                    //return false;
+                //}
             }
         }
 
-        public LinkedList<FSNode> Children {
+        public bool IsTraversable {
             get {
-                var children = new LinkedList<FSNode> ();
+                throw new NotImplementedException ();
+            }
+        }
 
-                if (IsAccessible) {
-                    foreach (string directory in Directory.GetDirectories (FullPath)) {
-                        DirectoryInfo directoryInfo = new DirectoryInfo (directory);
-                        children.AddLast (new DirectoryNode (directoryInfo));
+        public LinkedList<FileLikeFSNode> Children {
+            get {
+                if (IsAccessible && IsTraversable) {
+                    var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                    if (asDirectoryInfo != null) {
+                        var children = new LinkedList<FileLikeFSNode> ();
+
+                        foreach (var directoryInfo in asDirectoryInfo.EnumerateDirectories ()) {
+                            children.AddLast (new DirectoryNode (directoryInfo));
+                        }               
+
+                        foreach (var fileInfo in asDirectoryInfo.EnumerateFiles ()) {
+                            children.AddLast (new FileNode (fileInfo));
+                        }
+
+                        return children;
+                    } else {
+                        return null;
                     }
 
-                    foreach (string file in Directory.GetFiles (FullPath)) {
-                        FileInfo fileInfo = new FileInfo (file);
-                        children.AddLast (new FileNode (fileInfo));
-                    }
+                    //var children = new LinkedList<FileLikeFSNode> ();
 
-                    return children;
+                    //foreach (string directory in Directory.GetDirectories (FullPath)) {
+                    //    children.AddLast (new DirectoryNode (new DirectoryInfo (directory)));
+                    //}
+
+                    //foreach (string file in Directory.GetFiles (FullPath)) {
+                    //    children.AddLast (new FileNode (new FileInfo (file)));
+                    //}
+
+                    //return children;
                 } else {
                     return null;
                 }
@@ -125,14 +214,12 @@ namespace FSOps {
             get { return new List<FSNode> (FileManagement.EnumerateLocalDrives ()); }
         }
 
-        public SystemRootNode () : this (
-            "This PC",
-            Networking.GetFQDN ()
-        ) { }
+        public SystemRootNode () : this ("This PC", Networking.GetLocalFQDN ()) { }
 
-        public SystemRootNode (string fullPath, string name) {
+        // For future use
+        private SystemRootNode (string fullPath, string name) {
             Name = name;
-            NodeLevel = NodeLevel.Root;
+            TypeTag = TypeTag.Root;
             FullPath = fullPath;
         }
 
@@ -142,14 +229,18 @@ namespace FSOps {
     }
 
 
-    public class DriveNode : TraversableFSNode {
+    public class DriveNode : DirectoryLikeFSNode {
         public DriveInfo DriveInfo { get; set; }
 
-        public string Name {
+        public new FileSystemInfo FileSystemInfo {
+            get { return DriveInfo.RootDirectory; }
+        }
+
+        public new string Name {
             get { return DriveInfo.IsReady ? DriveInfo.VolumeLabel : "<no label>"; }
         }
 
-        public string FullPath {
+        public new string FullPath {
             get { return DriveInfo.Name; }
         }
 
@@ -157,20 +248,16 @@ namespace FSOps {
             get { return DriveInfo.IsReady; }
         }
 
-        public LinkedList<FSNode> Children {
+        public new LinkedList<FileLikeFSNode> Children {
             get {
-                if (IsReady) {
-                    return base.Children;
-                } else {
-                    return null;
-                }
+                return IsReady ? base.Children : null;
             }
         }
 
         public DriveNode (DriveInfo driveInfo) {
-            NodeLevel = NodeLevel.SubRoot;
-            FileSystemInfo = driveInfo.RootDirectory;
+            TypeTag = TypeTag.SubRoot;
             DriveInfo = driveInfo;
+            base.FileSystemInfo = FileSystemInfo;
         }
 
         public DriveNode (string fullPath) : this (new DriveInfo (fullPath.ToUpperInvariant ())) { }
@@ -181,9 +268,9 @@ namespace FSOps {
     }
 
 
-    public class DirectoryNode : TraversableFSNode {
+    public class DirectoryNode : DirectoryLikeFSNode {
         public DirectoryNode (DirectoryInfo directoryInfo) {
-            NodeLevel = NodeLevel.Internal;
+            TypeTag = TypeTag.Internal;
             FileSystemInfo = directoryInfo;
         }
 
@@ -193,7 +280,7 @@ namespace FSOps {
 
     public class FileNode : FileLikeFSNode {
         public FileNode (FileInfo fileInfo) {
-            NodeLevel = NodeLevel.Leaf;
+            TypeTag = TypeTag.Leaf;
             FileSystemInfo = fileInfo;
         }
 

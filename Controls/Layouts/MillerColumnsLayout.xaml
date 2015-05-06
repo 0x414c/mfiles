@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignWidth="600" d:DesignHeight="300">
 
-    <ScrollViewer x:Name="layoutScroller" 
+    <ScrollViewer x:Name="millerColumnsLayoutScrollViewer" 
                   HorizontalScrollBarVisibility="Visible"
                   VerticalScrollBarVisibility="Disabled">
         
@@ -15,8 +15,7 @@
             <!--<ItemsControl.ItemTemplate>
                 <untitled:ColumnView />
             </ItemsControl.ItemTemplate>-->
-            <!--<ItemsControl.ItemTemplateSelector>
-                
+            <!--<ItemsControl.ItemTemplateSelector>                
             </ItemsControl.ItemTemplateSelector>-->
             
             <ItemsControl.ItemsSource>
@@ -25,9 +24,9 @@
             
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <!--<StackPanel Orientation="Horizontal"/>-->
+                    <StackPanel Orientation="Horizontal" />
                     <!--<Grid></Grid>-->
-                    <DockPanel />
+                    <!--<DockPanel />-->
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             

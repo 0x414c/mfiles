@@ -5,7 +5,7 @@ using FSOps;
 
 
 namespace Controls.UserControls {
-    public class FSNodeViewModel : INotifyPropertyChanged {
+    public sealed class FSNodeViewModel : INotifyPropertyChanged {
         private FSNode _fsNode;
 
         public FSNode FSNode {
@@ -26,9 +26,11 @@ namespace Controls.UserControls {
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
+        private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;
-            if (handler != null) handler (this, new PropertyChangedEventArgs (propertyName));
+            if (handler != null) {
+                handler (this, new PropertyChangedEventArgs (propertyName));
+            }
         }
     }
 }

@@ -15,7 +15,7 @@
         <Image x:Name="fsNodeIconImage"
                VerticalAlignment="Center"
                HorizontalAlignment="Left"
-               Style="{rl:MyStyleRef ResourceKey=smallimg}"
+               Style="{rl:RLStyleRef ResourceKey=smallimg}"
                Source="/Graphics/Textfile_818_16x.png">
         </Image>
 
@@ -23,10 +23,9 @@
                    Margin="2,0,4,0"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Right"
-                   Style="{rl:MyStyleRef ResourceKey=trimbychar}">
+                   Style="{rl:RLStyleRef ResourceKey=trimbychar}">
 
             <TextBlock.Text>
-                <!--!!()ASd(f-->
                 <Binding Path="FSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </TextBlock.Text>
 

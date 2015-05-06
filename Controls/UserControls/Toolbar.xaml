@@ -14,19 +14,19 @@
         <ToolBar>
             <ToolBarPanel Orientation="Horizontal">
                 <Button x:Name="backButton" 
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}"
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}"
                         Margin="0,0,-1,0">
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="F1 M 57,42L 57,34L 32.25,34L 42.25,24L 31.75,24L 17.75,38L 31.75,52L 42.25,52L 32.25,42L 57,42 Z " />
                     </Button.Content>
                 </Button>
 
                 <Button x:Name="forwardButton"
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}"
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}"
                         Margin="0,0,0,0">
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="F1 M 19.0002,34L 19.0002,42L 43.7502,42L 33.7502,52L 44.2502,52L 58.2502,38L 44.2502,24L 33.7502,24L 43.7502,34L 19.0002,34 Z " />
                     </Button.Content>
                 </Button>
@@ -34,9 +34,9 @@
                 <Separator Width="2" Background="{x:Null}" />
                     
                 <Button x:Name="upButton"
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}">
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}">
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="F1 M 34,57L 42,57L 42,32.25L 52,42.25L 52,31.75L 38,17.75L 24,31.75L 24,42.25L 34,32.25L 34,57 Z " />
                     </Button.Content>
                 </Button>
@@ -48,9 +48,9 @@
         <ToolBar>
             <ToolBarPanel Orientation="Horizontal">
                 <Button x:Name="homeButton"
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}">
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}">
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="F1 M 24.0033,56.0078L 24.0033,38.0053L 22.0031,40.0056L 19.0027,35.0049L 38.0053,20.0028L 45.0063,25.5299L 45.0063,21.753L 49.0068,21.0029L 49.0068,28.6882L 57.008,35.0049L 54.0075,40.0056L 52.0073,38.0053L 52.0073,56.0078L 24.0033,56.0078 Z M 38.0053,26.9204L 27.0038,36.005L 27.0038,53.0074L 38.0045,53.0075L 38.0045,41.0061L 46.0058,41.0061L 46.0059,53.0075L 49.0068,53.0074L 49.0068,36.005L 38.0053,26.9204 Z M 30.004,41.0057L 35.0049,41.0057L 35.0049,47.0066L 30.004,47.0066L 30.004,41.0057 Z " />
                     </Button.Content>
                 </Button>
@@ -58,9 +58,9 @@
                 <Separator Width="2" Background="{x:Null}" />
                     
                 <Button x:Name="systemButton"
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}" >
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}" >
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="M0,44.993L64,44.993 64,51.735001 0,51.735001z M18.628,37.962999L45.372002,37.962999 45.372002,42.269 18.628,42.269z M4.4440002,3.855999L4.4440002,34.444999 59.556004,34.444999 59.556004,3.855999z M0.41899967,0L63.581001,0 63.581001,37.666 0.41899967,37.666z" />
                     </Button.Content>
                 </Button>
@@ -68,9 +68,9 @@
                 <Separator Width="2" Background="{x:Null}" />
                     
                 <Button x:Name="desktopButton"
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}" >
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}" >
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="M0,44.993L64,44.993 64,51.735001 0,51.735001z M18.628,37.962999L45.372002,37.962999 45.372002,42.269 18.628,42.269z M4.4440002,3.855999L4.4440002,34.444999 59.556004,34.444999 59.556004,3.855999z M0.41899967,0L63.581001,0 63.581001,37.666 0.41899967,37.666z" />
                     </Button.Content>
                 </Button>
@@ -78,9 +78,9 @@
                 <Separator Width="2" Background="{x:Null}" />
                     
                 <Button x:Name="sysDriveButton"
-                        Style="{rl:MyStyleRef ResourceKey=tbbutton}" >
+                        Style="{rl:RLStyleRef ResourceKey=tbbutton}" >
                     <Button.Content>
-                        <Path Style="{rl:MyStyleRef ResourceKey=smallicon}"
+                        <Path Style="{rl:RLStyleRef ResourceKey=smallicon}"
                               Data="M0,44.993L64,44.993 64,51.735001 0,51.735001z M18.628,37.962999L45.372002,37.962999 45.372002,42.269 18.628,42.269z M4.4440002,3.855999L4.4440002,34.444999 59.556004,34.444999 59.556004,3.855999z M0.41899967,0L63.581001,0 63.581001,37.666 0.41899967,37.666z" />
                     </Button.Content>
                 </Button>

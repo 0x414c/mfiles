@@ -3,7 +3,7 @@
 
 namespace FSOps {
     static class Networking {
-        public static string GetFQDN () {
+        public static string GetLocalFQDN () {
             var domainName = IPGlobalProperties.GetIPGlobalProperties ().DomainName;
             var hostName = IPGlobalProperties.GetIPGlobalProperties ().HostName;
 

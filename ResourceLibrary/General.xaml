@@ -8,9 +8,10 @@
         <ResourceDictionary Source="Styles/MainWindowStyle.xaml" />
         <ResourceDictionary Source="Styles/Styles.xaml" />
         <ResourceDictionary Source="Styles/ListViewFix.xaml" />
-        <ResourceDictionary Source="Styles/ControlTemplates.xaml" />
-        <ResourceDictionary Source="Styles/Button.xaml" />
-        <ResourceDictionary Source="Styles/Combobox.xaml" />
+        <ResourceDictionary Source="Styles/TabControlFix.xaml" />
+        <!--<ResourceDictionary Source="Styles/ControlTemplates.xaml" />-->
+        <!--<ResourceDictionary Source="Styles/Button.xaml" />-->
+        <!--<ResourceDictionary Source="Styles/Combobox.xaml" />-->
         
     </ResourceDictionary.MergedDictionaries>
 

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Controls.Auxiliary;
@@ -13,7 +14,7 @@ namespace Controls.UserControls {
     public partial class ColumnView : UserControl {
         public ColumnViewModel Model { get; private set; }
 
-        public int ViewId { get; set; }
+        public int ViewId { get; private set; }
 
         private ColumnView () {
             InitializeComponent ();
@@ -26,26 +27,48 @@ namespace Controls.UserControls {
             ViewId = viewId;
         }
 
-        private void listViewItem_MouseDoubleClick (object sender, MouseButtonEventArgs e) {
+        private void breadcrumbStackPanel_OnPreviewLeftMouseButtonDown (object sender, MouseButtonEventArgs e) {
+            // TODO: go to FSNode selected
+            MessageBox.Show (Model.ParentFSNode.Name);
+        }
+
+        private void childFSNodesListViewItem_OnMouseDoubleClick (object sender, MouseButtonEventArgs e) {
             var listViewItem = sender as ListViewItem;
             if (listViewItem != null) {
-                MessageBox.Show ("dc");
                 // TODO: open in new tab for Traversable / run for File
-                if (Equals (childFsNodesListView.SelectedItem as ListViewItem, listViewItem)) {
-                    var fsNodeView = listViewItem.Content as FSNodeView;
-                    if (fsNodeView != null) {
-                        var fsNodeSelected = fsNodeView.Model.FSNode;
-                        var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
-                        if (parentLayoutMgr != null) {
-                            parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
-                        }
-                    }
-                }
+                MessageBox.Show ("<2x");
+                //if (Equals (childFSNodesListView.SelectedItem as ListViewItem, listViewItem)) {
+                //    var fsNodeView = listViewItem.Content as FSNodeView;
+                //    if (fsNodeView != null) {
+                //        var fsNodeSelected = fsNodeView.Model.FSNode;
+                //        var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
+                //        if (parentLayoutMgr != null) {
+                //            parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
+                //        }
+                //    }
+                //}
             }
         }
 
-        private void listView_onSelectionChanged (object sender, SelectionChangedEventArgs e) {
-            //MessageBox.Show ("sel");
+        private void childFSNodesListViewItem_OnPreviewRightMouseButtonDown (object sender, MouseButtonEventArgs e) {
+            var listViewItem = sender as ListViewItem;
+            if (listViewItem != null) {
+                var fsNodeView = listViewItem.Content as FSNodeView;
+                if (fsNodeView != null) {
+                    var fsNodeSelected = fsNodeView.Model.FSNode;
+
+                    var fsNodeSelectedAsFileLikeFSNode = fsNodeSelected as FileLikeFSNode;
+                    if (fsNodeSelectedAsFileLikeFSNode != null) {
+                        var ctxMnu = new ShellContextMenu.ShellContextMenu ();
+                        var arrFI = new FileInfo[1];
+                        arrFI[0] = new FileInfo (fsNodeSelectedAsFileLikeFSNode.FullPath);
+                        ctxMnu.ShowContextMenu (arrFI, new System.Drawing.Point (300, 300));    
+                    }                               
+                }
+            }    
+        }
+
+        private void childFSNodesListView_OnSelectionChanged (object sender, SelectionChangedEventArgs e) {
             var listView = sender as ListView;
             if (listView != null) {
                 var fsNodeView = listView.SelectedItem as FSNodeView;
@@ -59,16 +82,12 @@ namespace Controls.UserControls {
             }
         }
 
-        // TODO:
-        private void listView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
+        // TODO: filter scrollbar clicks
+        private void childFSNodesListView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
             var asListView = sender as ListView;
             if (asListView != null) {
                 asListView.UnselectAll ();
             }
-            //var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
-            //if (parentLayoutMgr != null) {
-            //    parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
-            //}    
         }
     }
 }

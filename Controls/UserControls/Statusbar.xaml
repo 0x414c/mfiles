@@ -15,7 +15,7 @@
             </ItemsPanelTemplate>
         </StatusBar.ItemsPanel>-->
         <StatusBarItem DockPanel.Dock="Left">
-            <TextBlock x:Name="directoryInfoText" Style="{rl:MyStyleRef ResourceKey=trimbychar}" Margin="0,-1,0,1">
+            <TextBlock x:Name="directoryInfoText" Style="{rl:RLStyleRef ResourceKey=trimbychar}" Margin="0,-1,0,1">
                 <TextBlock.Text>
                     <Binding Path="" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                 </TextBlock.Text>
@@ -24,14 +24,14 @@
         <Separator DockPanel.Dock="Left" />
 
         <StatusBarItem DockPanel.Dock="Right" Margin="0,-1,14,1">
-            <TextBlock x:Name="statusText" Style="{rl:MyStyleRef ResourceKey=trimbychar}">
+            <TextBlock x:Name="statusText" Style="{rl:RLStyleRef ResourceKey=trimbychar}">
                 <TextBlock.Text>()</TextBlock.Text>
             </TextBlock>
         </StatusBarItem>
         <Separator DockPanel.Dock="Right" />
         
         <StatusBarItem>
-            <TextBlock x:Name="extraStatusText" Style="{rl:MyStyleRef ResourceKey=trimbychar}" Margin="0,-1,0,1">
+            <TextBlock x:Name="extraStatusText" Style="{rl:RLStyleRef ResourceKey=trimbychar}" Margin="0,-1,0,1">
                 <TextBlock.Text>Ready</TextBlock.Text>
             </TextBlock>
         </StatusBarItem>

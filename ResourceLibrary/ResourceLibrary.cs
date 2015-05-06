@@ -4,8 +4,8 @@ using WPFExtensions;
 
 
 namespace ResourceLibrary {
-    public class MyStyleRefExtension : StyleRefExtension {
-        static MyStyleRefExtension () {
+    public class RLStyleRefExtension : StyleRefExtension {
+        static RLStyleRefExtension () {
             ResourceDictionary = new ResourceDictionary {
                 Source = new Uri ("pack://application:,,,/ResourceLibrary;component/General.xaml")
             };

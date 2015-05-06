@@ -1,13 +1,26 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using Controls.Annotations;
 using Controls.Layouts;
 
 
 namespace FilesApplication {
-    internal sealed class MainWindowModel : INotifyPropertyChanged {
+    public sealed class MainWindowModel : INotifyPropertyChanged {
         private ObservableCollection<MillerColumnsLayout> _layouts;
+        private ObservableCollection<TextBlock> _data;
+
+        public ObservableCollection<TextBlock> Data {
+            get { return _data; }
+            set {
+                if (Equals (value, _data)) {
+                    return;
+                }
+                _data = value;
+                OnPropertyChanged ();
+            }
+        }
 
         public ObservableCollection<MillerColumnsLayout> Layouts {
             get { return _layouts; }
@@ -22,6 +35,7 @@ namespace FilesApplication {
 
         public MainWindowModel () {
             Layouts = new ObservableCollection<MillerColumnsLayout> ();
+            Data = new ObservableCollection<TextBlock> ();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

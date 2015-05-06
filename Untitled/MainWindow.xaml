@@ -10,7 +10,7 @@
         Title="Files"
         Height="480" Width="640" MinWidth="600" MinHeight="400"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextHintingMode="Fixed"
-        Style="{rl:MyStyleRef ResourceKey=mainwnd}"
+        Style="{rl:RLStyleRef ResourceKey=mainwnd}"
         Icon="Graphics/floppy-512.ico" 
         ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
 
@@ -21,55 +21,37 @@
 
         <controls:Statusbar x:Name="statusbar" DockPanel.Dock="Bottom" Margin="4,0,4,0" />
 
-        <TabControl DockPanel.Dock="Left"
+        <TabControl x:Name="tabs"
+                    DockPanel.Dock="Left"
                     BorderThickness="0,1,0,1"
+                    Style="{rl:RLStyleRef ResourceKey=tabcontrol_fix}"
                     SelectedIndex="0">
 
             <TabControl.ItemsSource>
                 <Binding Path="Layouts" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </TabControl.ItemsSource>
 
-            <!--<TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock>
-                        <TextBlock.Text>
-                            <Binding Path="Header" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-                        </TextBlock.Text>
-                    </TextBlock>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            
-            <TabControl.ContentTemplate>
-                <DataTemplate DataType="{x:Type layouts:MillerColumnsLayout}">
-                    <Binding Path="" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-
+            <!--TODO: why DataTemplates aren't workin here?-->
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
+
                     <Setter Property="Header">
                         <Setter.Value>
-                            <Binding Path="Header" IsAsync="True" UpdateSourceTrigger="PropertyChanged"  />
+                            <Binding Path="Title" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                         </Setter.Value>
                     </Setter>
+                    
                     <Setter Property="Content">
                         <Setter.Value>
                             <Binding Path="" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Margin" Value="5,0,-5,0" />
-                    <Setter Property="Padding" Value="6,0,6,0" />
+
                     <Setter Property="Height" Value="23" />
+
                 </Style>
             </TabControl.ItemContainerStyle>
 
-            <TabItem Margin="5,0,-5,0" Padding="6,0,6,0" Height="22">
-                <TabItem.Header>
-                    Tab 1
-                </TabItem.Header>
-                <layouts:MillerColumnsLayout x:Name="pane_1_LayoutViewRoot" Margin="-4" />
-            </TabItem>-->
-            
         </TabControl>
 
     </DockPanel>

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using Controls.Layouts;
 using FSOps;
 
@@ -25,24 +26,19 @@ namespace FilesApplication {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private MainWindowModel Model { get; set; }
+        public MainWindowModel Model { get; private set; }
 
         public MainWindow () {
             InitializeComponent ();
 
             Model = new MainWindowModel ();
             DataContext = Model;
-
-            Bootstrap ();
         }
 
-        private void Bootstrap () {
-            Model.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
-            Model.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
-            
-            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new SystemRootNode (), 0);
-            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new DirectoryNode (new DirectoryInfo (@"C:\Windows")), 0);
-            //pane_1_LayoutViewRoot.TryAddColumnForFSNode (new DirectoryNode (new DirectoryInfo (@"C:\Windows\System32")), 0);
+        // TODO: for future use
+        public MainWindow (FSNode startupFSNode) : this () {
+            Model.Layouts.Add (new MillerColumnsLayout (startupFSNode));
         }
+
     }
 }

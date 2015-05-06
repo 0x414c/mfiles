@@ -13,39 +13,56 @@ namespace Controls.Layouts {
     /// <summary>
     /// Interaction logic for MillerColumnsLayout.xaml
     /// </summary>
-    public partial class MillerColumnsLayout : UserControl, INotifyPropertyChanged {
+    public partial class MillerColumnsLayout : UserControl {
         /**
          \property  public MillerColumnsLayoutManager Model        
          \brief Gets or sets the model that acts as backing store for children Views.        
-         \return    The model.
+         \return The model.
          */
         public MillerColumnsLayoutManager Model { get; set; }
 
         /**
          \property  public int ViewsCounter        
          \brief Gets the views counter.            
-         \return    The views counter.
+         \return The views counter.
          */
         public int ViewsCounter { get { return Model.ColumnViews.Count; } }
 
-        public string Header { get { return Model.ColumnViews.Last ().Model.ParentFSNode.Name; } }
+        public string GetCurrentTitle {
+            get {
+                return Model.ColumnViews.Last ().Model.ParentFSNode.ToString ();
+            }
+        }
+
+        public string Title {
+            get { return (string) GetValue (TitleProperty); }
+            set { SetValue (TitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register (
+                "Title", typeof (string),
+                typeof (MillerColumnsLayout), new PropertyMetadata ("Untitled Tab")
+            );
+
 
         public MillerColumnsLayout () {
             InitializeComponent ();
-                        
+
             Model = new MillerColumnsLayoutManager ();
             DataContext = Model;
         }
 
-        public MillerColumnsLayout (FSNode parentFSNode): this () {
+        public MillerColumnsLayout (FSNode parentFSNode)
+            : this () {
             TryAddColumnForFSNode (parentFSNode, 0);
         }
 
         public void TryAddColumnForFSNode (FSNode fsNodeToAdd, int columnViewId) {
             // Try to determine what Action is needed
-            if (fsNodeToAdd.NodeLevel == NodeLevel.Leaf) {
+            if (fsNodeToAdd.TypeTag == TypeTag.Leaf) {
                 // TODO: try to open file
-                var asFile = FileManagement.TryGetConcreteNode<FileNode> (fsNodeToAdd);
+                var asFile = FileManagement.TryGetConcreteFSNode<FileNode> (fsNodeToAdd);
                 if (asFile != null) {
                     MessageBox.Show ("File: " + asFile);
 
@@ -53,8 +70,8 @@ namespace Controls.Layouts {
                 }
 
             } else {
-                if (fsNodeToAdd.NodeLevel == NodeLevel.SubRoot) {
-                    var asDrive = FileManagement.TryGetConcreteNode<DriveNode> (fsNodeToAdd);
+                if (fsNodeToAdd.TypeTag == TypeTag.SubRoot) {
+                    var asDrive = FileManagement.TryGetConcreteFSNode<DriveNode> (fsNodeToAdd);
                     if (asDrive != null) {
                         if (!asDrive.IsReady) {
                             // TODO: notify user
@@ -65,8 +82,8 @@ namespace Controls.Layouts {
                     }
 
                 } else {
-                    if (fsNodeToAdd.NodeLevel == NodeLevel.Internal) {
-                        var asDirectory = FileManagement.TryGetConcreteNode<DirectoryNode> (fsNodeToAdd);
+                    if (fsNodeToAdd.TypeTag == TypeTag.Internal) {
+                        var asDirectory = FileManagement.TryGetConcreteFSNode<DirectoryNode> (fsNodeToAdd);
                         if (asDirectory != null) {
                             if (!asDirectory.IsAccessible) {
                                 // TODO: notify user
@@ -95,19 +112,9 @@ namespace Controls.Layouts {
             }
 
             Model.ColumnViews.Last ().Model.ParentFSNode = fsNodeToAdd;
-            //Model.ColumnViews.Last ().Model.RefreshChildrenViews (fsNodeToAdd);
             
-            layoutScroller.ScrollToRightEnd ();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
-            var handler = PropertyChanged;
-            if (handler != null) {
-                handler (this, new PropertyChangedEventArgs (propertyName));
-            }
+            Title = GetCurrentTitle;
+            millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Controls.UserControls {
                     return;
                 }                            
                 _parentFsNode = value;
-                ReinitWatcher (_parentFsNode);
+                ReinitFSWatcher (_parentFsNode);
                 RefreshChildrenViews (_parentFsNode);
                 OnPropertyChanged ();
             }
@@ -62,24 +62,24 @@ namespace Controls.UserControls {
             //parentFsNodesComboBox.SelectedIndex = 0;
             ChildFSNodesViews.Clear ();
             
-            if (parentFsNode.NodeLevel == NodeLevel.Root) {
-                var asSystemRoot = FileManagement.TryGetConcreteNode<SystemRootNode> (parentFsNode);
+            if (parentFsNode.TypeTag == TypeTag.Root) {
+                var asSystemRoot = FileManagement.TryGetConcreteFSNode<SystemRootNode> (parentFsNode);
                 if (asSystemRoot != null) {
                     foreach (var childNode in asSystemRoot.Children) {
                         ChildFSNodesViews.Add (new FSNodeView (childNode));
                     }
                 }
             } else {
-                if (parentFsNode.NodeLevel == NodeLevel.SubRoot) {
-                    var asDrive = FileManagement.TryGetConcreteNode<DriveNode> (parentFsNode);
+                if (parentFsNode.TypeTag == TypeTag.SubRoot) {
+                    var asDrive = FileManagement.TryGetConcreteFSNode<DriveNode> (parentFsNode);
                     if (asDrive != null) {
                         foreach (var childNode in asDrive.Children) {
                             ChildFSNodesViews.Add (new FSNodeView (childNode));
                         }
                     }
                 } else {
-                    if (parentFsNode.NodeLevel == NodeLevel.Internal) {
-                        var asInternal = FileManagement.TryGetConcreteNode<TraversableFSNode> (parentFsNode);
+                    if (parentFsNode.TypeTag == TypeTag.Internal) {
+                        var asInternal = FileManagement.TryGetConcreteFSNode<DirectoryLikeFSNode> (parentFsNode);
                         if (asInternal != null) {
                             foreach (var childNode in asInternal.Children) {
                                 ChildFSNodesViews.Add (new FSNodeView (childNode));
@@ -100,10 +100,10 @@ namespace Controls.UserControls {
             ParentFSNode = parentFSNode;
         }
 
-        private void ReinitWatcher (FSNode parentFSNode) {
-            if (parentFSNode.NodeLevel == NodeLevel.SubRoot || parentFSNode.NodeLevel == NodeLevel.Internal) {
-                if (parentFSNode.NodeLevel == NodeLevel.SubRoot) {
-                    var asDrive = FileManagement.TryGetConcreteNode<DriveNode> (parentFSNode);
+        private void ReinitFSWatcher (FSNode parentFSNode) {
+            if (parentFSNode.TypeTag == TypeTag.SubRoot || parentFSNode.TypeTag == TypeTag.Internal) {
+                if (parentFSNode.TypeTag == TypeTag.SubRoot) {
+                    var asDrive = FileManagement.TryGetConcreteFSNode<DriveNode> (parentFSNode);
                     // TODO:
                     if (asDrive.IsReady) {
                         FileSystemWatcher = new FileSystemWatcher (asDrive.FullPath);
@@ -111,7 +111,7 @@ namespace Controls.UserControls {
                         return;
                     }          
                 } else {
-                    var asDirectory = FileManagement.TryGetConcreteNode<DirectoryNode> (parentFSNode);
+                    var asDirectory = FileManagement.TryGetConcreteFSNode<DirectoryNode> (parentFSNode);
                     if (asDirectory.IsAccessible) {
                         FileSystemWatcher = new FileSystemWatcher (asDirectory.FullPath);
                     } else {
@@ -120,17 +120,17 @@ namespace Controls.UserControls {
                 }
 
                 FileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastAccess | NotifyFilters.LastWrite;
-                //FileSystemWatcher.Changed += OnChanged;
-                //FileSystemWatcher.Created += OnChanged;
-                //FileSystemWatcher.Deleted += OnChanged;
-                FileSystemWatcher.Renamed += OnChanged;
+                //FileSystemWatcher.Changed += OnChildrenModelsChanged;
+                //FileSystemWatcher.Created += OnChildrenModelsChanged;
+                //FileSystemWatcher.Deleted += OnChildrenModelsChanged;
+                FileSystemWatcher.Renamed += OnChildrenModelsChanged;
                 FileSystemWatcher.EnableRaisingEvents = true;
                 FileSystemWatcher.IncludeSubdirectories = false;
             }
         }
 
         // TODO: temporary solution
-        private void OnChanged (object source, FileSystemEventArgs e) {
+        private void OnChildrenModelsChanged (object source, FileSystemEventArgs e) {
             Application.Current.Dispatcher.Invoke (
                 delegate {
                     RefreshChildrenViews (ParentFSNode);
@@ -143,7 +143,9 @@ namespace Controls.UserControls {
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;
-            if (handler != null) handler (this, new PropertyChangedEventArgs (propertyName));
+            if (handler != null) {
+                handler (this, new PropertyChangedEventArgs (propertyName));
+            }
         }
     }
 }

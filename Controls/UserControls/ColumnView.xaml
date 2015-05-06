@@ -9,7 +9,8 @@
              d:DesignHeight="300" d:DesignWidth="200">
 
     <DockPanel x:Name="columnViewDockPanel"
-               MinWidth="64">
+               MinWidth="64"
+               Width="200">
 
         <!--<ComboBox x:Name="parentFsNodesComboBox" DockPanel.Dock="Top">
             <ComboBox.ItemsSource>
@@ -20,16 +21,17 @@
         <StackPanel x:Name="breadcrumbStackPanel" DockPanel.Dock="Top"
                     Orientation="Horizontal"
                     Height="25"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    PreviewMouseLeftButtonDown="breadcrumbStackPanel_OnPreviewLeftMouseButtonDown">
             <Polyline Width="11"
                       Points="0,0 10,12 10,13 0,25"
                       ClipToBounds="True"
-                      Stroke="{rl:MyStyleRef ResourceKey=ListBorder}" />
+                      Stroke="{rl:RLStyleRef ResourceKey=ListBorder}" />
             <Image x:Name="parentFSNodeIconImage"
                VerticalAlignment="Center"
                HorizontalAlignment="Left"
                Margin="2,1,0,0"
-               Style="{rl:MyStyleRef ResourceKey=smallimg}"
+               Style="{rl:RLStyleRef ResourceKey=smallimg}"
                Source="/Graphics/Textfile_818_16x.png">
             </Image>
             <TextBlock x:Name="parentFsNodeTextBlock"
@@ -38,7 +40,7 @@
                        HorizontalAlignment="Left"
                        Margin="2,0,6,0"
                        FontWeight="Bold"
-                       Style="{rl:MyStyleRef ResourceKey=disableable}"
+                       Style="{rl:RLStyleRef ResourceKey=disableable}"
                        IsEnabled="{Binding IsEnabled, ElementName=columnViewControl}">
                 <TextBlock.Text>
                     <!--//ABCD!?ab(cd)-->
@@ -47,25 +49,40 @@
             </TextBlock>
         </StackPanel>
 
-        <ListView x:Name="childFsNodesListView" 
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+        <ListView x:Name="childFSNodesListView" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   AlternationCount="2"
-                  Style ="{rl:MyStyleRef ResourceKey=listview_fix}"
-                  SelectionChanged="listView_onSelectionChanged"
-                  PreviewMouseLeftButtonDown="listView_OnPreviewMouseLeftButtonDown">
-            <!--ScrollViewer.CanContentScroll="False"-->
+                  Style="{rl:RLStyleRef ResourceKey=listview_fix}"
+                  SelectionChanged="childFSNodesListView_OnSelectionChanged"
+                  PreviewMouseLeftButtonDown="childFSNodesListView_OnPreviewMouseLeftButtonDown">
 
-
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem" BasedOn="{rl:MyStyleRef ResourceKey=stripedrow}">
-                    <EventSetter Event="PreviewMouseDoubleClick" Handler="listViewItem_MouseDoubleClick" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.ItemsSource>
                 <Binding Path="ChildFSNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </ListView.ItemsSource>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{rl:RLStyleRef ResourceKey=stripedrow}">
+                    <EventSetter Event="PreviewMouseDoubleClick" 
+                                 Handler="childFSNodesListViewItem_OnMouseDoubleClick" />
+                    <EventSetter Event="PreviewMouseRightButtonDown" 
+                                 Handler="childFSNodesListViewItem_OnPreviewRightMouseButtonDown" />
+                    
+                    <!--<Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu Style="{rl:RLStyleRef ResourceKey=ctxmenu}">
+                                <MenuItem Header="Menu item 1" />
+                                <MenuItem Header="Menu item 2" />
+                                <Separator />
+                                <MenuItem Header="Menu item 3" />
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>-->
+                </Style>
+            </ListView.ItemContainerStyle>
+            
         </ListView>
+        
     </DockPanel>
 
 </UserControl>

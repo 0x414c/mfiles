@@ -11,7 +11,7 @@ namespace FSOps {
             );
         }
 
-        public static T TryGetConcreteNode<T> (FSNode fsNode) where T : FSNode {
+        public static T TryGetConcreteFSNode<T> (FSNode fsNode) where T : FSNode {
             T node = fsNode as T;
 
             return node;

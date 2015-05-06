@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceLibrary", "Resource
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFExtensions", "WPFExtensions\WPFExtensions.csproj", "{37CA437E-8D73-41E8-851C-E29831C1F284}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellContextMenu", "ShellContextMenu\ShellContextMenu.csproj", "{7B37534C-DDE4-4212-9EC6-B7B13CFEB0DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{37CA437E-8D73-41E8-851C-E29831C1F284}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37CA437E-8D73-41E8-851C-E29831C1F284}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37CA437E-8D73-41E8-851C-E29831C1F284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B37534C-DDE4-4212-9EC6-B7B13CFEB0DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B37534C-DDE4-4212-9EC6-B7B13CFEB0DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B37534C-DDE4-4212-9EC6-B7B13CFEB0DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B37534C-DDE4-4212-9EC6-B7B13CFEB0DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
