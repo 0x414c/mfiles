@@ -29,9 +29,7 @@ namespace Controls.Layouts {
         public int ViewsCounter { get { return Model.ColumnViews.Count; } }
 
         public string GetCurrentTitle {
-            get {
-                return Model.ColumnViews.Last ().Model.ParentFSNode.ToString ();
-            }
+            get { return Model.ColumnViews.Last ().Model.ParentFSNode.ToString (); }
         }
 
         public string Title {
@@ -45,7 +43,6 @@ namespace Controls.Layouts {
                 typeof (MillerColumnsLayout), new PropertyMetadata ("Untitled Tab")
             );
 
-
         public MillerColumnsLayout () {
             InitializeComponent ();
 
@@ -53,9 +50,26 @@ namespace Controls.Layouts {
             DataContext = Model;
         }
 
-        public MillerColumnsLayout (FSNode parentFSNode)
-            : this () {
+        public MillerColumnsLayout (FSNode parentFSNode) : this () {
             TryAddColumnForFSNode (parentFSNode, 0);
+        }
+
+        public void TryLevelUp () {
+            if (ViewsCounter > 1) {
+                Model.ColumnViews.RemoveAt (ViewsCounter - 1);
+
+                Title = GetCurrentTitle;
+                millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
+            }    
+        }
+
+        public void DeleteColumnsAfter (int columnViewId) {
+            if (ViewsCounter > 1) {
+                Model.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+
+                Title = GetCurrentTitle;
+                millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
+            }    
         }
 
         public void TryAddColumnForFSNode (FSNode fsNodeToAdd, int columnViewId) {
@@ -64,18 +78,25 @@ namespace Controls.Layouts {
                 // TODO: try to open file
                 var asFile = FileManagement.TryGetConcreteFSNode<FileNode> (fsNodeToAdd);
                 if (asFile != null) {
-                    MessageBox.Show ("File: " + asFile);
+                    if (!asFile.IsAccessible) {
+                        // TODO: notify user
+                        MessageBox.Show ("FileNode: " + asFile + " isn't accessible!");
 
-                    return;
+                        return;
+                    } else {
+                        MessageBox.Show ("File selected: " + asFile);
+
+                        return;
+                    }
                 }
 
             } else {
                 if (fsNodeToAdd.TypeTag == TypeTag.SubRoot) {
                     var asDrive = FileManagement.TryGetConcreteFSNode<DriveNode> (fsNodeToAdd);
                     if (asDrive != null) {
-                        if (!asDrive.IsReady) {
+                        if (!(asDrive.IsReady && asDrive.IsTraversable)) {
                             // TODO: notify user
-                            MessageBox.Show ("DriveNode: " + asDrive + " isn't ready!");
+                            MessageBox.Show ("DriveNode: " + asDrive + " isn't ready or isn't accessible!");
 
                             return;
                         }
@@ -87,7 +108,7 @@ namespace Controls.Layouts {
                         if (asDirectory != null) {
                             if (!asDirectory.IsAccessible) {
                                 // TODO: notify user
-                                MessageBox.Show ("DirectoryNode: " + asDirectory + " isn't ready!");
+                                MessageBox.Show ("DirectoryNode: " + asDirectory + " isn't accessible!");
 
                                 return;
                             }

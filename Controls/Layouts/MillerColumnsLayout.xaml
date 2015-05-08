@@ -24,9 +24,9 @@
             
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <!--<StackPanel Orientation="Horizontal" />-->
                     <!--<Grid></Grid>-->
-                    <!--<DockPanel />-->
+                    <DockPanel />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             

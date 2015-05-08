@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Windows;
 
 
 namespace FSOps {
@@ -36,7 +33,7 @@ namespace FSOps {
 
     /**
      \class FileLikeFSNode
-     \brief A file like file system node: DriveNode, DirectoryNode or FileNode.      
+     \brief A file-like file system node: DriveNode, DirectoryNode or FileNode.      
      */
     public abstract class FileLikeFSNode : FSNode {
         public FileSystemInfo FileSystemInfo { get; set; }
@@ -54,9 +51,7 @@ namespace FSOps {
         }
 
         public bool IsAccessible {
-            get {
-                throw new NotImplementedException ();
-            }
+            get { return FileManagement.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData); }
         }
 
         // TODO:
@@ -89,85 +84,12 @@ namespace FSOps {
      \brief A directory-like file system node: DriveNode or DirectoryNode that can have Children
      */
     public abstract class DirectoryLikeFSNode : FileLikeFSNode {
-        // TODO: check ACLs
-        public bool IsAccessible {
-            get {
-                throw new NotImplementedException ();
-
-                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
-                //if (asDirectoryInfo != null) {
-                //    try {
-                //        asDirectoryInfo.EnumerateFileSystemInfos ();
-                //    } catch (Exception exception) {
-                //        MessageBox.Show (exception.GetType () + exception.Message);
-                //        return false;
-                //    }
-                //} else {
-                //    return false;
-                //}                                                                  
-                //return true;
-
-                //public enum FileSystemRights {
-                //    ReadData = 1,
-                //    ListDirectory = ReadData,
-                //    WriteData = 2,
-                //    CreateFiles = WriteData,
-                //    AppendData = 4,
-                //    CreateDirectories = AppendData,
-                //    ReadExtendedAttributes = 8,
-                //    WriteExtendedAttributes = 16,
-                //    ExecuteFile = 32,
-                //    Traverse = ExecuteFile,
-                //    DeleteSubdirectoriesAndFiles = 64,
-                //    ReadAttributes = 128,
-                //    WriteAttributes = 256,
-                //    Delete = 65536,
-                //    ReadPermissions = 131072,
-                //    ChangePermissions = 262144,
-                //    TakeOwnership = 524288,
-                //    Synchronize = 1048576,
-                //    FullControl = Synchronize | TakeOwnership | ChangePermissions | ReadPermissions | Delete | WriteAttributes | ReadAttributes | DeleteSubdirectoriesAndFiles | Traverse | WriteExtendedAttributes | ReadExtendedAttributes | CreateDirectories | CreateFiles | ListDirectory,
-                //    Read = ReadPermissions | ReadAttributes | ReadExtendedAttributes | ListDirectory,
-                //    ReadAndExecute = Read | Traverse,
-                //    Write = WriteAttributes | WriteExtendedAttributes | CreateDirectories | CreateFiles,
-                //    Modify = Write | ReadAndExecute | Delete,
-                //}
-
-
-                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
-                //if (asDirectoryInfo != null) {
-                    //var readAllowed = false;
-                    //var readDenied = false;
-
-                    //var ACL = asDirectoryInfo.GetAccessControl (AccessControlSections.Access);
-                    //var accessRules = ACL.GetAccessRules (true, true, typeof (SecurityIdentifier));
-
-                    //foreach (FileSystemAccessRule rule in accessRules) {
-                    //    if ((FileSystemRights.Read & rule.FileSystemRights) != FileSystemRights.Read) {
-                    //        continue;
-                    //    }
-
-                    //    switch (rule.AccessControlType) {
-                    //        case AccessControlType.Allow:
-                    //            readAllowed = true;
-                    //            break;
-                    //        case AccessControlType.Deny:
-                    //            readDenied = true;
-                    //            break;
-                    //    }
-                    //}
-
-                    //return readAllowed && !readDenied;
-                //} else {
-                    //return false;
-                //}
-            }
+        public new bool IsAccessible {
+            get { return FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory); }
         }
 
         public bool IsTraversable {
-            get {
-                throw new NotImplementedException ();
-            }
+            get { return FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse); }
         }
 
         public LinkedList<FileLikeFSNode> Children {
@@ -179,7 +101,7 @@ namespace FSOps {
 
                         foreach (var directoryInfo in asDirectoryInfo.EnumerateDirectories ()) {
                             children.AddLast (new DirectoryNode (directoryInfo));
-                        }               
+                        }
 
                         foreach (var fileInfo in asDirectoryInfo.EnumerateFiles ()) {
                             children.AddLast (new FileNode (fileInfo));

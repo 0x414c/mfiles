@@ -28,8 +28,13 @@ namespace Controls.UserControls {
         }
 
         private void breadcrumbStackPanel_OnPreviewLeftMouseButtonDown (object sender, MouseButtonEventArgs e) {
-            // TODO: go to FSNode selected
-            MessageBox.Show (Model.ParentFSNode.Name);
+            var stackPanel = sender as StackPanel;
+            if (stackPanel != null) {
+                var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
+                if (parentLayoutMgr != null) {
+                    parentLayoutMgr.DeleteColumnsAfter (ViewId);
+                } 
+            }
         }
 
         private void childFSNodesListViewItem_OnMouseDoubleClick (object sender, MouseButtonEventArgs e) {
@@ -84,9 +89,10 @@ namespace Controls.UserControls {
 
         // TODO: filter scrollbar clicks
         private void childFSNodesListView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
-            var asListView = sender as ListView;
+            var asListView = sender as ScrollContentPresenter;
             if (asListView != null) {
-                asListView.UnselectAll ();
+                //var lv = Utils.FindParent<ListView> (sender);
+                //lv.UnselectAll ();
             }
         }
     }

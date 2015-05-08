@@ -13,7 +13,7 @@
         Style="{rl:RLStyleRef ResourceKey=mainwnd}"
         Icon="Graphics/floppy-512.ico" 
         ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
-
+    
     <DockPanel x:Name="mainWndDockPanel" >
         <controls:Menubar x:Name="menubar" DockPanel.Dock="Top" Margin="4" />
 

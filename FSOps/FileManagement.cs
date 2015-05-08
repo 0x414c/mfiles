@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
+using System.Windows;
 
 
 namespace FSOps {
@@ -15,6 +19,66 @@ namespace FSOps {
             T node = fsNode as T;
 
             return node;
+        }
+
+        public static bool HasRights (FileInfo fileInfo, FileSystemRights rightsToCheck) {
+            try {
+                FileSecurity accessControl = fileInfo.GetAccessControl (AccessControlSections.Access);
+                AuthorizationRuleCollection authorizationRuleCollection = accessControl.GetAccessRules (true, true, typeof (NTAccount));
+
+                return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
+            } catch (Exception ex) {
+                // TODO: 
+                MessageBox.Show (ex.Message);
+
+                return false;
+            }
+        }
+
+        public static bool HasRights (DirectoryInfo directoryInfo, FileSystemRights rightsToCheck) {
+            try {
+                DirectorySecurity accessControl = directoryInfo.GetAccessControl (AccessControlSections.Access);
+                AuthorizationRuleCollection authorizationRuleCollection = accessControl.GetAccessRules (true, true, typeof (NTAccount));
+
+                return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
+            } catch (Exception ex) {
+                MessageBox.Show (ex.Message);
+
+                return false;
+            }
+        }
+
+        public static bool CheckRightsForCurrentUser (AuthorizationRuleCollection authorizationRuleCollection, FileSystemRights rightsToCheck) {
+            FileSystemRights permissiveFileSystemRights = 0;
+            FileSystemRights prohibitiveFileSystemRights = 0;
+
+            try {
+                WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent ();
+                WindowsPrincipal currentPrincipal = new WindowsPrincipal (currentIdentity);
+
+                foreach (
+                    FileSystemAccessRule asFileSystemAccessRule in
+                    from asFileSystemAccessRule in authorizationRuleCollection.OfType<FileSystemAccessRule> ()
+                    let asNTAccount = asFileSystemAccessRule.IdentityReference as NTAccount
+                    where asNTAccount != null
+                    where currentPrincipal.IsInRole (asNTAccount.Value)
+                    select asFileSystemAccessRule
+                ) {
+                    if (asFileSystemAccessRule.AccessControlType == AccessControlType.Allow) {
+                        permissiveFileSystemRights |= asFileSystemAccessRule.FileSystemRights;
+                    } else {
+                        prohibitiveFileSystemRights |= asFileSystemAccessRule.FileSystemRights;
+                    }
+                }
+            } catch (Exception ex) {
+                Console.WriteLine (ex.Message);
+                permissiveFileSystemRights = 0;
+                prohibitiveFileSystemRights = 0;
+            }
+
+            FileSystemRights effectiveRights = permissiveFileSystemRights & ~prohibitiveFileSystemRights;
+
+            return (effectiveRights & rightsToCheck) == rightsToCheck;
         }
     }
 }
