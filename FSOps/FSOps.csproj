@@ -42,6 +42,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clipboard.cs" />
     <Compile Include="FSNode.cs" />
     <Compile Include="FileManagement.cs" />
     <Compile Include="Networking.cs" />

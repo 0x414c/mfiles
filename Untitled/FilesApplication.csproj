@@ -193,6 +193,10 @@
       <Project>{87A11449-8241-42CA-A6E6-68690B27A9C1}</Project>
       <Name>ResourceLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Shell32Interop\Shell32Interop.csproj">
+      <Project>{7013d34a-084d-4cf3-ab5c-57f47035ead6}</Project>
+      <Name>Shell32Interop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WPFExtensions\WPFExtensions.csproj">
       <Project>{37ca437e-8d73-41e8-851c-e29831c1f284}</Project>
       <Name>WPFExtensions</Name>

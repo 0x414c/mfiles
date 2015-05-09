@@ -11,7 +11,13 @@ namespace FSOps {
       Root for an entire Machine, SubRoot for particular Drives,
       Internal for Directories, Leaf for Files
      */
-    public enum TypeTag { Root, SubRoot, Internal, Leaf }
+    [Flags]
+    public enum TypeTag {
+        Leaf = 1,
+        Internal = 2,
+        SubRoot = 4,
+        Root = 8
+    }
 
 
     /**
@@ -25,6 +31,10 @@ namespace FSOps {
 
         public string FullPath { get; set; }
 
+        public bool Is (TypeTag compareTo) {
+            return (TypeTag & compareTo) == TypeTag;
+        }
+
         public override string ToString () {
             return Name;
         }
@@ -36,7 +46,7 @@ namespace FSOps {
      \brief A file-like file system node: DriveNode, DirectoryNode or FileNode.      
      */
     public abstract class FileLikeFSNode : FSNode {
-        public FileSystemInfo FileSystemInfo { get; set; }
+        public virtual FileSystemInfo FileSystemInfo { get; set; }
 
         public new string Name {
             get { return FileSystemInfo.Name; }
@@ -51,7 +61,7 @@ namespace FSOps {
         }
 
         public bool IsAccessible {
-            get { return FileManagement.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData); }
+            get { return FileSystemInfo.Exists && FileManagement.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData); }
         }
 
         // TODO:
@@ -85,14 +95,14 @@ namespace FSOps {
      */
     public abstract class DirectoryLikeFSNode : FileLikeFSNode {
         public new bool IsAccessible {
-            get { return FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory); }
+            get { return FileSystemInfo.Exists && FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory); }
         }
 
         public bool IsTraversable {
-            get { return FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse); }
+            get { return FileSystemInfo.Exists && FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse); }
         }
 
-        public LinkedList<FileLikeFSNode> Children {
+        public virtual IEnumerable<FileLikeFSNode> Children {
             get {
                 if (IsAccessible && IsTraversable) {
                     var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
@@ -111,18 +121,6 @@ namespace FSOps {
                     } else {
                         return null;
                     }
-
-                    //var children = new LinkedList<FileLikeFSNode> ();
-
-                    //foreach (string directory in Directory.GetDirectories (FullPath)) {
-                    //    children.AddLast (new DirectoryNode (new DirectoryInfo (directory)));
-                    //}
-
-                    //foreach (string file in Directory.GetFiles (FullPath)) {
-                    //    children.AddLast (new FileNode (new FileInfo (file)));
-                    //}
-
-                    //return children;
                 } else {
                     return null;
                 }
@@ -131,8 +129,12 @@ namespace FSOps {
     }
 
 
-    public class SystemRootNode : FSNode {
-        public List<FSNode> Children {
+    /**
+     \class SystemRootNode    
+     \brief A system root node.
+     */
+    public sealed class SystemRootNode : FSNode {
+        public IEnumerable<FSNode> Children {
             get { return new List<FSNode> (FileManagement.EnumerateLocalDrives ()); }
         }
 
@@ -151,10 +153,13 @@ namespace FSOps {
     }
 
 
-    public class DriveNode : DirectoryLikeFSNode {
+    /// <summary>
+    /// Represents particular Drive
+    /// </summary>
+    public sealed class DriveNode : DirectoryLikeFSNode {
         public DriveInfo DriveInfo { get; set; }
 
-        public new FileSystemInfo FileSystemInfo {
+        public override FileSystemInfo FileSystemInfo {
             get { return DriveInfo.RootDirectory; }
         }
 
@@ -170,16 +175,13 @@ namespace FSOps {
             get { return DriveInfo.IsReady; }
         }
 
-        public new LinkedList<FileLikeFSNode> Children {
-            get {
-                return IsReady ? base.Children : null;
-            }
+        public override IEnumerable<FileLikeFSNode> Children {
+            get { return IsReady ? base.Children : null; }
         }
 
         public DriveNode (DriveInfo driveInfo) {
             TypeTag = TypeTag.SubRoot;
             DriveInfo = driveInfo;
-            base.FileSystemInfo = FileSystemInfo;
         }
 
         public DriveNode (string fullPath) : this (new DriveInfo (fullPath.ToUpperInvariant ())) { }
@@ -189,8 +191,8 @@ namespace FSOps {
         }
     }
 
-
-    public class DirectoryNode : DirectoryLikeFSNode {
+    
+    public sealed class DirectoryNode : DirectoryLikeFSNode {
         public DirectoryNode (DirectoryInfo directoryInfo) {
             TypeTag = TypeTag.Internal;
             FileSystemInfo = directoryInfo;
@@ -200,7 +202,7 @@ namespace FSOps {
     }
 
 
-    public class FileNode : FileLikeFSNode {
+    public sealed class FileNode : FileLikeFSNode {
         public FileNode (FileInfo fileInfo) {
             TypeTag = TypeTag.Leaf;
             FileSystemInfo = fileInfo;
@@ -208,4 +210,4 @@ namespace FSOps {
 
         public FileNode (string fullPath) : this (new FileInfo (fullPath)) { }
     }
-}
+}               

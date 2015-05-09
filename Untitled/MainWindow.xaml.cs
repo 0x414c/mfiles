@@ -1,7 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Input;
 using Controls.Layouts;
+using Controls.UserControls;
 using FSOps;
+using Shell32Interop;
 
 
 /*
@@ -26,19 +28,74 @@ namespace FilesApplication {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        public MainWindowModel Model { get; private set; }
+        public MainWindowModel ViewModel { get; private set; }
 
         public MainWindow () {
             InitializeComponent ();
 
-            Model = new MainWindowModel ();
-            DataContext = Model;
+            ViewModel = new MainWindowModel ();
+            DataContext = ViewModel;
         }
 
         // TODO: for future use
         public MainWindow (FSNode startupFSNode) : this () {
-            Model.Layouts.Add (new MillerColumnsLayout (startupFSNode));
+            ViewModel.Layouts.Add (new MillerColumnsLayout (startupFSNode));
         }
 
+        private static void ShellExecuteExOnFSNode (ExecutedRoutedEventArgs e, string lpVerb) {
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                if (fsNode != null) {
+                    Shell.ShellExecuteEx (fsNode.FullPath, lpVerb);
+                }
+            }
+        }
+
+        private void propertiesCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            ShellExecuteExOnFSNode (e, "properties");
+        }
+
+        private void propertiesCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            e.CanExecute = true;
+        }
+
+        private void openCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            ShellExecuteExOnFSNode (e, "open");
+        }
+
+        private void openCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            e.CanExecute = true;
+        }
+
+        private void cutCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void cutCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode); 
+                if (fsNode != null) {
+                    e.CanExecute = fsNode.Is (TypeTag.Internal | TypeTag.Leaf);
+                }
+            }
+        }
+
+        private void copyCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void copyCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            e.CanExecute = true;
+        }
+
+        private void pasteCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void pasteCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            e.CanExecute = true;
+        }
     }
 }

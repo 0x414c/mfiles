@@ -12,7 +12,7 @@ namespace Controls.UserControls {
     /// Interaction logic for ColumnView.xaml
     /// </summary>
     public partial class ColumnView : UserControl {
-        public ColumnViewModel Model { get; private set; }
+        public ColumnViewModel ViewModel { get; private set; }
 
         public int ViewId { get; private set; }
 
@@ -22,14 +22,14 @@ namespace Controls.UserControls {
 
         // TODO: use DataTemplate, determine between File List, File Preview, Error Notif.
         public ColumnView (FSNode parentFsNode, int viewId) : this () {
-            Model = new ColumnViewModel (parentFsNode);
-            DataContext = Model;
             ViewId = viewId;
+            ViewModel = new ColumnViewModel (parentFsNode);
+            DataContext = ViewModel;
         }
 
-        private void breadcrumbStackPanel_OnPreviewLeftMouseButtonDown (object sender, MouseButtonEventArgs e) {
-            var stackPanel = sender as StackPanel;
-            if (stackPanel != null) {
+        private void breadcrumbDockPanel_OnPreviewLeftMouseButtonDown (object sender, MouseButtonEventArgs e) {
+            var dockPanel = sender as DockPanel;
+            if (dockPanel != null) {
                 var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
                 if (parentLayoutMgr != null) {
                     parentLayoutMgr.DeleteColumnsAfter (ViewId);
@@ -45,7 +45,7 @@ namespace Controls.UserControls {
                 //if (Equals (childFSNodesListView.SelectedItem as ListViewItem, listViewItem)) {
                 //    var fsNodeView = listViewItem.Content as FSNodeView;
                 //    if (fsNodeView != null) {
-                //        var fsNodeSelected = fsNodeView.Model.FSNode;
+                //        var fsNodeSelected = fsNodeView.ViewModel.FSNode;
                 //        var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
                 //        if (parentLayoutMgr != null) {
                 //            parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
@@ -60,7 +60,7 @@ namespace Controls.UserControls {
             if (listViewItem != null) {
                 var fsNodeView = listViewItem.Content as FSNodeView;
                 if (fsNodeView != null) {
-                    var fsNodeSelected = fsNodeView.Model.FSNode;
+                    var fsNodeSelected = fsNodeView.ViewModel.FSNode;
 
                     var fsNodeSelectedAsFileLikeFSNode = fsNodeSelected as FileLikeFSNode;
                     if (fsNodeSelectedAsFileLikeFSNode != null) {
@@ -78,7 +78,7 @@ namespace Controls.UserControls {
             if (listView != null) {
                 var fsNodeView = listView.SelectedItem as FSNodeView;
                 if (fsNodeView != null) {
-                    var fsNodeSelected = fsNodeView.Model.FSNode;
+                    var fsNodeSelected = fsNodeView.ViewModel.FSNode;
                     var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
                     if (parentLayoutMgr != null) {
                         parentLayoutMgr.TryAddColumnForFSNode (fsNodeSelected, ViewId);
@@ -89,11 +89,12 @@ namespace Controls.UserControls {
 
         // TODO: filter scrollbar clicks
         private void childFSNodesListView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
-            var asListView = sender as ScrollContentPresenter;
-            if (asListView != null) {
-                //var lv = Utils.FindParent<ListView> (sender);
-                //lv.UnselectAll ();
-            }
+            childFSNodesListView.UnselectAll ();
+            //var asListView = sender as ScrollContentPresenter;
+            //if (asListView != null) {
+            //    var lv = Utils.FindParent<ListView> (asListView);
+            //    lv.UnselectAll ();
+            //}
         }
     }
 }

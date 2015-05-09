@@ -5,57 +5,57 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
+             xmlns:local="clr-namespace:Controls.UserControls"
+
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
 
+    <!--<UserControl.DataContext>
+        <local:ColumnViewModel />
+    </UserControl.DataContext>-->
+    
     <DockPanel x:Name="columnViewDockPanel"
                MinWidth="64">
 
-        <StackPanel x:Name="breadcrumbStackPanel" DockPanel.Dock="Top"
-                    Orientation="Horizontal"
-                    Height="25"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-                    PreviewMouseLeftButtonDown="breadcrumbStackPanel_OnPreviewLeftMouseButtonDown">
+        <DockPanel x:Name="breadcrumbStackPanel"
+                   DockPanel.Dock="Top"
+                   Height="25"
+                   Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                   PreviewMouseLeftButtonDown="breadcrumbDockPanel_OnPreviewLeftMouseButtonDown">
 
-             <Polyline Width="11"
+            <Polyline DockPanel.Dock="Left"
+                      Width="11"
                       Points="0,0 10,12 10,13 0,25"
                       ClipToBounds="True"
                       Stroke="{rl:RLStyleRef ResourceKey=ListBorder}" />
 
             <Image x:Name="parentFSNodeIconImage"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Left"
-               Margin="2,1,0,0"
-               Style="{rl:RLStyleRef ResourceKey=smallimg}"
-               Source="/Graphics/Textfile_818_16x.png">
-            </Image>
+                   DockPanel.Dock="Left"   
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   Margin="2,1,0,0"
+                   Style="{rl:RLStyleRef ResourceKey=smallimg}"
+                   Source="/Graphics/Textfile_818_16x.png" />
 
             <TextBlock x:Name="parentFsNodeTextBlock"
-                       DockPanel.Dock="Top"
+                       DockPanel.Dock="Left"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
                        Margin="2,0,6,0"
                        FontWeight="Bold"
-                       Width="169"
                        Style="{rl:RLStyleRef ResourceKey=disableable}"
-                       TextTrimming="None"
                        IsEnabled="{Binding IsEnabled, ElementName=columnViewControl}">
-                
-                <TextBlock.Foreground>
-                    <LinearGradientBrush EndPoint="160.55,0" MappingMode="Absolute">
-                        <GradientStop Color="Black" Offset="0.95"/>
-                        <GradientStop Color="Transparent" Offset="1"/>
-                    </LinearGradientBrush>
-                </TextBlock.Foreground>
 
                 <TextBlock.Text>
                     <Binding Path="ParentFSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                 </TextBlock.Text>
+
             </TextBlock>
 
-        </StackPanel>
+        </DockPanel>
 
-        <ListView x:Name="childFSNodesListView" 
+        <ListView x:Name="childFSNodesListView"
+                  DockPanel.Dock="Top"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   AlternationCount="2"
@@ -68,22 +68,83 @@
             </ListView.ItemsSource>
 
             <ListView.ItemContainerStyle>
+                <!--<Style.Triggers>
+                    <Trigger Property="ItemsSource" Value="{x:Null}">
+                        <Setter Property="Template" Value="{StaticResource WaitControlTemplate}" />
+                    </Trigger>
+                </Style.Triggers>-->
+
                 <Style TargetType="ListViewItem" BasedOn="{rl:RLStyleRef ResourceKey=stripedrow}">
                     <EventSetter Event="PreviewMouseDoubleClick" 
                                  Handler="childFSNodesListViewItem_OnMouseDoubleClick" />
-                    <EventSetter Event="PreviewMouseRightButtonDown" 
-                                 Handler="childFSNodesListViewItem_OnPreviewRightMouseButtonDown" />
+                    <!--<EventSetter Event="PreviewMouseRightButtonDown" 
+                                 Handler="childFSNodesListViewItem_OnPreviewRightMouseButtonDown" />-->
 
-                    <!--<Setter Property="ContextMenu">
+                    <Setter Property="ContextMenu">
                         <Setter.Value>
                             <ContextMenu Style="{rl:RLStyleRef ResourceKey=ctxmenu}">
-                                <MenuItem Header="Menu item 1" />
-                                <MenuItem Header="Menu item 2" />
+                                
+                                <ContextMenu.DataContext>
+                                    <Binding Path="PlacementTarget.ListView.DataContext" 
+                                             RelativeSource="{RelativeSource Self}" />
+                                </ContextMenu.DataContext>
+                                
+                                <MenuItem Header="Open In System"
+                                          Command="Open">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
+                                <MenuItem Header="Rename"
+                                          Command="Replace">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
                                 <Separator />
-                                <MenuItem Header="Menu item 3" />
+
+                                <MenuItem Header="Cut"
+                                          Command="Cut">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
+                                <MenuItem Header="Copy"
+                                          Command="Copy">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
+                                <MenuItem Header="Paste"
+                                          Command="Paste">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
+                                <Separator />
+                                
+                                <MenuItem Header="Properties" 
+                                          Command="Properties">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+                                
                             </ContextMenu>
                         </Setter.Value>
-                    </Setter>-->
+                    </Setter>
+                    
                 </Style>
             </ListView.ItemContainerStyle>
 

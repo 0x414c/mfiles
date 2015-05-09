@@ -28,7 +28,7 @@ namespace FSOps {
 
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
             } catch (Exception ex) {
-                // TODO: 
+                // TODO: readable system errors
                 MessageBox.Show (ex.Message);
 
                 return false;
@@ -48,7 +48,7 @@ namespace FSOps {
             }
         }
 
-        public static bool CheckRightsForCurrentUser (AuthorizationRuleCollection authorizationRuleCollection, FileSystemRights rightsToCheck) {
+        private static bool CheckRightsForCurrentUser (AuthorizationRuleCollection authorizationRuleCollection, FileSystemRights rightsToCheck) {
             FileSystemRights permissiveFileSystemRights = 0;
             FileSystemRights prohibitiveFileSystemRights = 0;
 
@@ -63,7 +63,8 @@ namespace FSOps {
                     where asNTAccount != null
                     where currentPrincipal.IsInRole (asNTAccount.Value)
                     select asFileSystemAccessRule
-                ) {
+                )
+                {
                     if (asFileSystemAccessRule.AccessControlType == AccessControlType.Allow) {
                         permissiveFileSystemRights |= asFileSystemAccessRule.FileSystemRights;
                     } else {

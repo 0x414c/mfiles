@@ -14,6 +14,24 @@
         Icon="Graphics/floppy-512.ico" 
         ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
     
+    <Window.CommandBindings>
+        <CommandBinding Command="Properties"
+                        Executed="propertiesCommandBinding_OnExecuted"
+                        CanExecute="propertiesCommandBinding_OnCanExecute" />
+        <CommandBinding Command="Open"
+                        Executed="openCommandBinding_OnExecuted"
+                        CanExecute="openCommandBinding_OnCanExecute" />
+        <CommandBinding Command="Cut"
+                        Executed="cutCommandBinding_OnExecuted" 
+                        CanExecute="cutCommandBinding_OnCanExecute" />
+        <CommandBinding Command="Copy"
+                        Executed="copyCommandBinding_OnExecuted" 
+                        CanExecute="copyCommandBinding_OnCanExecute" />
+        <CommandBinding Command="Paste" 
+                        Executed="pasteCommandBinding_OnExecuted"
+                        CanExecute="pasteCommandBinding_OnCanExecute" />
+    </Window.CommandBindings>
+    
     <DockPanel x:Name="mainWndDockPanel" >
         <controls:Menubar x:Name="menubar" DockPanel.Dock="Top" Margin="4" />
 

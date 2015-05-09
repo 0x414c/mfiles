@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Controls.Annotations;
 using Controls.Auxiliary;
 using Controls.UserControls;
 using FSOps;
@@ -15,21 +12,24 @@ namespace Controls.Layouts {
     /// </summary>
     public partial class MillerColumnsLayout : UserControl {
         /**
-         \property  public MillerColumnsLayoutManager Model        
+         \property  public MillerColumnsLayoutManager ViewModel        
          \brief Gets or sets the model that acts as backing store for children Views.        
          \return The model.
          */
-        public MillerColumnsLayoutManager Model { get; set; }
+        public MillerColumnsLayoutManager ViewModel { get; set; }
 
         /**
          \property  public int ViewsCounter        
          \brief Gets the views counter.            
          \return The views counter.
          */
-        public int ViewsCounter { get { return Model.ColumnViews.Count; } }
+
+        public int ViewsCounter {
+            get { return ViewModel.ColumnViews.Count; }
+        }
 
         public string GetCurrentTitle {
-            get { return Model.ColumnViews.Last ().Model.ParentFSNode.ToString (); }
+            get { return ViewModel.ColumnViews.Last ().ViewModel.ParentFSNode.ToString (); }
         }
 
         public string Title {
@@ -46,8 +46,8 @@ namespace Controls.Layouts {
         public MillerColumnsLayout () {
             InitializeComponent ();
 
-            Model = new MillerColumnsLayoutManager ();
-            DataContext = Model;
+            ViewModel = new MillerColumnsLayoutManager ();
+            DataContext = ViewModel;
         }
 
         public MillerColumnsLayout (FSNode parentFSNode) : this () {
@@ -56,7 +56,7 @@ namespace Controls.Layouts {
 
         public void TryLevelUp () {
             if (ViewsCounter > 1) {
-                Model.ColumnViews.RemoveAt (ViewsCounter - 1);
+                ViewModel.ColumnViews.RemoveAt (ViewsCounter - 1);
 
                 Title = GetCurrentTitle;
                 millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
@@ -65,7 +65,7 @@ namespace Controls.Layouts {
 
         public void DeleteColumnsAfter (int columnViewId) {
             if (ViewsCounter > 1) {
-                Model.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+                ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
 
                 Title = GetCurrentTitle;
                 millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
@@ -124,15 +124,16 @@ namespace Controls.Layouts {
             // Remove columns from end; skip Caller and its Parents
             // and reuse Caller later to display new contents
             if (columnViewId + 1 < ViewsCounter) {
-                Model.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+                ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
             } else {
                 // If we need another column
                 if (columnViewId == ViewsCounter) {
-                    Model.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
+                    ViewModel.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
                 }
             }
 
-            Model.ColumnViews.Last ().Model.ParentFSNode = fsNodeToAdd;
+            // WTF: reassigning ParentFSNode ??
+            ViewModel.ColumnViews.Last ().ViewModel.ParentFSNode = fsNodeToAdd;
             
             Title = GetCurrentTitle;
             millerColumnsLayoutScrollViewer.ScrollToRightEnd ();

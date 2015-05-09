@@ -53,7 +53,7 @@ namespace Controls.UserControls {
 
         //[STAThread]
         public void RefreshChildrenViews (FSNode parentFsNode) {
-            //if (!Equals (Model.ParentFSNode, parentFsNode)) {
+            //if (!Equals (ViewModel.ParentFSNode, parentFsNode)) {
             
             ParentFSNodesViews.Clear ();
             
@@ -91,13 +91,13 @@ namespace Controls.UserControls {
             //}
         }
 
-        private ColumnViewModel () {
+        public ColumnViewModel () {
             ChildFSNodesViews = new ObservableCollection<FSNodeView> ();
             ParentFSNodesViews = new ObservableCollection<FSNodeView> ();
         }
 
         public ColumnViewModel (FSNode parentFSNode) : this () {
-            ParentFSNode = parentFSNode;
+            //ParentFSNode = parentFSNode;
         }
 
         private void ReinitFSWatcher (FSNode parentFSNode) {
