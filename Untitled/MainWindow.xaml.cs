@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 using Controls.Layouts;
 using Controls.UserControls;
+using Files;
 using FSOps;
 using Shell32Interop;
 
@@ -28,8 +30,12 @@ namespace FilesApplication {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+        #region props
         public MainWindowModel ViewModel { get; private set; }
+        #endregion
 
+
+        #region ctors
         public MainWindow () {
             InitializeComponent ();
 
@@ -41,7 +47,10 @@ namespace FilesApplication {
         public MainWindow (FSNode startupFSNode) : this () {
             ViewModel.Layouts.Add (new MillerColumnsLayout (startupFSNode));
         }
+        #endregion
 
+
+        #region events
         private static void ShellExecuteExOnFSNode (ExecutedRoutedEventArgs e, string lpVerb) {
             var fsNodeView = e.Parameter as FSNodeView;
             if (fsNodeView != null) {
@@ -52,50 +61,131 @@ namespace FilesApplication {
             }
         }
 
+        private static void CheckEventArgsType (CanExecuteRoutedEventArgs e, TypeTag tagToCheck) {
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                if (fsNode != null) {
+                    e.CanExecute = fsNode.Is (tagToCheck);
+                }
+            }
+        }
+
+
         private void propertiesCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             ShellExecuteExOnFSNode (e, "properties");
         }
 
         private void propertiesCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            e.CanExecute = true;
+            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal | TypeTag.Leaf);
         }
+
 
         private void openCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             ShellExecuteExOnFSNode (e, "open");
         }
 
         private void openCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            e.CanExecute = true;
+            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal | TypeTag.Leaf);
         }
+
 
         private void cutCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             throw new System.NotImplementedException ();
         }
 
         private void cutCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            var fsNodeView = e.Parameter as FSNodeView;
-            if (fsNodeView != null) {
-                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode); 
-                if (fsNode != null) {
-                    e.CanExecute = fsNode.Is (TypeTag.Internal | TypeTag.Leaf);
-                }
-            }
+            CheckEventArgsType (e, TypeTag.Internal | TypeTag.Leaf);
         }
+
 
         private void copyCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             throw new System.NotImplementedException ();
         }
 
         private void copyCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            e.CanExecute = true;
+            CheckEventArgsType (e, TypeTag.Internal | TypeTag.Leaf);
         }
+
 
         private void pasteCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             throw new System.NotImplementedException ();
         }
 
         private void pasteCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            e.CanExecute = true;
+            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal);
         }
+
+
+        private void deleteCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void deleteCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            CheckEventArgsType (e, TypeTag.Internal | TypeTag.Leaf);
+        }
+
+
+        private void newCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void newCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal);
+        }
+
+
+        private void renameCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                if (fsNode != null) {
+                    var renameWnd = new TextInputDialog (fsNode.Name, "Rename") { Owner = this };
+                    renameWnd.ShowDialog ();
+                }
+            }
+        }
+
+        private void renameCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            Debug.WriteLine ("ren_CE");
+            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal | TypeTag.Leaf);
+        }
+
+
+        private void backCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void backCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+
+        private void forwardCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void forwardCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+
+        private void homeCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void homeCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+
+        private void upCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void upCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+        #endregion
     }
 }

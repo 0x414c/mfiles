@@ -12,21 +12,28 @@ namespace Controls.UserControls {
     /// Interaction logic for ColumnView.xaml
     /// </summary>
     public partial class ColumnView : UserControl {
+        #region fields & props
         public ColumnViewModel ViewModel { get; private set; }
 
         public int ViewId { get; private set; }
+        #endregion
 
+        #region ctors
         private ColumnView () {
             InitializeComponent ();
+
+            ViewModel = new ColumnViewModel ();
+            DataContext = ViewModel;
         }
 
         // TODO: use DataTemplate, determine between File List, File Preview, Error Notif.
         public ColumnView (FSNode parentFsNode, int viewId) : this () {
             ViewId = viewId;
-            ViewModel = new ColumnViewModel (parentFsNode);
-            DataContext = ViewModel;
+            ViewModel.ParentFSNode = parentFsNode;
         }
+        #endregion
 
+        #region Events
         private void breadcrumbDockPanel_OnPreviewLeftMouseButtonDown (object sender, MouseButtonEventArgs e) {
             var dockPanel = sender as DockPanel;
             if (dockPanel != null) {
@@ -55,23 +62,23 @@ namespace Controls.UserControls {
             }
         }
 
-        private void childFSNodesListViewItem_OnPreviewRightMouseButtonDown (object sender, MouseButtonEventArgs e) {
-            var listViewItem = sender as ListViewItem;
-            if (listViewItem != null) {
-                var fsNodeView = listViewItem.Content as FSNodeView;
-                if (fsNodeView != null) {
-                    var fsNodeSelected = fsNodeView.ViewModel.FSNode;
+        //private void childFSNodesListViewItem_OnPreviewRightMouseButtonDown (object sender, MouseButtonEventArgs e) {
+        //    var listViewItem = sender as ListViewItem;
+        //    if (listViewItem != null) {
+        //        var fsNodeView = listViewItem.Content as FSNodeView;
+        //        if (fsNodeView != null) {
+        //            var fsNodeSelected = fsNodeView.ViewModel.FSNode;
 
-                    var fsNodeSelectedAsFileLikeFSNode = fsNodeSelected as FileLikeFSNode;
-                    if (fsNodeSelectedAsFileLikeFSNode != null) {
-                        var ctxMnu = new ShellContextMenu.ShellContextMenu ();
-                        var arrFI = new FileInfo[1];
-                        arrFI[0] = new FileInfo (fsNodeSelectedAsFileLikeFSNode.FullPath);
-                        ctxMnu.ShowContextMenu (arrFI, new System.Drawing.Point (300, 300));    
-                    }                               
-                }
-            }    
-        }
+        //            var fsNodeSelectedAsFileLikeFSNode = fsNodeSelected as FileLikeFSNode;
+        //            if (fsNodeSelectedAsFileLikeFSNode != null) {
+        //                //var ctxMnu = new ShellContextMenu.ShellContextMenu ();
+        //                //var arrFI = new FileInfo[1];
+        //                //arrFI[0] = new FileInfo (fsNodeSelectedAsFileLikeFSNode.FullPath);
+        //                //ctxMnu.ShowContextMenu (arrFI, new System.Drawing.Point (300, 300));    
+        //            }                               
+        //        }
+        //    }    
+        //}
 
         private void childFSNodesListView_OnSelectionChanged (object sender, SelectionChangedEventArgs e) {
             var listView = sender as ListView;
@@ -96,5 +103,6 @@ namespace Controls.UserControls {
             //    lv.UnselectAll ();
             //}
         }
+        #endregion
     }
 }

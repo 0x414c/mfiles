@@ -7,7 +7,7 @@
         
         <Style.Triggers>
             <Trigger Property="ItemsSource" Value="{x:Null}">
-                <Setter Property="Background" Value="Red" />
+                <Setter Property="Background" Value="DarkGray" />
             </Trigger>
         </Style.Triggers>
         

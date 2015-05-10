@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clipboard.cs" />
+    <Compile Include="Commands.cs" />
     <Compile Include="FSNode.cs" />
     <Compile Include="FileManagement.cs" />
     <Compile Include="Networking.cs" />

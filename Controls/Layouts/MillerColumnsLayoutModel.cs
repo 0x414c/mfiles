@@ -6,7 +6,7 @@ using Controls.UserControls;
 
 
 namespace Controls.Layouts {
-    public class MillerColumnsLayoutManager : INotifyPropertyChanged {
+    public class MillerColumnsLayoutViewModel : INotifyPropertyChanged {
         private ObservableCollection<ColumnView> _columnViews;
 
         public ObservableCollection<ColumnView> ColumnViews {
@@ -20,7 +20,7 @@ namespace Controls.Layouts {
             }
         }
 
-        public MillerColumnsLayoutManager () {
+        public MillerColumnsLayoutViewModel () {
             ColumnViews = new ObservableCollection<ColumnView> ();
         }
 

@@ -46,12 +46,7 @@
   <ItemGroup>
     <Compile Include="ResourceLibrary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WPFExtensions\WPFExtensions.csproj">
-      <Project>{37CA437E-8D73-41E8-851C-E29831C1F284}</Project>
-      <Name>WPFExtensions</Name>
-    </ProjectReference>
+    <Compile Include="MarkupExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="General.xaml">

@@ -27,9 +27,9 @@ namespace FSOps {
     public abstract class FSNode {
         public TypeTag TypeTag { get; set; }
 
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
-        public string FullPath { get; set; }
+        public virtual string FullPath { get; set; }
 
         public bool Is (TypeTag compareTo) {
             return (TypeTag & compareTo) == TypeTag;
@@ -48,16 +48,12 @@ namespace FSOps {
     public abstract class FileLikeFSNode : FSNode {
         public virtual FileSystemInfo FileSystemInfo { get; set; }
 
-        public new string Name {
+        public override string Name {
             get { return FileSystemInfo.Name; }
         }
 
-        public new string FullPath {
+        public override string FullPath {
             get { return FileSystemInfo.FullName; }
-        }
-
-        public override string ToString () {
-            return Name;
         }
 
         public bool IsAccessible {
@@ -106,6 +102,7 @@ namespace FSOps {
             get {
                 if (IsAccessible && IsTraversable) {
                     var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                    
                     if (asDirectoryInfo != null) {
                         var children = new LinkedList<FileLikeFSNode> ();
 
@@ -134,13 +131,14 @@ namespace FSOps {
      \brief A system root node.
      */
     public sealed class SystemRootNode : FSNode {
+        // TODO: 
         public IEnumerable<FSNode> Children {
             get { return new List<FSNode> (FileManagement.EnumerateLocalDrives ()); }
         }
 
         public SystemRootNode () : this ("This PC", Networking.GetLocalFQDN ()) { }
 
-        // For future use
+        // TODO: For future use
         private SystemRootNode (string fullPath, string name) {
             Name = name;
             TypeTag = TypeTag.Root;
@@ -163,11 +161,11 @@ namespace FSOps {
             get { return DriveInfo.RootDirectory; }
         }
 
-        public new string Name {
+        public override string Name {
             get { return DriveInfo.IsReady ? DriveInfo.VolumeLabel : "<no label>"; }
         }
 
-        public new string FullPath {
+        public override string FullPath {
             get { return DriveInfo.Name; }
         }
 

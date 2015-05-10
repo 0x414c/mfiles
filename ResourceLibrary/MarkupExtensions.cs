@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Markup;
 
 
-namespace WPFExtensions {
-    public abstract class StyleRefExtension : MarkupExtension {
+namespace ResourceLibrary {
+    public abstract class GetStyleMarkupExtension : MarkupExtension {
         /// <summary>
         /// Property for specific resource dictionary
         /// </summary>

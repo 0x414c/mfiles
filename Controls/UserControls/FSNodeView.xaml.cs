@@ -7,15 +7,21 @@ namespace Controls.UserControls {
     /// Interaction logic for FSNodeView.xaml
     /// </summary>
     public partial class FSNodeView : ContentControl {
+        #region props
         public FSNodeViewModel ViewModel { get; private set; }
+        #endregion
 
+        #region ctors
         private FSNodeView () {
             InitializeComponent ();
+
+            ViewModel = new FSNodeViewModel ();
+            DataContext = ViewModel;
         }
 
         public FSNodeView (FSNode fsNode) : this () {
-            ViewModel = new FSNodeViewModel (fsNode);
-            DataContext = ViewModel;
+            ViewModel.FSNode = fsNode;
         }
+        #endregion
     }
 }

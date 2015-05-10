@@ -6,21 +6,32 @@
         xmlns:layouts="clr-namespace:Controls.Layouts;assembly=Controls"
         xmlns:controls="clr-namespace:Controls.UserControls;assembly=Controls"
         xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
+        xmlns:fsops="clr-namespace:FSOps;assembly=FSOps"
 
         Title="Files"
         Height="480" Width="640" MinWidth="600" MinHeight="400"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextHintingMode="Fixed"
-        Style="{rl:RLStyleRef ResourceKey=mainwnd}"
+        Style="{rl:GetStyle ResourceKey=mainwnd}"
         Icon="Graphics/floppy-512.ico" 
         ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
     
     <Window.CommandBindings>
-        <CommandBinding Command="Properties"
-                        Executed="propertiesCommandBinding_OnExecuted"
-                        CanExecute="propertiesCommandBinding_OnCanExecute" />
         <CommandBinding Command="Open"
                         Executed="openCommandBinding_OnExecuted"
                         CanExecute="openCommandBinding_OnCanExecute" />
+        <CommandBinding Command="Delete"
+                        Executed="deleteCommandBinding_OnExecuted"
+                        CanExecute="deleteCommandBinding_OnCanExecute" />
+        <CommandBinding Command="New"
+                        Executed="newCommandBinding_OnExecuted" 
+                        CanExecute="newCommandBinding_OnCanExecute" />
+        <CommandBinding Command="fsops:Commands.RenameCommand"
+                        Executed="renameCommandBinding_OnExecuted"
+                        CanExecute="renameCommandBinding_OnCanExecute" />
+        <CommandBinding Command="Properties"
+                        Executed="propertiesCommandBinding_OnExecuted"
+                        CanExecute="propertiesCommandBinding_OnCanExecute" />
+
         <CommandBinding Command="Cut"
                         Executed="cutCommandBinding_OnExecuted" 
                         CanExecute="cutCommandBinding_OnCanExecute" />
@@ -30,7 +41,21 @@
         <CommandBinding Command="Paste" 
                         Executed="pasteCommandBinding_OnExecuted"
                         CanExecute="pasteCommandBinding_OnCanExecute" />
+        
+        <CommandBinding Command="BrowseBack"
+                        Executed="backCommandBinding_OnExecuted"
+                        CanExecute="backCommandBinding_OnCanExecute" />
+        <CommandBinding Command="BrowseForward"
+                        Executed="forwardCommandBinding_OnExecuted"
+                        CanExecute="forwardCommandBinding_OnCanExecute" />
+        <CommandBinding Command="BrowseHome"
+                        Executed="homeCommandBinding_OnExecuted"
+                        CanExecute="homeCommandBinding_OnCanExecute" />
+        <CommandBinding Command="fsops:Commands.BrowseUpCommand"
+                        Executed="upCommandBinding_OnExecuted"
+                        CanExecute="upCommandBinding_OnCanExecute"/>
     </Window.CommandBindings>
+    
     
     <DockPanel x:Name="mainWndDockPanel" >
         <controls:Menubar x:Name="menubar" DockPanel.Dock="Top" Margin="4" />
@@ -42,7 +67,7 @@
         <TabControl x:Name="tabs"
                     DockPanel.Dock="Left"
                     BorderThickness="0,1,0,1"
-                    Style="{rl:RLStyleRef ResourceKey=tabcontrol_fix}"
+                    Style="{rl:GetStyle ResourceKey=tabcontrol_fix}"
                     SelectedIndex="0">
 
             <TabControl.ItemsSource>

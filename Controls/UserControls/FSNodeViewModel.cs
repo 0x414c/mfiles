@@ -19,10 +19,6 @@ namespace Controls.UserControls {
             }
         }
 
-        public FSNodeViewModel (FSNode fsNode) {
-            _fsNode = fsNode;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

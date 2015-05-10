@@ -5,34 +5,43 @@ using Controls.Annotations;
 
 namespace Controls.UserControls {
     public class StatusBarModel : INotifyPropertyChanged {
-        private int _itemsCount;
-        private int _availableSpace;
+        private string _itemInfo;
 
-        public int ItemsCount {
-            get { return _itemsCount; }
+        public string ItemInfo {
+            get { return _itemInfo; }
             set {
-                if (value == _itemsCount) {
+                if (value == _itemInfo) {
                     return;
                 }
-                _itemsCount = value;
+                _itemInfo = value;
                 OnPropertyChanged ();
             }
         }
 
-        public int AvailableSpace {
-            get { return _availableSpace; }
+        private string _status;
+
+        public string Status {
+            get { return _status; }
             set {
-                if (value == _availableSpace) {
+                if (value == _status) {
                     return;
                 }
-                _availableSpace = value;
+                _status = value;
                 OnPropertyChanged ();
             }
         }
 
-        public override string ToString () {
-            return "{0} items, {1} available";
-            //return String.Format ("{0} items, {1} available", ItemsCount, AvailableSpace);
+        private string _extraStatus;
+
+        public string ExtraStatus {
+            get { return _extraStatus; }
+            set {
+                if (value == _extraStatus) {
+                    return;
+                }
+                _extraStatus = value;
+                OnPropertyChanged ();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

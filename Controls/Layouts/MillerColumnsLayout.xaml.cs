@@ -12,18 +12,17 @@ namespace Controls.Layouts {
     /// </summary>
     public partial class MillerColumnsLayout : UserControl {
         /**
-         \property  public MillerColumnsLayoutManager ViewModel        
+         \property  public MillerColumnsLayoutViewModel ViewModel        
          \brief Gets or sets the model that acts as backing store for children Views.        
          \return The model.
          */
-        public MillerColumnsLayoutManager ViewModel { get; set; }
+        public MillerColumnsLayoutViewModel ViewModel { get; set; }
 
         /**
          \property  public int ViewsCounter        
          \brief Gets the views counter.            
          \return The views counter.
          */
-
         public int ViewsCounter {
             get { return ViewModel.ColumnViews.Count; }
         }
@@ -46,7 +45,7 @@ namespace Controls.Layouts {
         public MillerColumnsLayout () {
             InitializeComponent ();
 
-            ViewModel = new MillerColumnsLayoutManager ();
+            ViewModel = new MillerColumnsLayoutViewModel ();
             DataContext = ViewModel;
         }
 
@@ -89,7 +88,6 @@ namespace Controls.Layouts {
                         return;
                     }
                 }
-
             } else {
                 if (fsNodeToAdd.TypeTag == TypeTag.SubRoot) {
                     var asDrive = FileManagement.TryGetConcreteFSNode<DriveNode> (fsNodeToAdd);
@@ -101,12 +99,11 @@ namespace Controls.Layouts {
                             return;
                         }
                     }
-
                 } else {
                     if (fsNodeToAdd.TypeTag == TypeTag.Internal) {
                         var asDirectory = FileManagement.TryGetConcreteFSNode<DirectoryNode> (fsNodeToAdd);
                         if (asDirectory != null) {
-                            if (!asDirectory.IsAccessible) {
+                            if (!(asDirectory.IsAccessible && asDirectory.IsTraversable)) {
                                 // TODO: notify user
                                 MessageBox.Show ("DirectoryNode: " + asDirectory + " isn't accessible!");
 
@@ -119,21 +116,17 @@ namespace Controls.Layouts {
 
             // If user selects previous column we need to reflow the layout
             // (for Views following the Caller)
-
-            // In case of previous column selected
-            // Remove columns from end; skip Caller and its Parents
-            // and reuse Caller later to display new contents
-            if (columnViewId + 1 < ViewsCounter) {
-                ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+            if (columnViewId == ViewsCounter) {
+                ViewModel.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
             } else {
-                // If we need another column
-                if (columnViewId == ViewsCounter) {
-                    ViewModel.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
+                // In case of previous column(s) selected
+                // Remove columns from end; skip Caller and its Parents
+                // and reuse Caller later to display new contents
+                if (columnViewId < ViewsCounter) {
+                    ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+                    ViewModel.ColumnViews.Last ().ViewModel.ParentFSNode = fsNodeToAdd;
                 }
             }
-
-            // WTF: reassigning ParentFSNode ??
-            ViewModel.ColumnViews.Last ().ViewModel.ParentFSNode = fsNodeToAdd;
             
             Title = GetCurrentTitle;
             millerColumnsLayoutScrollViewer.ScrollToRightEnd ();

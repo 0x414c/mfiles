@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
              xmlns:local="clr-namespace:Controls.UserControls"
+             xmlns:fsops="clr-namespace:FSOps;assembly=FSOps"
 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
@@ -27,15 +28,31 @@
                       Width="11"
                       Points="0,0 10,12 10,13 0,25"
                       ClipToBounds="True"
-                      Stroke="{rl:RLStyleRef ResourceKey=ListBorder}" />
+                      Stroke="{rl:GetStyle ResourceKey=ListBorder}" />
 
             <Image x:Name="parentFSNodeIconImage"
                    DockPanel.Dock="Left"   
                    VerticalAlignment="Center"
                    HorizontalAlignment="Left"
-                   Margin="2,1,0,0"
-                   Style="{rl:RLStyleRef ResourceKey=smallimg}"
-                   Source="/Graphics/Textfile_818_16x.png" />
+                   Margin="2,1,0,0">
+
+                <Image.Style>
+                    <Style BasedOn="{rl:GetStyle ResourceKey=smallimg}" TargetType="{x:Type Image}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="8">
+                                <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/computersystemproduct.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="4">
+                                <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="2">
+                                <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+
+            </Image>
 
             <TextBlock x:Name="parentFsNodeTextBlock"
                        DockPanel.Dock="Left"
@@ -43,7 +60,7 @@
                        HorizontalAlignment="Left"
                        Margin="2,0,6,0"
                        FontWeight="Bold"
-                       Style="{rl:RLStyleRef ResourceKey=disableable}"
+                       Style="{rl:GetStyle ResourceKey=disableable}"
                        IsEnabled="{Binding IsEnabled, ElementName=columnViewControl}">
 
                 <TextBlock.Text>
@@ -59,7 +76,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   AlternationCount="2"
-                  Style="{rl:RLStyleRef ResourceKey=listview_fix}"
+                  Style="{rl:GetStyle ResourceKey=listview_fix}"
                   SelectionChanged="childFSNodesListView_OnSelectionChanged"
                   PreviewMouseLeftButtonDown="childFSNodesListView_OnPreviewMouseLeftButtonDown">
 
@@ -74,7 +91,7 @@
                     </Trigger>
                 </Style.Triggers>-->
 
-                <Style TargetType="ListViewItem" BasedOn="{rl:RLStyleRef ResourceKey=stripedrow}">
+                <Style TargetType="ListViewItem" BasedOn="{rl:GetStyle ResourceKey=stripedrow}">
                     <EventSetter Event="PreviewMouseDoubleClick" 
                                  Handler="childFSNodesListViewItem_OnMouseDoubleClick" />
                     <!--<EventSetter Event="PreviewMouseRightButtonDown" 
@@ -82,7 +99,8 @@
 
                     <Setter Property="ContextMenu">
                         <Setter.Value>
-                            <ContextMenu Style="{rl:RLStyleRef ResourceKey=ctxmenu}">
+                            
+                            <ContextMenu Style="{rl:GetStyle ResourceKey=ctxmenu}">
                                 
                                 <ContextMenu.DataContext>
                                     <Binding Path="PlacementTarget.ListView.DataContext" 
@@ -91,14 +109,6 @@
                                 
                                 <MenuItem Header="Open In System"
                                           Command="Open">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
-
-                                <MenuItem Header="Rename"
-                                          Command="Replace">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
                                                  Path="PlacementTarget.DataContext" />
@@ -132,7 +142,31 @@
                                 </MenuItem>
 
                                 <Separator />
+
+                                <MenuItem Header="New"
+                                          Command="New">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
+                                <MenuItem Header="Move to Trash"
+                                          Command="Delete">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
                                 
+                                <MenuItem Header="Rename"
+                                          Command="fsops:Commands.RenameCommand">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
                                 <MenuItem Header="Properties" 
                                           Command="Properties">
                                     <MenuItem.CommandParameter>
@@ -142,6 +176,7 @@
                                 </MenuItem>
                                 
                             </ContextMenu>
+                            
                         </Setter.Value>
                     </Setter>
                     

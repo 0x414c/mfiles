@@ -28,8 +28,9 @@ namespace FSOps {
 
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
             } catch (Exception ex) {
-                // TODO: readable system errors
-                MessageBox.Show (ex.Message);
+                // TODO: _readable_ system errors (description instead of code)
+                // but I don't wanna to fiddle w/ WinAPI here :C
+                // MessageBox.Show (ex.Message);
 
                 return false;
             }
@@ -42,7 +43,7 @@ namespace FSOps {
 
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
             } catch (Exception ex) {
-                MessageBox.Show (ex.Message);
+                //MessageBox.Show (ex.Message);
 
                 return false;
             }
@@ -81,5 +82,7 @@ namespace FSOps {
 
             return (effectiveRights & rightsToCheck) == rightsToCheck;
         }
+
+
     }
 }
