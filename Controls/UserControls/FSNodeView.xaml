@@ -10,24 +10,30 @@
 
     <StackPanel Orientation="Horizontal" 
                 x:Name="fsNodeViewStackPanel"
-                Height="22">
+                Height="22"
+                Background="{x:Null}">
 
         <Image x:Name="fsNodeIconImage"
                VerticalAlignment="Center"
-               HorizontalAlignment="Left">
+               HorizontalAlignment="Left"
+               Margin="1,0,1,0">
             
             <Image.Style>
                 <Style BasedOn="{rl:GetStyle ResourceKey=smallimg}" TargetType="{x:Type Image}">
                     <Style.Triggers>
+                        
                         <DataTrigger Binding="{Binding FSNode.TypeTag}" Value="4">
                             <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
                         </DataTrigger>
+                        
                         <DataTrigger Binding="{Binding FSNode.TypeTag}" Value="2">
                             <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
                         </DataTrigger>
+                        
                         <DataTrigger Binding="{Binding FSNode.TypeTag}" Value="1">
                             <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Textfile_818_32x.png" />
                         </DataTrigger>
+                        
                     </Style.Triggers>
                 </Style>
             </Image.Style>

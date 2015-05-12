@@ -110,10 +110,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClipboardWindow.xaml.cs">
+      <DependentUpon>ClipboardWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClipboardWindowModel.cs" />
     <Compile Include="MainWindowModel.cs" />
     <Compile Include="TextInputDialog.xaml.cs">
       <DependentUpon>TextInputDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="ClipboardWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TextInputDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -196,6 +204,10 @@
     <ProjectReference Include="..\Controls\ControlsLibrary.csproj">
       <Project>{1937d5fe-e7f5-48f3-bb2f-0c6a0c3b0bc5}</Project>
       <Name>ControlsLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileOperationInterop\FileOperationInterop.csproj">
+      <Project>{a957346a-ef6b-457d-978c-3321f6b75b41}</Project>
+      <Name>FileOperationInterop</Name>
     </ProjectReference>
     <ProjectReference Include="..\FSOps\FSOps.csproj">
       <Project>{100754f9-9ef9-400d-8355-1ecfca905711}</Project>

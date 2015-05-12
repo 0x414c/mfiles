@@ -11,6 +11,7 @@ namespace Controls.Layouts {
     /// Interaction logic for MillerColumnsLayout.xaml
     /// </summary>
     public partial class MillerColumnsLayout : UserControl {
+        #region props
         /**
          \property  public MillerColumnsLayoutViewModel ViewModel        
          \brief Gets or sets the model that acts as backing store for children Views.        
@@ -27,11 +28,16 @@ namespace Controls.Layouts {
             get { return ViewModel.ColumnViews.Count; }
         }
 
-        public string GetCurrentTitle {
-            get { return ViewModel.ColumnViews.Last ().ViewModel.ParentFSNode.ToString (); }
+        public ColumnView LastColumnView {
+            get { return ViewModel.ColumnViews.Last (); }
         }
 
-        public string Title {
+        public string CurrentTitle {
+            get { return LastColumnView.Title; }
+        }
+
+        
+        private string Title {
             get { return (string) GetValue (TitleProperty); }
             set { SetValue (TitleProperty, value); }
         }
@@ -39,9 +45,48 @@ namespace Controls.Layouts {
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register (
                 "Title", typeof (string),
-                typeof (MillerColumnsLayout), new PropertyMetadata ("Untitled Tab")
+                typeof (MillerColumnsLayout), new PropertyMetadata ("<untitled>")
             );
 
+        
+        private string CurrentItemInfo {
+            get { return (string) GetValue (CurrentItemInfoProperty); }
+            set { SetValue (CurrentItemInfoProperty, value); }
+        }
+
+        public static readonly DependencyProperty CurrentItemInfoProperty =
+            DependencyProperty.Register (
+                "CurrentItemInfo", typeof (string),
+                typeof (MillerColumnsLayout), new PropertyMetadata ("<current item info is n/a>")
+            );
+
+
+        private string Status {
+            get { return (string) GetValue (StatusProperty); }
+            set { SetValue (StatusProperty, value); }
+        }
+
+        public static readonly DependencyProperty StatusProperty =
+            DependencyProperty.Register (
+                "Status", typeof (string),
+                typeof (MillerColumnsLayout),new PropertyMetadata ("<status is unknown>")
+            );
+
+                                     
+        public string ExtraStatus {
+            get { return (string) GetValue (ExtraStatusProperty); }
+            set { SetValue (ExtraStatusProperty, value); }
+        }
+
+        public static readonly DependencyProperty ExtraStatusProperty =
+            DependencyProperty.Register (
+                "ExtraStatus", typeof (string),
+                typeof (MillerColumnsLayout), new PropertyMetadata ("<extra status is unknown>")
+            );
+        #endregion
+
+
+        #region ctors
         public MillerColumnsLayout () {
             InitializeComponent ();
 
@@ -50,86 +95,122 @@ namespace Controls.Layouts {
         }
 
         public MillerColumnsLayout (FSNode parentFSNode) : this () {
-            TryAddColumnForFSNode (parentFSNode, 0);
+            NavigateTo (parentFSNode, 0);
+        }
+        #endregion
+
+                          
+        #region navigation
+        private void Reflow (FSNode fsNodeToAdd, int columnViewId) {
+            if (columnViewId == ViewsCounter) {
+                ViewModel.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
+            } else {
+                if (columnViewId < ViewsCounter) {
+                    ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
+                    LastColumnView.ViewModel.ParentFSNode = fsNodeToAdd;
+                }
+            }
         }
 
-        public void TryLevelUp () {
+        private void FinalizeLayoutReflow () {
+            RefreshDepProps ();
+            millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
+        }
+
+        private void RefreshDepProps () {
+            Title = CurrentTitle;
+            Status = string.Format ("{0}: {1} items total", CurrentTitle, LastColumnView.ItemsCount);
+            ExtraStatus = string.Format ("{0} selected", LastColumnView.SelectionSize);
+
+            if (LastColumnView.ViewModel.ParentFSNode.Is (TypeTag.Internal | TypeTag.SubRoot)) {
+                var asDirectoryLike = FSOps.FSOps.TryGetConcreteFSNode<DirectoryLikeFSNode> (LastColumnView.ViewModel.ParentFSNode);
+                if (asDirectoryLike != null) {
+                    CurrentItemInfo = string.Format (
+                        "{0}: {1} available", asDirectoryLike.RootDrive,
+                        FSOps.FSOps.StrFormatByteSize (asDirectoryLike.RootDrive.DriveInfo.AvailableFreeSpace)
+                    );
+                }
+            } else {
+                CurrentItemInfo = CurrentTitle;
+            }
+        }
+
+        public bool DeleteColumnsAfter (int columnViewId) {
+            if (ViewsCounter > 1) {
+                ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId && _.ViewId < ViewsCounter + 1);
+                LastColumnView.ClearSelection ();
+                FinalizeLayoutReflow ();
+
+                return true;
+            } else {
+                return false;    
+            }                
+        }
+
+        public bool LevelUp () {
             if (ViewsCounter > 1) {
                 ViewModel.ColumnViews.RemoveAt (ViewsCounter - 1);
+                FinalizeLayoutReflow ();
 
-                Title = GetCurrentTitle;
-                millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
-            }    
+                return true;
+            } else {
+                return false;
+            }
         }
 
-        public void DeleteColumnsAfter (int columnViewId) {
-            if (ViewsCounter > 1) {
-                ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
-
-                Title = GetCurrentTitle;
-                millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
-            }    
-        }
-
-        public void TryAddColumnForFSNode (FSNode fsNodeToAdd, int columnViewId) {
-            // Try to determine what Action is needed
+        public bool NavigateTo (FSNode fsNodeToAdd, int originColumnViewId) {
+            // Try to determine what Action is needed and filter inaccessible items
             if (fsNodeToAdd.TypeTag == TypeTag.Leaf) {
-                // TODO: try to open file
-                var asFile = FileManagement.TryGetConcreteFSNode<FileNode> (fsNodeToAdd);
+                // TODO: try to show file info
+                var asFile = FSOps.FSOps.TryGetConcreteFSNode<FileNode> (fsNodeToAdd);
                 if (asFile != null) {
                     if (!asFile.IsAccessible) {
-                        // TODO: notify user
-                        MessageBox.Show ("FileNode: " + asFile + " isn't accessible!");
+                        MessageBox.Show (
+                            "File " + asFile + " isn't accessible!",
+                            "File access error", MessageBoxButton.OK, MessageBoxImage.Error
+                        );
 
-                        return;
+                        return false;
                     } else {
-                        MessageBox.Show ("File selected: " + asFile);
-
-                        return;
+                        // TODO: open file
+                        return false;
                     }
                 }
             } else {
                 if (fsNodeToAdd.TypeTag == TypeTag.SubRoot) {
-                    var asDrive = FileManagement.TryGetConcreteFSNode<DriveNode> (fsNodeToAdd);
+                    var asDrive = FSOps.FSOps.TryGetConcreteFSNode<DriveNode> (fsNodeToAdd);
                     if (asDrive != null) {
                         if (!(asDrive.IsReady && asDrive.IsTraversable)) {
-                            // TODO: notify user
-                            MessageBox.Show ("DriveNode: " + asDrive + " isn't ready or isn't accessible!");
+                            MessageBox.Show (
+                                "Drive " + asDrive + " isn't ready or isn't accessible now.",
+                                "Drive access error", MessageBoxButton.OK, MessageBoxImage.Error
+                            );
 
-                            return;
+                            return false;
                         }
                     }
                 } else {
                     if (fsNodeToAdd.TypeTag == TypeTag.Internal) {
-                        var asDirectory = FileManagement.TryGetConcreteFSNode<DirectoryNode> (fsNodeToAdd);
+                        var asDirectory = FSOps.FSOps.TryGetConcreteFSNode<DirectoryNode> (fsNodeToAdd);
                         if (asDirectory != null) {
                             if (!(asDirectory.IsAccessible && asDirectory.IsTraversable)) {
-                                // TODO: notify user
-                                MessageBox.Show ("DirectoryNode: " + asDirectory + " isn't accessible!");
+                                MessageBox.Show (
+                                    "Directory " + asDirectory + " isn't accessible.",
+                                    "Directory access error", MessageBoxButton.OK, MessageBoxImage.Error
+                                );
 
-                                return;
+                                return false;
                             }
                         }
                     }
                 }
             }
 
-            // If user selects previous column we need to reflow the layout
-            // (for Views following the Caller)
-            if (columnViewId == ViewsCounter) {
-                ViewModel.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
-            } else {
-                // In case of previous column(s) selected
-                // Remove columns from end; skip Caller and its Parents
-                // and reuse Caller later to display new contents
-                if (columnViewId < ViewsCounter) {
-                    ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId + 1 && _.ViewId < ViewsCounter + 1);
-                    ViewModel.ColumnViews.Last ().ViewModel.ParentFSNode = fsNodeToAdd;
-                }
-            }
-            
-            Title = GetCurrentTitle;
-            millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
+            Reflow (fsNodeToAdd, originColumnViewId);
+            FinalizeLayoutReflow ();
+
+            return true;
         }
+        #endregion
     }
 }

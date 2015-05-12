@@ -10,8 +10,8 @@
     <ScrollViewer x:Name="millerColumnsLayoutScrollViewer" 
                   HorizontalScrollBarVisibility="Visible"
                   VerticalScrollBarVisibility="Disabled">
-        
-        <ItemsControl>
+
+        <ItemsControl Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
             <!--<ItemsControl.ItemTemplate>
                 <untitled:ColumnView />
             </ItemsControl.ItemTemplate>-->

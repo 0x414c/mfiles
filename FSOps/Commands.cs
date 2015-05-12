@@ -16,5 +16,12 @@ namespace FSOps {
                 typeof (Commands),
                 new InputGestureCollection { new KeyGesture (Key.Enter, ModifierKeys.Alt) }
             );
+
+        public static readonly RoutedUICommand NewDirectoryCommand =
+            new RoutedUICommand (
+                "Make new directory", "New directory",
+                typeof (Commands),
+                new InputGestureCollection { new KeyGesture (Key.N, ModifierKeys.Shift | ModifierKeys.Control) }
+            );
     }
 }

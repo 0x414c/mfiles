@@ -23,31 +23,70 @@
                    Height="25"
                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
                    PreviewMouseLeftButtonDown="breadcrumbDockPanel_OnPreviewLeftMouseButtonDown">
-
+            
             <Polyline DockPanel.Dock="Left"
                       Width="11"
                       Points="0,0 10,12 10,13 0,25"
                       ClipToBounds="True"
-                      Stroke="{rl:GetStyle ResourceKey=ListBorder}" />
+                      SnapsToDevicePixels="True"
+                      Stroke="{rl:GetStyle ResourceKey=ListBorder}"
+                      StrokeEndLineCap="Square"
+                      StrokeStartLineCap="Square" 
+                      Stretch="Fill"
+                      RenderTransformOrigin="0.5,0.5">
+            
+                <Polyline.Style>
+                    <Style TargetType="{x:Type Polyline}">
+                        <Style.Triggers>
+                            <DataTrigger Value="True">
+                                <DataTrigger.Binding>
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" Path="IsMouseOver" />
+                                </DataTrigger.Binding>
+                                <Setter Property="StrokeThickness" Value="1.25" />
+                                <Setter Property="Width" Value="13" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Polyline.Style>
+            
+            </Polyline>
 
             <Image x:Name="parentFSNodeIconImage"
                    DockPanel.Dock="Left"   
                    VerticalAlignment="Center"
-                   HorizontalAlignment="Left"
-                   Margin="2,1,0,0">
+                   HorizontalAlignment="Center"
+                   Margin="4,1,0,0"
+                   RenderTransformOrigin="0.5,0.5" 
+                   SnapsToDevicePixels="True">
 
                 <Image.Style>
                     <Style BasedOn="{rl:GetStyle ResourceKey=smallimg}" TargetType="{x:Type Image}">
                         <Style.Triggers>
+                            
                             <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="8">
                                 <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/computersystemproduct.png" />
                             </DataTrigger>
+                            
                             <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="4">
                                 <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
                             </DataTrigger>
+                            
                             <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="2">
                                 <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
                             </DataTrigger>
+                            
+                            <DataTrigger Value="True">
+                                <DataTrigger.Binding>
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" Path="IsMouseOver" />
+                                </DataTrigger.Binding>
+                                
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            
                         </Style.Triggers>
                     </Style>
                 </Image.Style>
@@ -57,15 +96,27 @@
             <TextBlock x:Name="parentFsNodeTextBlock"
                        DockPanel.Dock="Left"
                        VerticalAlignment="Center"
-                       HorizontalAlignment="Left"
-                       Margin="2,0,6,0"
+                       HorizontalAlignment="Center"
+                       Margin="4,0,6,0"
                        FontWeight="Bold"
-                       Style="{rl:GetStyle ResourceKey=disableable}"
                        IsEnabled="{Binding IsEnabled, ElementName=columnViewControl}">
 
                 <TextBlock.Text>
                     <Binding Path="ParentFSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
                 </TextBlock.Text>
+                
+                <TextBlock.Style>
+                    <Style BasedOn="{rl:GetStyle ResourceKey=disableable}" TargetType="{x:Type TextBlock}">
+                        <Style.Triggers>
+                            <DataTrigger Value="True">
+                                <DataTrigger.Binding>
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" Path="IsMouseOver" />
+                                </DataTrigger.Binding>
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
 
             </TextBlock>
 
@@ -107,7 +158,7 @@
                                              RelativeSource="{RelativeSource Self}" />
                                 </ContextMenu.DataContext>
                                 
-                                <MenuItem Header="Open In System"
+                                <MenuItem Header="_Open in system"
                                           Command="Open">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -117,7 +168,7 @@
 
                                 <Separator />
 
-                                <MenuItem Header="Cut"
+                                <MenuItem Header="_Cut"
                                           Command="Cut">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -125,7 +176,7 @@
                                     </MenuItem.CommandParameter>
                                 </MenuItem>
 
-                                <MenuItem Header="Copy"
+                                <MenuItem Header="C_opy"
                                           Command="Copy">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -133,7 +184,7 @@
                                     </MenuItem.CommandParameter>
                                 </MenuItem>
 
-                                <MenuItem Header="Paste"
+                                <MenuItem Header="_Paste here"
                                           Command="Paste">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -143,7 +194,7 @@
 
                                 <Separator />
 
-                                <MenuItem Header="New"
+                                <MenuItem Header="New _file here"
                                           Command="New">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -151,7 +202,15 @@
                                     </MenuItem.CommandParameter>
                                 </MenuItem>
 
-                                <MenuItem Header="Move to Trash"
+                                <MenuItem Header="New _directory here"
+                                          Command="fsops:Commands.NewDirectoryCommand">
+                                    <MenuItem.CommandParameter>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.DataContext" />
+                                    </MenuItem.CommandParameter>
+                                </MenuItem>
+
+                                <MenuItem Header="Move to _trash"
                                           Command="Delete">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -159,7 +218,7 @@
                                     </MenuItem.CommandParameter>
                                 </MenuItem>
                                 
-                                <MenuItem Header="Rename"
+                                <MenuItem Header="_Rename"
                                           Command="fsops:Commands.RenameCommand">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
@@ -167,7 +226,7 @@
                                     </MenuItem.CommandParameter>
                                 </MenuItem>
 
-                                <MenuItem Header="Properties" 
+                                <MenuItem Header="_Properties" 
                                           Command="Properties">
                                     <MenuItem.CommandParameter>
                                         <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 

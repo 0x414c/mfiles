@@ -2,23 +2,35 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Windows;
+using System.Text;
 
 
 namespace FSOps {
-    public static class FileManagement {
+    public static class FSOps {
         public static IEnumerable<DriveNode> EnumerateLocalDrives () {
             return DriveInfo.GetDrives ().Select (
                 _ => new DriveNode (_)
             );
         }
 
+        // TODO:
         public static T TryGetConcreteFSNode<T> (FSNode fsNode) where T : FSNode {
             T node = fsNode as T;
 
             return node;
+        }
+
+        [DllImport ("Shlwapi.dll", CharSet = CharSet.Auto)]
+        private static extern long StrFormatByteSize (long fileSize, [MarshalAs (UnmanagedType.LPTStr)] StringBuilder buffer, int bufferSize);
+
+        public static string StrFormatByteSize (long filesize) {
+            StringBuilder sb = new StringBuilder (11);
+            StrFormatByteSize (filesize, sb, sb.Capacity);
+
+            return sb.ToString ();
         }
 
         public static bool HasRights (FileInfo fileInfo, FileSystemRights rightsToCheck) {
@@ -82,7 +94,5 @@ namespace FSOps {
 
             return (effectiveRights & rightsToCheck) == rightsToCheck;
         }
-
-
     }
 }

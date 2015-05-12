@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{100754F9-9EF9-400D-8355-1ECFCA905711}</ProjectGuid>
+    <ProjectGuid>{A957346A-EF6B-457D-978C-3321F6B75B41}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FSOps</RootNamespace>
-    <AssemblyName>FSOps</AssemblyName>
+    <RootNamespace>FileOperationInterop</RootNamespace>
+    <AssemblyName>FileOperationInterop</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,23 +30,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClipboardStack.cs" />
-    <Compile Include="Commands.cs" />
-    <Compile Include="FSNode.cs" />
-    <Compile Include="FSOps.cs" />
-    <Compile Include="Networking.cs" />
+    <Compile Include="ComReleaser.cs" />
+    <Compile Include="FileOperation.cs" />
+    <Compile Include="FileOperationProgressSink.cs" />
+    <Compile Include="Interop\CopyEngineResult.cs" />
+    <Compile Include="Interop\FileOperationFlags.cs" />
+    <Compile Include="Interop\IFileOperation.cs" />
+    <Compile Include="Interop\IFileOperationProgressSink.cs" />
+    <Compile Include="Interop\IShellItem.cs" />
+    <Compile Include="Interop\SIGDN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

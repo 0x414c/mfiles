@@ -46,6 +46,7 @@ namespace FSOps {
      \brief A file-like file system node: DriveNode, DirectoryNode or FileNode.      
      */
     public abstract class FileLikeFSNode : FSNode {
+        // TODO: call FileSystemInfo.Refresh () before returning value
         public virtual FileSystemInfo FileSystemInfo { get; set; }
 
         public override string Name {
@@ -57,7 +58,11 @@ namespace FSOps {
         }
 
         public bool IsAccessible {
-            get { return FileSystemInfo.Exists && FileManagement.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData); }
+            get { return FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData); }
+        }
+
+        public DriveNode RootDrive {
+            get { return new DriveNode (Path.GetPathRoot (FileSystemInfo.FullName)); }
         }
 
         // TODO:
@@ -91,11 +96,11 @@ namespace FSOps {
      */
     public abstract class DirectoryLikeFSNode : FileLikeFSNode {
         public new bool IsAccessible {
-            get { return FileSystemInfo.Exists && FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory); }
+            get { return FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory); }
         }
 
         public bool IsTraversable {
-            get { return FileSystemInfo.Exists && FileManagement.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse); }
+            get { return FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse); }
         }
 
         public virtual IEnumerable<FileLikeFSNode> Children {
@@ -131,14 +136,14 @@ namespace FSOps {
      \brief A system root node.
      */
     public sealed class SystemRootNode : FSNode {
-        // TODO: 
+        // TODO: derive from DirectoryLike? 
         public IEnumerable<FSNode> Children {
-            get { return new List<FSNode> (FileManagement.EnumerateLocalDrives ()); }
+            get { return new List<FSNode> (FSOps.EnumerateLocalDrives ()); }
         }
 
         public SystemRootNode () : this ("This PC", Networking.GetLocalFQDN ()) { }
 
-        // TODO: For future use
+        // TODO: for future use
         private SystemRootNode (string fullPath, string name) {
             Name = name;
             TypeTag = TypeTag.Root;

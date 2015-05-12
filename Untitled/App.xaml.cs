@@ -19,7 +19,7 @@ namespace FilesApplication {
         private void Bootstrap (object sender, StartupEventArgs e) {
             AppWindows.Add (new MainWindow ());
             InitWindow (0);
-            //AppWindows.Add (new MainWindow ());
+            //AppWindows.Put (new MainWindow ());
             //InitWindow (1);
         }
 

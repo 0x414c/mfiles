@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using Controls.Layouts;
 using Controls.UserControls;
+using FileOperationInterop;
 using Files;
 using FSOps;
 using Shell32Interop;
@@ -32,6 +33,8 @@ namespace FilesApplication {
     public partial class MainWindow : Window {
         #region props
         public MainWindowModel ViewModel { get; private set; }
+
+        public ClipboardWindow ClipboardWindow { get; private set; }
         #endregion
 
 
@@ -41,20 +44,28 @@ namespace FilesApplication {
 
             ViewModel = new MainWindowModel ();
             DataContext = ViewModel;
+
+            ClipboardWindow = new ClipboardWindow ();
         }
 
         // TODO: for future use
-        public MainWindow (FSNode startupFSNode) : this () {
-            ViewModel.Layouts.Add (new MillerColumnsLayout (startupFSNode));
+        public MainWindow (IEnumerable<FSNode> startupFSNodes) : this () {
+            foreach (var node in startupFSNodes) {
+                ViewModel.Layouts.Add (new MillerColumnsLayout (node));    
+            }                                                          
         }
         #endregion
 
 
         #region events
+        private void mainWindow_OnClosing (object sender, System.ComponentModel.CancelEventArgs e) {
+            ClipboardWindow.Close ();
+        }
+
         private static void ShellExecuteExOnFSNode (ExecutedRoutedEventArgs e, string lpVerb) {
             var fsNodeView = e.Parameter as FSNodeView;
             if (fsNodeView != null) {
-                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
                 if (fsNode != null) {
                     Shell.ShellExecuteEx (fsNode.FullPath, lpVerb);
                 }
@@ -64,9 +75,20 @@ namespace FilesApplication {
         private static void CheckEventArgsType (CanExecuteRoutedEventArgs e, TypeTag tagToCheck) {
             var fsNodeView = e.Parameter as FSNodeView;
             if (fsNodeView != null) {
-                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
                 if (fsNode != null) {
                     e.CanExecute = fsNode.Is (tagToCheck);
+                }
+            }
+        }
+
+        private void AddFSNodeToClipboard (ExecutedRoutedEventArgs e, ActionTag actionTag) {
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                if (fsNode != null) {
+                    ClipboardWindow.Show ();
+                    ClipboardWindow.ViewModel.ClipboardStack += new ClipboardEntry<FileLikeFSNode> (fsNode, actionTag);
                 }
             }
         }
@@ -91,7 +113,7 @@ namespace FilesApplication {
 
 
         private void cutCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
+            AddFSNodeToClipboard (e, ActionTag.Cut);
         }
 
         private void cutCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
@@ -100,7 +122,7 @@ namespace FilesApplication {
 
 
         private void copyCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
+            AddFSNodeToClipboard (e, ActionTag.Copy);
         }
 
         private void copyCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
@@ -109,7 +131,56 @@ namespace FilesApplication {
 
 
         private void pasteCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                if (fsNode != null) {
+                    if (ClipboardWindow.ViewModel.ClipboardStack.Count > 0) {
+                        using (var fileOperation = new FileOperation (new FileOperationProgressSink ())) {
+                            foreach (var clipboardEntry in ClipboardWindow.ViewModel.ClipboardStack) {
+                                if (clipboardEntry.Item2 == ActionTag.Copy) {
+                                    fileOperation.CopyItem (
+                                        clipboardEntry.Item1.FullPath,
+                                        fsNode.FullPath,
+                                        clipboardEntry.Item1.Name
+                                    );
+                                } else {
+                                    if (clipboardEntry.Item2 == ActionTag.Cut) {
+                                        fileOperation.MoveItem (
+                                            clipboardEntry.Item1.FullPath,
+                                            fsNode.FullPath,
+                                            clipboardEntry.Item1.Name
+                                        );
+                                    }
+                                }    
+                            }
+                            fileOperation.PerformOperations ();
+                        }    
+                    }
+                 
+                    //foreach (var clipboardEntry in ClipboardWindow.ViewModel.ClipboardStack) {
+                    //    if (clipboardEntry.Item2 == ActionTag.Copy) {
+                    //        using (var fileOperation = new FileOperation (new FileOperationProgressSink ())) {
+                    //            fileOperation.CopyItem (
+                    //                clipboardEntry.Item1.FullPath, fsNode.FullPath,
+                    //                clipboardEntry.Item1.Name
+                    //                );
+                    //            fileOperation.PerformOperations ();
+                    //        }
+                    //    } else {
+                    //        if (clipboardEntry.Item2 == ActionTag.Cut) {
+                    //            using (var fileOperation = new FileOperation (new FileOperationProgressSink ())) {
+                    //                fileOperation.MoveItem (
+                    //                    clipboardEntry.Item1.FullPath, fsNode.FullPath,
+                    //                    clipboardEntry.Item1.Name
+                    //                );
+                    //                fileOperation.PerformOperations ();
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                }
+            }
         }
 
         private void pasteCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
@@ -118,7 +189,27 @@ namespace FilesApplication {
 
 
         private void deleteCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
+            var fsNodeView = e.Parameter as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                if (fsNode != null) {
+                    using (var fileOperation = new FileOperation (new FileOperationProgressSink ())) {
+                        fileOperation.DeleteItem (fsNode.FullPath);
+                        var result = MessageBox.Show (
+                            "Are you sure to delete " + fsNode,
+                            "Delete",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question
+                        );
+                        if (result == MessageBoxResult.Yes) {
+                            //if (!fileOperation.GetAnyOperationsAborted ()) {
+                                fileOperation.PerformOperations ();
+                            //}
+                            var a = fileOperation.GetAnyOperationsAborted ();
+                        }
+                    }
+                }
+            }
         }
 
         private void deleteCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
@@ -126,11 +217,20 @@ namespace FilesApplication {
         }
 
 
-        private void newCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+        private void newFileCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             throw new System.NotImplementedException ();
         }
 
-        private void newCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+        private void newFileCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal);
+        }
+
+
+        private void newDirectoryCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+            throw new System.NotImplementedException ();
+        }
+
+        private void newDirectoryCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
             CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal);
         }
 
@@ -138,7 +238,7 @@ namespace FilesApplication {
         private void renameCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             var fsNodeView = e.Parameter as FSNodeView;
             if (fsNodeView != null) {
-                var fsNode = FileManagement.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
+                var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
                 if (fsNode != null) {
                     var renameWnd = new TextInputDialog (fsNode.Name, "Rename") { Owner = this };
                     renameWnd.ShowDialog ();
@@ -147,45 +247,44 @@ namespace FilesApplication {
         }
 
         private void renameCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            Debug.WriteLine ("ren_CE");
             CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal | TypeTag.Leaf);
         }
 
 
-        private void backCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
+        //private void backCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
 
-        private void backCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
-
-
-        private void forwardCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
-
-        private void forwardCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
+        //private void backCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
 
 
-        private void homeCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
+        //private void forwardCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
 
-        private void homeCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
+        //private void forwardCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
 
 
-        private void upCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
+        //private void homeCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
 
-        private void upCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            throw new System.NotImplementedException ();
-        }
+        //private void homeCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
+
+
+        //private void upCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
+
+        //private void upCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
+        //    throw new System.NotImplementedException ();
+        //}
         #endregion
     }
 }

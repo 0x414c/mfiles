@@ -14,31 +14,41 @@
                 <DockPanel></DockPanel>
             </ItemsPanelTemplate>
         </StatusBar.ItemsPanel>-->
+        
         <StatusBarItem DockPanel.Dock="Left">
-            <TextBlock x:Name="itemInfoText" Style="{rl:GetStyle ResourceKey=trimbychar}" Margin="0,-1,0,1">
+            <TextBlock x:Name="currentItemInfoText"
+                       Style="{rl:GetStyle ResourceKey=trimbychar}"
+                       Margin="0,-1,0,1">
                 <TextBlock.Text>
-                    <Binding Path="ItemInfo" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                    <Binding Path="CurrentItemInfo" ElementName="statusbarControl" />
                 </TextBlock.Text>
             </TextBlock>
         </StatusBarItem>
+        
         <Separator DockPanel.Dock="Left" />
 
-        <StatusBarItem DockPanel.Dock="Right" Margin="0,-1,14,1">
-            <TextBlock x:Name="statusText" Style="{rl:GetStyle ResourceKey=trimbychar}">
+        <StatusBarItem DockPanel.Dock="Right" Margin="0,0,14,0">
+            <TextBlock x:Name="extraStatusText" 
+                       Style="{rl:GetStyle ResourceKey=trimbychar}"
+                       Margin="0,-1,0,1">
                 <TextBlock.Text>
-                    <Binding Path="Status" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                    <Binding Path="ExtraStatus" ElementName="statusbarControl" />
                 </TextBlock.Text>
             </TextBlock>
         </StatusBarItem>
+        
         <Separator DockPanel.Dock="Right" />
         
         <StatusBarItem>
-            <TextBlock x:Name="extraStatusText" Style="{rl:GetStyle ResourceKey=trimbychar}" Margin="0,-1,0,1">
+            <TextBlock x:Name="statusText"
+                       Style="{rl:GetStyle ResourceKey=trimbychar}"
+                       Margin="0,-1,0,1">
                 <TextBlock.Text>
-                    <Binding Path="ExtraStatus" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                    <Binding Path="Status" ElementName="statusbarControl" />
                 </TextBlock.Text>
             </TextBlock>
         </StatusBarItem>
+        
     </StatusBar>
     
 </UserControl>

@@ -13,7 +13,7 @@
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextHintingMode="Fixed"
         Style="{rl:GetStyle ResourceKey=mainwnd}"
         Icon="Graphics/floppy-512.ico" 
-        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
+        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Closing="mainWindow_OnClosing">
     
     <Window.CommandBindings>
         <CommandBinding Command="Open"
@@ -23,8 +23,11 @@
                         Executed="deleteCommandBinding_OnExecuted"
                         CanExecute="deleteCommandBinding_OnCanExecute" />
         <CommandBinding Command="New"
-                        Executed="newCommandBinding_OnExecuted" 
-                        CanExecute="newCommandBinding_OnCanExecute" />
+                        Executed="newFileCommandBinding_OnExecuted" 
+                        CanExecute="newFileCommandBinding_OnCanExecute" />
+        <CommandBinding Command="fsops:Commands.NewDirectoryCommand"
+                        Executed="newDirectoryCommandBinding_OnExecuted"
+                        CanExecute="newDirectoryCommandBinding_OnCanExecute"/>
         <CommandBinding Command="fsops:Commands.RenameCommand"
                         Executed="renameCommandBinding_OnExecuted"
                         CanExecute="renameCommandBinding_OnCanExecute" />
@@ -42,7 +45,7 @@
                         Executed="pasteCommandBinding_OnExecuted"
                         CanExecute="pasteCommandBinding_OnCanExecute" />
         
-        <CommandBinding Command="BrowseBack"
+        <!--<CommandBinding Command="BrowseBack"
                         Executed="backCommandBinding_OnExecuted"
                         CanExecute="backCommandBinding_OnCanExecute" />
         <CommandBinding Command="BrowseForward"
@@ -53,16 +56,33 @@
                         CanExecute="homeCommandBinding_OnCanExecute" />
         <CommandBinding Command="fsops:Commands.BrowseUpCommand"
                         Executed="upCommandBinding_OnExecuted"
-                        CanExecute="upCommandBinding_OnCanExecute"/>
+                        CanExecute="upCommandBinding_OnCanExecute"/>-->
     </Window.CommandBindings>
     
     
     <DockPanel x:Name="mainWndDockPanel" >
-        <controls:Menubar x:Name="menubar" DockPanel.Dock="Top" Margin="4" />
+        <!--<controls:Menubar x:Name="menubar" DockPanel.Dock="Top" Margin="4" />-->
 
-        <controls:Toolbar x:Name="toolbar" DockPanel.Dock="Top" Margin="4,0,4,6" />
+        <!--<controls:Toolbar x:Name="toolbar" DockPanel.Dock="Top" Margin="4,0,4,6" />-->
 
-        <controls:Statusbar x:Name="statusbar" DockPanel.Dock="Bottom" Margin="4,0,4,0" />
+        <controls:Statusbar x:Name="statusbar" DockPanel.Dock="Bottom" Margin="4,0,4,0">
+            
+            <controls:Statusbar.CurrentItemInfo>
+                <Binding Path="SelectedItem.(layouts:MillerColumnsLayout.CurrentItemInfo)"
+                         ElementName="tabs" />
+            </controls:Statusbar.CurrentItemInfo>
+            
+            <controls:Statusbar.Status>
+                <Binding Path="SelectedItem.(layouts:MillerColumnsLayout.Status)"
+                         ElementName="tabs" />
+            </controls:Statusbar.Status>
+
+            <controls:Statusbar.ExtraStatus>
+                <Binding Path="SelectedItem.(layouts:MillerColumnsLayout.ExtraStatus)"
+                         ElementName="tabs" />
+            </controls:Statusbar.ExtraStatus>
+
+        </controls:Statusbar>
 
         <TabControl x:Name="tabs"
                     DockPanel.Dock="Left"
