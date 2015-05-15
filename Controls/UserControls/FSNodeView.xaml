@@ -19,25 +19,42 @@
                Margin="1,0,1,0">
             
             <Image.Style>
-                <Style BasedOn="{rl:GetStyle ResourceKey=smallimg}" TargetType="{x:Type Image}">
+                <Style BasedOn="{rl:GetRsrc ResourceKey=smallimg}" TargetType="{x:Type Image}">
                     <Style.Triggers>
                         
-                        <DataTrigger Binding="{Binding FSNode.TypeTag}" Value="4">
-                            <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
+                        <DataTrigger Value="4">
+                            <DataTrigger.Binding>
+                                <Binding Path="FSNode.TypeTag" IsAsync="True" />
+                            </DataTrigger.Binding>
+                            <Setter Property="Source" 
+                                    Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
                         </DataTrigger>
                         
-                        <DataTrigger Binding="{Binding FSNode.TypeTag}" Value="2">
-                            <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
+                        <DataTrigger Value="2">
+                            <DataTrigger.Binding>
+                                <Binding Path="FSNode.TypeTag" IsAsync="True" />
+                            </DataTrigger.Binding>
+                            <Setter Property="Source" 
+                                    Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
                         </DataTrigger>
                         
-                        <DataTrigger Binding="{Binding FSNode.TypeTag}" Value="1">
-                            <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Textfile_818_32x.png" />
+                        <DataTrigger Value="1">
+                            <DataTrigger.Binding>
+                                <Binding Path="FSNode.TypeTag" IsAsync="True" />
+                            </DataTrigger.Binding>
+                            <Setter Property="Source" 
+                                    Value="pack://application:,,,/Controls;component/Graphics/Textfile_818_32x.png" />
                         </DataTrigger>
-                        
+
+                        <DataTrigger Value="False">
+                            <DataTrigger.Binding>
+                                <Binding Path="FSNode.IsAccessible" IsAsync="True" />
+                            </DataTrigger.Binding>
+                            <Setter Property="Opacity" Value="0.5" />
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Image.Style>
-            
         </Image>
 
         <TextBlock x:Name="fsNodeNameTextBlock"
@@ -46,9 +63,12 @@
                    HorizontalAlignment="Right">
 
             <TextBlock.Style>
-                <Style BasedOn="{rl:GetStyle ResourceKey=trimbychar}" TargetType="{x:Type TextBlock}">
+                <Style BasedOn="{rl:GetRsrc ResourceKey=trimbychar}" TargetType="{x:Type TextBlock}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding FSNode.IsAccessible}" Value="False">
+                        <DataTrigger Value="False">
+                            <DataTrigger.Binding>
+                                <Binding Path="FSNode.IsAccessible" IsAsync="True" />
+                            </DataTrigger.Binding>
                             <Setter Property="Foreground" Value="DarkGray" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -58,20 +78,6 @@
             <TextBlock.Text>
                 <Binding Path="FSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
             </TextBlock.Text>
-
         </TextBlock>
-
-        <!--<TextBox x:Name="fsNodeNameTextBlock"
-                   Margin="2,0,4,0"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Right">
-
-            <TextBox.Text>
-                <Binding Path="FSNode.FullPath" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-            </TextBox.Text>
-
-        </TextBox>-->
-
     </StackPanel>
-
 </ContentControl>

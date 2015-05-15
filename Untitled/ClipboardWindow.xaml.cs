@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using System.Windows.Threading;
+using System.Windows.Controls.Primitives;
 
 
 namespace Files {
@@ -16,16 +16,13 @@ namespace Files {
             DataContext = ViewModel;
         }
 
-        private void clipboardWindow_OnClosing (object sender, System.ComponentModel.CancelEventArgs e) {
-            //Application.Current.Dispatcher.Invoke (Hide);
-
-            //if (Equals (sender, this)) {
-            //    e.Cancel = true;
-            //}
-        }
-
         private void clearButton_OnClick (object sender, RoutedEventArgs e) {
             ViewModel.ClipboardStack.Clear ();
+        }
+
+        private void headerThumb_OnDragDelta (object sender, DragDeltaEventArgs e) {
+            Left = Left + e.HorizontalChange;
+            Top = Top + e.VerticalChange;
         }
     }
 }

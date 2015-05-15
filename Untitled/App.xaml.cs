@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using Controls.Layouts;
 using FSOps;
 
@@ -19,8 +18,6 @@ namespace FilesApplication {
         private void Bootstrap (object sender, StartupEventArgs e) {
             AppWindows.Add (new MainWindow ());
             InitWindow (0);
-            //AppWindows.Put (new MainWindow ());
-            //InitWindow (1);
         }
 
         private void InitWindow (int index) {
@@ -30,6 +27,8 @@ namespace FilesApplication {
 
         // TODO: remember last visited dirs in settings
         private void ReloadContents (int index) {
+            //AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new DirectoryNode (@"C:\Windows\System32")));
+            //AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new FileNode (@"C:\interbase.log")));
             AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
             AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
         }

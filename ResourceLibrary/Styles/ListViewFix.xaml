@@ -5,15 +5,9 @@
     
     <Style x:Key="listview_fix" TargetType="{x:Type ListView}">
         
-        <Style.Triggers>
-            <Trigger Property="ItemsSource" Value="{x:Null}">
-                <Setter Property="Background" Value="DarkGray" />
-            </Trigger>
-        </Style.Triggers>
-        
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ListBorder}"/>
-        <Setter Property="BorderThickness" Value="0,1"/>
+        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
@@ -36,7 +30,15 @@
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
                         </Trigger>
-                        
+
+                        <Trigger Property="ItemsSource" Value="{x:Null}">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    DarkGray
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsGrouping" Value="true"/>

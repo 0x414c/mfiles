@@ -7,13 +7,8 @@ namespace Controls.UserControls {
     /// Interaction logic for Statusbar.xaml
     /// </summary>
     public partial class Statusbar : UserControl {
-        //public StatusBarModel ViewModel { get; set; }
-       
         public Statusbar () {             
             InitializeComponent ();
-
-            //ViewModel = new StatusBarModel ();
-            //DataContext = ViewModel;
         }
 
         #region depProps
@@ -37,7 +32,7 @@ namespace Controls.UserControls {
         public static readonly DependencyProperty StatusProperty =
             DependencyProperty.Register (
                 "Status", typeof (string), 
-                typeof (Statusbar), new PropertyMetadata ("<app is not ready (yet)>")
+                typeof (Statusbar), new PropertyMetadata ("<app is not ready>")
             );
 
 
@@ -49,7 +44,7 @@ namespace Controls.UserControls {
         public static readonly DependencyProperty ExtraStatusProperty =
             DependencyProperty.Register (
                 "ExtraStatus", typeof (string),
-                typeof (Statusbar), new PropertyMetadata ("<current status is unknown (yet)>")
+                typeof (Statusbar), new PropertyMetadata ("<current status is unknown>")
             );
         #endregion
     }

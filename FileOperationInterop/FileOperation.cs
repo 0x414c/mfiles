@@ -16,10 +16,8 @@ namespace FileOperationInterop {
         private uint _sinkCookie;
 
         public FileOperation () : this (null) { }
-        
-        public FileOperation (FileOperationProgressSink callbackSink) : this (callbackSink, null) { }
-        
-        public FileOperation (FileOperationProgressSink callbackSink, IWin32Window owner) {
+
+        public FileOperation (FileOperationProgressSink callbackSink, IWin32Window owner = null) {
             _callbackSink = callbackSink;
             _fileOperation = (IFileOperation) Activator.CreateInstance (_fileOperationType);
 

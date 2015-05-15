@@ -7,25 +7,120 @@
         
         Title="Clipboard" 
         Height="300" Width="200" MinWidth="100" MinHeight="100"
-        WindowStyle="ToolWindow"
-        ShowInTaskbar="False" ShowActivated="False" Icon="Graphics/floppy-512.ico"
-        Closing="clipboardWindow_OnClosing" >
+        WindowStyle="None" Background="Transparent" AllowsTransparency="True"
+        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@256/floppy-512.ico" 
+        ShowInTaskbar="False" ShowActivated="False" ResizeMode="NoResize">
 
-    <DockPanel x:Name="clipboardWindowDockPanel">
-        <Button x:Name="clearButton" DockPanel.Dock="Bottom"
-                Height="24"
-                Padding="0,0,0,2" 
-                VerticalAlignment="Bottom"
-                Content="Clear" Click="clearButton_OnClick"/>
 
-        <ListView x:Name="clipboardContentsListView" 
-                  Style="{rl:GetStyle ResourceKey=listviewfix}"
-                  BorderThickness="0">
-            <ListView.ItemsSource>
-                <Binding Path="ClipboardStack" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-            </ListView.ItemsSource>
-        </ListView>
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Style.Triggers>
+                <DataTrigger Value="0">
+                    <DataTrigger.Binding>
+                        <Binding Path="Items.Count" ElementName="clipboardContentsListView" Mode="OneWay" />
+                    </DataTrigger.Binding>
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
 
-    </DockPanel>
+                <DataTrigger Value="False">
+                    <DataTrigger.Binding>
+                        <Binding Path="Items.IsEmpty" ElementName="clipboardContentsListView" Mode="OneWay" />
+                    </DataTrigger.Binding>
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
 
+    <Border>
+        <Border.Effect>
+            <DropShadowEffect Direction="0" Opacity="0.5" ShadowDepth="0" BlurRadius="5"/>
+        </Border.Effect>
+
+        <DockPanel x:Name="clipboardWindowDockPanel" Margin="5">
+            <Border x:Name="headerBorder" 
+                    DockPanel.Dock="Top" 
+                    Height="26" 
+                    VerticalAlignment="Top"
+                    CornerRadius="3,3,0,0"
+                    BorderThickness="1,1,1,1"
+                    BorderBrush="DimGray" 
+                    Background="LightGray" >
+                
+                <Grid>
+                    
+                    <Thumb x:Name="headerThumb" 
+                           Opacity="0" 
+                           Background="{x:Null}" 
+                           Foreground="{x:Null}"
+                           DragDelta="headerThumb_OnDragDelta" Panel.ZIndex="1" />
+                    
+                    <TextBlock Text="Clipboard" 
+                               SnapsToDevicePixels="True"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               TextOptions.TextFormattingMode="Display" FontSize="13"
+                               Margin="0,-1,0,0" />
+                    
+                    <Image Source="{rl:GetRsrc ResourceKey=paperclip_icon}" 
+                           HorizontalAlignment="Left" Margin="2" />
+                </Grid>
+            </Border>
+
+            <Button x:Name="clearButton" DockPanel.Dock="Bottom"
+                    Height="24"
+                    Padding="0,0,0,2" 
+                    Margin="0,-3,0,0"
+                    VerticalAlignment="Bottom"
+                    Content="Clear"
+                    Click="clearButton_OnClick" Panel.ZIndex="2" />
+
+            <ListView x:Name="clipboardContentsListView" 
+                      Style="{rl:GetRsrc ResourceKey=listviewfix}"
+                      BorderThickness="1,0,1,0" Padding="0,0,0,3" BorderBrush="DimGray">
+                
+                <ListView.ItemsSource>
+                    <Binding Path="ClipboardStack" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                </ListView.ItemsSource>
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Height="24">
+                            <Image>
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}" 
+                                           BasedOn="{rl:GetRsrc ResourceKey=smallimg}">
+                                       
+                                        <Style.Triggers>
+                                            
+                                            <DataTrigger Value="Cut">
+                                                <DataTrigger.Binding>
+                                                    <Binding Path="Item2" />
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Source" 
+                                                        Value="{rl:GetRsrc ResourceKey=cut_action}" />
+                                            </DataTrigger>
+
+                                            <DataTrigger Value="Copy">
+                                                <DataTrigger.Binding>
+                                                    <Binding Path="Item2" />
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Source" 
+                                                        Value="{rl:GetRsrc ResourceKey=copy_action}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,0,2,0">
+                                <TextBlock.Text>
+                                    <Binding Path="Item1" />
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DockPanel>
+    </Border>
 </Window>

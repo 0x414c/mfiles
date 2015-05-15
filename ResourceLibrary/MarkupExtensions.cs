@@ -4,7 +4,7 @@ using System.Windows.Markup;
 
 
 namespace ResourceLibrary {
-    public abstract class GetStyleMarkupExtension : MarkupExtension {
+    public abstract class GetRsrcMarkupExtension : MarkupExtension {
         /// <summary>
         /// Property for specific resource dictionary
         /// </summary>

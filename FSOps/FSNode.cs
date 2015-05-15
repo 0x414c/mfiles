@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Security.AccessControl;
 
 
@@ -25,11 +26,11 @@ namespace FSOps {
      \brief A file system node.
      */
     public abstract class FSNode {
-        public TypeTag TypeTag { get; set; }
+        public TypeTag TypeTag { get; protected set; }
 
-        public virtual string Name { get; set; }
+        public virtual string Name { get; protected set; }
 
-        public virtual string FullPath { get; set; }
+        public virtual string FullPath { get; protected set; }
 
         public bool Is (TypeTag compareTo) {
             return (TypeTag & compareTo) == TypeTag;
@@ -46,8 +47,7 @@ namespace FSOps {
      \brief A file-like file system node: DriveNode, DirectoryNode or FileNode.      
      */
     public abstract class FileLikeFSNode : FSNode {
-        // TODO: call FileSystemInfo.Refresh () before returning value
-        public virtual FileSystemInfo FileSystemInfo { get; set; }
+        public virtual FileSystemInfo FileSystemInfo { get; protected set; }
 
         public override string Name {
             get { return FileSystemInfo.Name; }
@@ -65,26 +65,23 @@ namespace FSOps {
             get { return new DriveNode (Path.GetPathRoot (FileSystemInfo.FullName)); }
         }
 
-        // TODO:
         public DirectoryLikeFSNode Parent {
             get {
-                throw new NotImplementedException ();
-
-                //var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
-                //if (asDirectoryInfo != null) {
-                //    return new DirectoryNode (asDirectoryInfo.Parent);
-                //} else {
-                //    var asFileInfo = FileSystemInfo as FileInfo;
-                //    if (asFileInfo != null) {
-                //        if (asFileInfo.Directory != null) {
-                //            return new DirectoryNode (asFileInfo.Directory.Parent);
-                //        } else {
-                //            return null;
-                //        }
-                //    } else {
-                //        return null;
-                //    }
-                //}
+                var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
+                if (asDirectoryInfo != null) {
+                    return new DirectoryNode (asDirectoryInfo.Parent);
+                } else {
+                    var asFileInfo = FileSystemInfo as FileInfo;
+                    if (asFileInfo != null) {
+                        if (asFileInfo.Directory != null) {
+                            return new DirectoryNode (asFileInfo.Directory);
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                }
             }
         }
     }
@@ -160,7 +157,7 @@ namespace FSOps {
     /// Represents particular Drive
     /// </summary>
     public sealed class DriveNode : DirectoryLikeFSNode {
-        public DriveInfo DriveInfo { get; set; }
+        public DriveInfo DriveInfo { get; private set; }
 
         public override FileSystemInfo FileSystemInfo {
             get { return DriveInfo.RootDirectory; }

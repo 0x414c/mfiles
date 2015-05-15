@@ -11,8 +11,8 @@ namespace Files {
             InitializeComponent ();
         }
 
-        public TextInputDialog (string originalName, string doneButtonText) : this () {
-            doneButton.Content = doneButtonText;
+        public TextInputDialog (string originalName, string windowTitle) : this () {
+            textInputDialogWindow.Title = windowTitle;
             inputTextBox.Text = originalName;            
             inputTextBox.SelectAll ();
         }

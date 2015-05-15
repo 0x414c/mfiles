@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Controls.Auxiliary;
@@ -32,11 +34,23 @@ namespace Controls.Layouts {
             get { return ViewModel.ColumnViews.Last (); }
         }
 
+        public ColumnView LastButOneColumnView {
+            get {
+                if (ViewsCounter > 1) {
+                    return ViewModel.ColumnViews.ElementAt (ViewModel.ColumnViews.Count - 2);
+                } else {
+                    return ViewModel.ColumnViews.Last ();
+                }
+            }
+        }
+
         public string CurrentTitle {
             get { return LastColumnView.Title; }
         }
+        #endregion
 
-        
+
+        #region depprops
         private string Title {
             get { return (string) GetValue (TitleProperty); }
             set { SetValue (TitleProperty, value); }
@@ -101,7 +115,7 @@ namespace Controls.Layouts {
 
                           
         #region navigation
-        private void Reflow (FSNode fsNodeToAdd, int columnViewId) {
+        private void AddColumnAfter (FSNode fsNodeToAdd, int columnViewId) {
             if (columnViewId == ViewsCounter) {
                 ViewModel.ColumnViews.Add (new ColumnView (fsNodeToAdd, ViewsCounter + 1));
             } else {
@@ -110,46 +124,14 @@ namespace Controls.Layouts {
                     LastColumnView.ViewModel.ParentFSNode = fsNodeToAdd;
                 }
             }
-        }
 
-        private void FinalizeLayoutReflow () {
-            RefreshDepProps ();
-            millerColumnsLayoutScrollViewer.ScrollToRightEnd ();
-        }
-
-        private void RefreshDepProps () {
-            Title = CurrentTitle;
-            Status = string.Format ("{0}: {1} items total", CurrentTitle, LastColumnView.ItemsCount);
-            ExtraStatus = string.Format ("{0} selected", LastColumnView.SelectionSize);
-
-            if (LastColumnView.ViewModel.ParentFSNode.Is (TypeTag.Internal | TypeTag.SubRoot)) {
-                var asDirectoryLike = FSOps.FSOps.TryGetConcreteFSNode<DirectoryLikeFSNode> (LastColumnView.ViewModel.ParentFSNode);
-                if (asDirectoryLike != null) {
-                    CurrentItemInfo = string.Format (
-                        "{0}: {1} available", asDirectoryLike.RootDrive,
-                        FSOps.FSOps.StrFormatByteSize (asDirectoryLike.RootDrive.DriveInfo.AvailableFreeSpace)
-                    );
-                }
-            } else {
-                CurrentItemInfo = CurrentTitle;
-            }
+            FinalizeLayoutReflow ();
         }
 
         public bool DeleteColumnsAfter (int columnViewId) {
-            if (ViewsCounter > 1) {
+            if (ViewsCounter > 0) {
                 ViewModel.ColumnViews.Remove (_ => _.ViewId > columnViewId && _.ViewId < ViewsCounter + 1);
                 LastColumnView.ClearSelection ();
-                FinalizeLayoutReflow ();
-
-                return true;
-            } else {
-                return false;    
-            }                
-        }
-
-        public bool LevelUp () {
-            if (ViewsCounter > 1) {
-                ViewModel.ColumnViews.RemoveAt (ViewsCounter - 1);
                 FinalizeLayoutReflow ();
 
                 return true;
@@ -158,21 +140,72 @@ namespace Controls.Layouts {
             }
         }
 
+        private void FinalizeLayoutReflow () {
+            RefreshDepProps ();
+        }
+
+        private void RefreshDepProps () {
+            Title = CurrentTitle;
+
+            ExtraStatus = string.Format ("{0} selected", LastButOneColumnView.SelectionSize);
+
+            if (LastColumnView.ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
+                Status = string.Format (
+                    "{0}: {1} items total",
+                    CurrentTitle, LastColumnView.ItemsCount
+                );
+            } else {
+                if (LastColumnView.ViewModel.ParentFSNode.TypeTag == TypeTag.Leaf) {
+                    var asFileLikeFSNode = LastColumnView.ViewModel.ParentFSNode as FileLikeFSNode;
+                    if (asFileLikeFSNode != null) {
+                        Status = string.Format (
+                            "{0}: {1}",
+                            CurrentTitle,
+                            FSOps.FSOps.StrFormatByteSize (new FileInfo (asFileLikeFSNode.FullPath).Length)
+                        );
+                    }
+                }
+            }
+            
+            if (LastColumnView.ViewModel.ParentFSNode.Is (TypeTag.SubRoot | TypeTag.Internal)) {
+                var asDirectoryLike = FSOps.FSOps.TryGetConcreteFSNode<DirectoryLikeFSNode> (LastColumnView.ViewModel.ParentFSNode);
+                if (asDirectoryLike != null) {
+                    CurrentItemInfo = string.Format (
+                        "{0}: {1} of {2} available", asDirectoryLike.RootDrive,
+                        FSOps.FSOps.StrFormatByteSize (asDirectoryLike.RootDrive.DriveInfo.AvailableFreeSpace),
+                        FSOps.FSOps.StrFormatByteSize (asDirectoryLike.RootDrive.DriveInfo.TotalSize)
+                    );
+                }
+            } else {
+                if (LastColumnView.ViewModel.ParentFSNode.TypeTag == TypeTag.Leaf) {
+                    var asFileLike = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (LastColumnView.ViewModel.ParentFSNode);
+                    if (asFileLike != null) {
+                        CurrentItemInfo = string.Format (
+                            "{0}: {1} of {2} available", asFileLike.RootDrive,
+                            FSOps.FSOps.StrFormatByteSize (asFileLike.RootDrive.DriveInfo.AvailableFreeSpace),
+                            FSOps.FSOps.StrFormatByteSize (asFileLike.RootDrive.DriveInfo.TotalSize)
+                        );
+                    }   
+                } else {
+                    if (LastColumnView.ViewModel.ParentFSNode.TypeTag == TypeTag.Root) {
+                        CurrentItemInfo = CurrentTitle;
+                    }
+                }                                  
+            }
+        }
+
         public bool NavigateTo (FSNode fsNodeToAdd, int originColumnViewId) {
-            // Try to determine what Action is needed and filter inaccessible items
             if (fsNodeToAdd.TypeTag == TypeTag.Leaf) {
-                // TODO: try to show file info
                 var asFile = FSOps.FSOps.TryGetConcreteFSNode<FileNode> (fsNodeToAdd);
                 if (asFile != null) {
                     if (!asFile.IsAccessible) {
+                        DeleteColumnsAfter (originColumnViewId);
+
                         MessageBox.Show (
-                            "File " + asFile + " isn't accessible!",
+                            "File \"" + asFile + "\" isn't accessible!",
                             "File access error", MessageBoxButton.OK, MessageBoxImage.Error
                         );
 
-                        return false;
-                    } else {
-                        // TODO: open file
                         return false;
                     }
                 }
@@ -181,8 +214,10 @@ namespace Controls.Layouts {
                     var asDrive = FSOps.FSOps.TryGetConcreteFSNode<DriveNode> (fsNodeToAdd);
                     if (asDrive != null) {
                         if (!(asDrive.IsReady && asDrive.IsTraversable)) {
+                            DeleteColumnsAfter (originColumnViewId);
+
                             MessageBox.Show (
-                                "Drive " + asDrive + " isn't ready or isn't accessible now.",
+                                "Drive \"" + asDrive + "\" isn't ready or isn't accessible now.",
                                 "Drive access error", MessageBoxButton.OK, MessageBoxImage.Error
                             );
 
@@ -194,8 +229,10 @@ namespace Controls.Layouts {
                         var asDirectory = FSOps.FSOps.TryGetConcreteFSNode<DirectoryNode> (fsNodeToAdd);
                         if (asDirectory != null) {
                             if (!(asDirectory.IsAccessible && asDirectory.IsTraversable)) {
+                                DeleteColumnsAfter (originColumnViewId);
+
                                 MessageBox.Show (
-                                    "Directory " + asDirectory + " isn't accessible.",
+                                    "Directory \"" + asDirectory + "\" isn't accessible.",
                                     "Directory access error", MessageBoxButton.OK, MessageBoxImage.Error
                                 );
 
@@ -206,8 +243,7 @@ namespace Controls.Layouts {
                 }
             }
 
-            Reflow (fsNodeToAdd, originColumnViewId);
-            FinalizeLayoutReflow ();
+            AddColumnAfter (fsNodeToAdd, originColumnViewId);
 
             return true;
         }

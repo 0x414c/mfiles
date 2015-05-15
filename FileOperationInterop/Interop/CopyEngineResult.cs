@@ -1,5 +1,7 @@
 // Stephen Toub
 
+// ReSharper disable InconsistentNaming
+
 
 namespace FileOperationInterop {
     public enum CopyEngineResult : uint {

@@ -1,9 +1,11 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿// ReSharper disable InconsistentNaming
 
+using System;
+using System.Runtime.InteropServices;
+                                       
 
 namespace Shell32Interop {
-    public static class Shell {
+    public static class Shell32 {
         [DllImport ("shell32.dll", CharSet = CharSet.Auto)]
         static extern bool ShellExecuteEx (ref SHELLEXECUTEINFO lpExecInfo);
 

@@ -16,7 +16,7 @@ namespace FSOps {
             );
         }
 
-        // TODO:
+        // TODO: _
         public static T TryGetConcreteFSNode<T> (FSNode fsNode) where T : FSNode {
             T node = fsNode as T;
 
@@ -41,8 +41,7 @@ namespace FSOps {
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
             } catch (Exception ex) {
                 // TODO: _readable_ system errors (description instead of code)
-                // but I don't wanna to fiddle w/ WinAPI here :C
-                // MessageBox.Show (ex.Message);
+                // but I don't wanna fiddle w/ WinAPI here :C
 
                 return false;
             }
@@ -55,8 +54,6 @@ namespace FSOps {
 
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
             } catch (Exception ex) {
-                //MessageBox.Show (ex.Message);
-
                 return false;
             }
         }

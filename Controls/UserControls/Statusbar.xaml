@@ -9,18 +9,13 @@
              d:DesignHeight="22" d:DesignWidth="300">
     
     <StatusBar VerticalAlignment="Center" Background="{x:Null}">
-        <!--<StatusBar.ItemsPanel>
-            <ItemsPanelTemplate>
-                <DockPanel></DockPanel>
-            </ItemsPanelTemplate>
-        </StatusBar.ItemsPanel>-->
-        
         <StatusBarItem DockPanel.Dock="Left">
             <TextBlock x:Name="currentItemInfoText"
-                       Style="{rl:GetStyle ResourceKey=trimbychar}"
+                       Style="{rl:GetRsrc ResourceKey=trimbychar}"
                        Margin="0,-1,0,1">
+                
                 <TextBlock.Text>
-                    <Binding Path="CurrentItemInfo" ElementName="statusbarControl" />
+                    <Binding Path="CurrentItemInfo" ElementName="statusbarControl" IsAsync="True" />
                 </TextBlock.Text>
             </TextBlock>
         </StatusBarItem>
@@ -29,10 +24,11 @@
 
         <StatusBarItem DockPanel.Dock="Right" Margin="0,0,14,0">
             <TextBlock x:Name="extraStatusText" 
-                       Style="{rl:GetStyle ResourceKey=trimbychar}"
+                       Style="{rl:GetRsrc ResourceKey=trimbychar}"
                        Margin="0,-1,0,1">
+                
                 <TextBlock.Text>
-                    <Binding Path="ExtraStatus" ElementName="statusbarControl" />
+                    <Binding Path="ExtraStatus" ElementName="statusbarControl" IsAsync="True" />
                 </TextBlock.Text>
             </TextBlock>
         </StatusBarItem>
@@ -41,10 +37,11 @@
         
         <StatusBarItem>
             <TextBlock x:Name="statusText"
-                       Style="{rl:GetStyle ResourceKey=trimbychar}"
+                       Style="{rl:GetRsrc ResourceKey=trimbychar}"
                        Margin="0,-1,0,1">
+                
                 <TextBlock.Text>
-                    <Binding Path="Status" ElementName="statusbarControl" />
+                    <Binding Path="Status" ElementName="statusbarControl" IsAsync="True" />
                 </TextBlock.Text>
             </TextBlock>
         </StatusBarItem>

@@ -1,5 +1,6 @@
 // Stephen Toub
 
+// ReSharper disable InconsistentNaming
 
 namespace FileOperationInterop {
     public enum SIGDN : uint {

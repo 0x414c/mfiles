@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Controls.Auxiliary;
@@ -26,7 +25,19 @@ namespace Controls.UserControls {
         public int ViewId { get; private set; }
 
         public int SelectionSize {
-            get { return childFSNodesListView.SelectedItems.Count; }
+            get {
+                if (ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
+                    var childFSNodesListView = Utils.FindVisualChild<ListView> (columnViewContentPresenter);
+                    
+                    if (childFSNodesListView != null) {
+                        return childFSNodesListView.SelectedItems.Count;
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return 1;
+                }
+            }
         }
         #endregion
 
@@ -39,7 +50,6 @@ namespace Controls.UserControls {
             DataContext = ViewModel;
         }
 
-        // TODO: use DataTemplate, determine between File List, File Preview, Error Notif.
         public ColumnView (FSNode parentFsNode, int viewId) : this () {
             ViewId = viewId;
             ViewModel.ParentFSNode = parentFsNode;
@@ -49,7 +59,13 @@ namespace Controls.UserControls {
 
         #region utils
         public void ClearSelection () {
-            childFSNodesListView.UnselectAll ();
+            if (ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
+                var childFSNodesListView = Utils.FindVisualChild<ListView> (columnViewContentPresenter);
+
+                if (childFSNodesListView != null) {
+                    childFSNodesListView.UnselectAll ();
+                }
+            }
         }
         #endregion
 
@@ -58,69 +74,39 @@ namespace Controls.UserControls {
         private void breadcrumbDockPanel_OnPreviewLeftMouseButtonDown (object sender, MouseButtonEventArgs e) {
             var dockPanel = sender as DockPanel;
             if (dockPanel != null) {
-                var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
-                if (parentLayoutMgr != null) {
-                    parentLayoutMgr.DeleteColumnsAfter (ViewId);
-                } 
+                ClearSelection ();
             }
         }
 
         private void childFSNodesListViewItem_OnMouseDoubleClick (object sender, MouseButtonEventArgs e) {
-            var listViewItem = sender as ListViewItem;
-            if (listViewItem != null) {
-                // TODO: open in new tab for Traversable / run for File
-                MessageBox.Show ("<2x");
-                //if (Equals (childFSNodesListView.SelectedItem as ListViewItem, listViewItem)) {
-                //    var fsNodeView = listViewItem.Content as FSNodeView;
-                //    if (fsNodeView != null) {
-                //        var fsNodeSelected = fsNodeView.ViewModel.FSNode;
-                //        var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
-                //        if (parentLayoutMgr != null) {
-                //            parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId);
-                //        }
-                //    }
-                //}
-            }
+            //var listViewItem = sender as ListViewItem;
+            //if (listViewItem != null) {
+            //    // TODO: ~
+            //    var fsNodeView = listViewItem.Content as FSNodeView;
+            //    if (fsNodeView != null) {
+            //        var fsNodeSelected = fsNodeView.ViewModel.FSNode;
+            //        var parentLayoutMgr = Utils.FindVisualParent<MillerColumnsLayout> (this);
+            //        if (parentLayoutMgr != null) {
+            //            parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId);
+            //        }
+            //    }
+            //}
         }
-
-        //private void childFSNodesListViewItem_OnPreviewRightMouseButtonDown (object sender, MouseButtonEventArgs e) {
-        //    var listViewItem = sender as ListViewItem;
-        //    if (listViewItem != null) {
-        //        var fsNodeView = listViewItem.Content as FSNodeView;
-        //        if (fsNodeView != null) {
-        //            var fsNodeSelected = fsNodeView.ViewModel.FSNode;
-
-        //            var fsNodeSelectedAsFileLikeFSNode = fsNodeSelected as FileLikeFSNode;
-        //            if (fsNodeSelectedAsFileLikeFSNode != null) {
-        //                //var ctxMnu = new ShellContextMenu.ShellContextMenu ();
-        //                //var arrFI = new FileInfo[1];
-        //                //arrFI[0] = new FileInfo (fsNodeSelectedAsFileLikeFSNode.FullPath);
-        //                //ctxMnu.ShowContextMenu (arrFI, new System.Drawing.Point (300, 300));    
-        //            }                               
-        //        }
-        //    }    
-        //}
 
         private void childFSNodesListView_OnSelectionChanged (object sender, SelectionChangedEventArgs e) {
             var listView = sender as ListView;
             if (listView != null) {
-                var parentLayoutMgr = Utils.FindParent<MillerColumnsLayout> (this);
+                var parentLayoutMgr = Utils.FindVisualParent<MillerColumnsLayout> (this);
                 if (parentLayoutMgr != null) {
                     if (listView.SelectedIndex > -1) {
                         var fsNodeView = listView.SelectedItem as FSNodeView;
                         if (fsNodeView != null) {
                             var fsNodeSelected = fsNodeView.ViewModel.FSNode;
-                            //var currentSelectionIndex = listView.SelectedIndex;
-                            if (!parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId)) {
-                                MessageBox.Show ("!");
-                                //listView.SelectedIndex = currentSelectionIndex;
-                            }
+                            parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId);
                         }
+                    } else {
+                        parentLayoutMgr.DeleteColumnsAfter (ViewId);
                     }
-                    //else {
-                    //    MessageBox.Show ("-1 :" + ViewId);
-                    //    parentLayoutMgr.DeleteColumnsAfter (ViewId);
-                    //}
                 }
             }
         }
@@ -128,11 +114,6 @@ namespace Controls.UserControls {
         // TODO: filter scrollbar clicks
         private void childFSNodesListView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
             //ClearSelection ();
-            //var asListView = sender as ScrollContentPresenter;
-            //if (asListView != null) {
-            //    var lv = Utils.FindParent<ListView> (asListView);
-            //    lv.UnselectAll ();
-            //}
         }
         #endregion
     }

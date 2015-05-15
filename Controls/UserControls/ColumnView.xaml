@@ -6,19 +6,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
              xmlns:local="clr-namespace:Controls.UserControls"
+             xmlns:auxiliary="clr-namespace:Controls.Auxiliary"
              xmlns:fsops="clr-namespace:FSOps;assembly=FSOps"
-
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="200">
-
-    <!--<UserControl.DataContext>
-        <local:ColumnViewModel />
-    </UserControl.DataContext>-->
     
-    <DockPanel x:Name="columnViewDockPanel"
-               MinWidth="64">
+    <UserControl.Resources>
+        <auxiliary:FSNodeToBitmapSourceConverter x:Key="FSNodeToBitmapSourceConverter" />
+        <auxiliary:FileLikeFSNodeToDateConverter x:Key="FileLikeFsNodeToDateConverter" />
+        <auxiliary:FileLikeFSNodeToInfoConverter x:Key="FileLikeFsNodeToInfoConverter" />
+    </UserControl.Resources>
+    
+    <DockPanel x:Name="columnViewRootDockPanel"
+               MinWidth="64" Background="{x:Null}">
 
-        <DockPanel x:Name="breadcrumbStackPanel"
+        <DockPanel x:Name="breadcrumbDockPanel"
                    DockPanel.Dock="Top"
                    Height="25"
                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
@@ -29,10 +31,10 @@
                       Points="0,0 10,12 10,13 0,25"
                       ClipToBounds="True"
                       SnapsToDevicePixels="True"
-                      Stroke="{rl:GetStyle ResourceKey=ListBorder}"
+                      Stroke="{rl:GetRsrc ResourceKey=ListBorder}"
                       StrokeEndLineCap="Square"
                       StrokeStartLineCap="Square" 
-                      Stretch="Fill"
+                      Stretch="None"
                       RenderTransformOrigin="0.5,0.5">
             
                 <Polyline.Style>
@@ -40,7 +42,8 @@
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" Path="IsMouseOver" />
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" 
+                                             Path="IsMouseOver" IsAsync="True" />
                                 </DataTrigger.Binding>
                                 <Setter Property="StrokeThickness" Value="1.25" />
                                 <Setter Property="Width" Value="13" />
@@ -48,7 +51,6 @@
                         </Style.Triggers>
                     </Style>
                 </Polyline.Style>
-            
             </Polyline>
 
             <Image x:Name="parentFSNodeIconImage"
@@ -60,40 +62,59 @@
                    SnapsToDevicePixels="True">
 
                 <Image.Style>
-                    <Style BasedOn="{rl:GetStyle ResourceKey=smallimg}" TargetType="{x:Type Image}">
+                    <Style BasedOn="{rl:GetRsrc ResourceKey=smallimg}" TargetType="{x:Type Image}">
                         <Style.Triggers>
                             
-                            <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="8">
-                                <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/computersystemproduct.png" />
+                            <DataTrigger Value="8">
+                                <DataTrigger.Binding>
+                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
+                                </DataTrigger.Binding>
+                                <Setter Property="Source" 
+                                        Value="pack://application:,,,/Controls;component/Graphics/computersystemproduct.png" />
                             </DataTrigger>
                             
-                            <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="4">
-                                <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
+                            <DataTrigger Value="4">
+                                <DataTrigger.Binding>
+                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
+                                </DataTrigger.Binding>
+                                <Setter Property="Source"
+                                        Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
                             </DataTrigger>
                             
-                            <DataTrigger Binding="{Binding ParentFSNode.TypeTag}" Value="2">
-                                <Setter Property="Source" Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
+                            <DataTrigger Value="2">
+                                <DataTrigger.Binding>
+                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
+                                </DataTrigger.Binding>
+                                <Setter Property="Source" 
+                                        Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
                             </DataTrigger>
-                            
+
+                            <DataTrigger Value="1">
+                                <DataTrigger.Binding>
+                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
+                                </DataTrigger.Binding>
+                                <Setter Property="Source" 
+                                        Value="pack://application:,,,/Controls;component/Graphics/Textfile_818_32x.png" />
+                            </DataTrigger>
+
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" Path="IsMouseOver" />
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" 
+                                             Path="IsMouseOver"
+                                             IsAsync="True" />
                                 </DataTrigger.Binding>
-                                
                                 <Setter Property="RenderTransform">
                                     <Setter.Value>
                                         <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
-                            
                         </Style.Triggers>
                     </Style>
                 </Image.Style>
-
             </Image>
 
-            <TextBlock x:Name="parentFsNodeTextBlock"
+            <TextBlock x:Name="parentFSNodeTitleTextBlock"
                        DockPanel.Dock="Left"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
@@ -106,144 +127,312 @@
                 </TextBlock.Text>
                 
                 <TextBlock.Style>
-                    <Style BasedOn="{rl:GetStyle ResourceKey=disableable}" TargetType="{x:Type TextBlock}">
+                    <Style BasedOn="{rl:GetRsrc ResourceKey=disableable}" TargetType="{x:Type TextBlock}">
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" Path="IsMouseOver" />
+                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" 
+                                             Path="IsMouseOver" IsAsync="True" />
                                 </DataTrigger.Binding>
                                 <Setter Property="TextDecorations" Value="Underline" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
-
             </TextBlock>
-
         </DockPanel>
 
-        <ListView x:Name="childFSNodesListView"
-                  DockPanel.Dock="Top"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  AlternationCount="2"
-                  Style="{rl:GetStyle ResourceKey=listview_fix}"
-                  SelectionChanged="childFSNodesListView_OnSelectionChanged"
-                  PreviewMouseLeftButtonDown="childFSNodesListView_OnPreviewMouseLeftButtonDown">
+        <Border DockPanel.Dock="Top"
+                BorderThickness="0,1,0,1" BorderBrush="{rl:GetRsrc ResourceKey=ListBorder}">
 
-            <ListView.ItemsSource>
-                <Binding Path="ChildFSNodesViews" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-            </ListView.ItemsSource>
+            <ContentControl x:Name="columnViewContentControl">
+                <ContentPresenter x:Name="columnViewContentPresenter">
+                    <ContentPresenter.Resources>
+                        <DataTemplate x:Key="directory"
+                                  DataType="local:ColumnViewModel">
 
-            <ListView.ItemContainerStyle>
-                <!--<Style.Triggers>
-                    <Trigger Property="ItemsSource" Value="{x:Null}">
-                        <Setter Property="Template" Value="{StaticResource WaitControlTemplate}" />
-                    </Trigger>
-                </Style.Triggers>-->
+                            <ListView x:Name="childFSNodesListView"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                  AlternationCount="2"
+                                  Style="{rl:GetRsrc ResourceKey=listview_fix}"
+                                  BorderThickness="0"
+                                  SelectionChanged="childFSNodesListView_OnSelectionChanged"
+                                  PreviewMouseLeftButtonDown="childFSNodesListView_OnPreviewMouseLeftButtonDown">
 
-                <Style TargetType="ListViewItem" BasedOn="{rl:GetStyle ResourceKey=stripedrow}">
-                    <EventSetter Event="PreviewMouseDoubleClick" 
-                                 Handler="childFSNodesListViewItem_OnMouseDoubleClick" />
-                    <!--<EventSetter Event="PreviewMouseRightButtonDown" 
-                                 Handler="childFSNodesListViewItem_OnPreviewRightMouseButtonDown" />-->
+                                <ListView.ItemsSource>
+                                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=local:ColumnView}"
+                                             Path="DataContext.(local:ColumnViewModel.ChildFSNodesViews)"
+                                             IsAsync="True"
+                                             UpdateSourceTrigger="PropertyChanged" />
+                                </ListView.ItemsSource>
 
-                    <Setter Property="ContextMenu">
-                        <Setter.Value>
-                            
-                            <ContextMenu Style="{rl:GetStyle ResourceKey=ctxmenu}">
-                                
-                                <ContextMenu.DataContext>
-                                    <Binding Path="PlacementTarget.ListView.DataContext" 
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem" BasedOn="{rl:GetRsrc ResourceKey=stripedrow}">
+                                        <EventSetter Event="PreviewMouseDoubleClick" 
+                                             Handler="childFSNodesListViewItem_OnMouseDoubleClick" />
+
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu Style="{rl:GetRsrc ResourceKey=ctxmenu}">
+
+                                                    <ContextMenu.DataContext>
+                                                        <Binding Path="PlacementTarget.(local:ColumnView.DataContext)" 
                                              RelativeSource="{RelativeSource Self}" />
-                                </ContextMenu.DataContext>
-                                
-                                <MenuItem Header="_Open in system"
+                                                    </ContextMenu.DataContext>
+
+                                                    <MenuItem Header="_Open in system"
                                           Command="Open">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=open_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <Separator />
+                                                    <Separator />
 
-                                <MenuItem Header="_Cut"
+                                                    <MenuItem Header="_Cut"
                                           Command="Cut">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=cut_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <MenuItem Header="C_opy"
+                                                    <MenuItem Header="C_opy"
                                           Command="Copy">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=copy_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <MenuItem Header="_Paste here"
+                                                    <MenuItem Header="_Paste here"
                                           Command="Paste">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=paste_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <Separator />
+                                                    <Separator />
 
-                                <MenuItem Header="New _file here"
+                                                    <MenuItem Header="New _file here"
                                           Command="New">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=newfile_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <MenuItem Header="New _directory here"
+                                                    <MenuItem Header="New _directory here"
                                           Command="fsops:Commands.NewDirectoryCommand">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=newdir_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <MenuItem Header="Move to _trash"
+                                                    <MenuItem Header="Move to _trash"
                                           Command="Delete">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
-                                
-                                <MenuItem Header="_Rename"
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=delete_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+
+                                                    <MenuItem Header="_Rename"
                                           Command="fsops:Commands.RenameCommand">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=rename_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
 
-                                <MenuItem Header="_Properties" 
+                                                    <MenuItem Header="_Properties" 
                                           Command="Properties">
-                                    <MenuItem.CommandParameter>
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
-                                                 Path="PlacementTarget.DataContext" />
-                                    </MenuItem.CommandParameter>
-                                </MenuItem>
-                                
-                            </ContextMenu>
-                            
-                        </Setter.Value>
-                    </Setter>
-                    
-                </Style>
-            </ListView.ItemContainerStyle>
+                                                        <MenuItem.CommandParameter>
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ContextMenu}" 
+                                                 Path="PlacementTarget.(local:ColumnView.DataContext)" />
+                                                        </MenuItem.CommandParameter>
+                                                        <MenuItem.Icon>
+                                                            <Image Style="{rl:GetRsrc ResourceKey=smallimg}"
+                                               Source="{rl:GetRsrc ResourceKey=props_action}" />
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </DataTemplate>
 
-        </ListView>
+                        <DataTemplate x:Key="file" DataType="local:ColumnViewModel">
+                            <ScrollViewer x:Name="fileInfoScrollViewer"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          VerticalScrollBarVisibility="Auto"
+                                          Background="White">
 
+                                <DockPanel x:Name="fileInfoDockPanel"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center">
+
+                                    <Image x:Name="fileIconImage"
+                                           DockPanel.Dock="Top"
+                                           HorizontalAlignment="Center" 
+                                           Width="192" Height="192" 
+                                           Margin="0,8,0,0">
+
+                                        <Image.Source>
+                                            <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                     Path="DataContext.(local:ColumnViewModel.ParentFSNode).FullPath" 
+                                                     Converter="{StaticResource FSNodeToBitmapSourceConverter}"
+                                                     IsAsync="True" />
+                                        </Image.Source>
+                                    </Image>
+
+                                    <StackPanel x:Name="fileInfoStackPanel"
+                                                Orientation="Vertical"
+                                                Margin="8">
+
+                                        <TextBlock x:Name="fileNameTextBlock"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="14">
+
+                                            <TextBlock.Text>
+                                                <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                         Path="DataContext.(local:ColumnViewModel.ParentFSNode)" 
+                                                         IsAsync="True" 
+                                                         UpdateSourceTrigger="PropertyChanged" />
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+                                        <TextBlock x:Name="fileSizeTextBlock"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="13">
+
+                                            <TextBlock.Text>
+                                                <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                         Path="DataContext.(local:ColumnViewModel.ParentFSNode)" 
+                                                         Converter="{StaticResource FileLikeFsNodeToInfoConverter}"
+                                                         ConverterParameter="size"
+                                                         IsAsync="True" 
+                                                         UpdateSourceTrigger="PropertyChanged" />
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+                                        <TextBlock x:Name="fileInfoTextBlock"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="12" Foreground="DimGray">
+
+                                            <TextBlock.Text>
+                                                <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                         Path="DataContext.(local:ColumnViewModel.ParentFSNode)" 
+                                                         Converter="{StaticResource FileLikeFsNodeToInfoConverter}"
+                                                         ConverterParameter="attr"
+                                                         IsAsync="True" 
+                                                         UpdateSourceTrigger="PropertyChanged" />
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+                                        <TextBlock x:Name="fileCreationDateTextBlock"
+                                                   HorizontalAlignment="Right"
+                                                   FontSize="12">
+
+                                    <Run Foreground="DimGray">
+                                        Created: 
+                                    </Run>
+                                    <Run>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                 Path="DataContext.(local:ColumnViewModel.ParentFSNode)"
+                                                 Converter="{StaticResource FileLikeFsNodeToDateConverter}"
+                                                 ConverterParameter="created"
+                                                 IsAsync="True" 
+                                                 UpdateSourceTrigger="PropertyChanged" />
+                                    </Run>
+                                        </TextBlock>
+
+                                        <TextBlock x:Name="fileModificationDateTextBlock"
+                                                   HorizontalAlignment="Right"
+                                                   FontSize="12">
+
+                                    <Run Foreground="DimGray">
+                                        Modified:
+                                    </Run>
+                                    <Run>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                 Path="DataContext.(local:ColumnViewModel.ParentFSNode)"
+                                                 Converter="{StaticResource FileLikeFsNodeToDateConverter}"
+                                                 ConverterParameter="modified"
+                                                 IsAsync="True" 
+                                                 UpdateSourceTrigger="PropertyChanged" />
+                                    </Run>
+                                        </TextBlock>
+
+                                        <TextBlock x:Name="fileAccessDateTextBlock"
+                                                   HorizontalAlignment="Right"
+                                                   FontSize="12">
+
+                                    <Run Foreground="DimGray">
+                                        Last opened:
+                                    </Run>
+                                    <Run>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
+                                                 Path="DataContext.(local:ColumnViewModel.ParentFSNode)"
+                                                 Converter="{StaticResource FileLikeFsNodeToDateConverter}"
+                                                 ConverterParameter="accessed"
+                                                 IsAsync="True" 
+                                                 UpdateSourceTrigger="PropertyChanged" />
+                                    </Run>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DockPanel>
+                            </ScrollViewer>
+                        </DataTemplate>
+                    </ContentPresenter.Resources>
+
+                    <ContentPresenter.ContentTemplateSelector>
+                        <local:ColumnViewDataTemplateSelector />
+                    </ContentPresenter.ContentTemplateSelector>
+
+                    <ContentPresenter.Content>
+                        <Binding Path="ParentFSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                    </ContentPresenter.Content>
+                </ContentPresenter>
+            </ContentControl>
+        </Border>
     </DockPanel>
-
 </UserControl>

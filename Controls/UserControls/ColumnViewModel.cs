@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -63,10 +64,10 @@ namespace Controls.UserControls {
                 }
 
                 FileSystemWatcher.NotifyFilter =
-                      NotifyFilters.FileName
-                    | NotifyFilters.DirectoryName
-                    | NotifyFilters.LastAccess
-                    | NotifyFilters.LastWrite;
+                    NotifyFilters.FileName
+                    | NotifyFilters.DirectoryName;
+                    //| NotifyFilters.LastAccess
+                    //| NotifyFilters.LastWrite;
                 FileSystemWatcher.Changed += OnChildrenModelsChanged;
                 FileSystemWatcher.Created += OnChildrenModelsChanged;
                 FileSystemWatcher.Deleted += OnChildrenModelsChanged;
@@ -84,28 +85,34 @@ namespace Controls.UserControls {
         private void RefreshChildrenViews (FSNode parentFsNode) {          
             ChildFSNodesViews.Clear ();
             
+            var children = new List<FSNodeView> ();
+
             if (parentFsNode.TypeTag == TypeTag.Root) {
                 var asSystemRoot = FSOps.FSOps.TryGetConcreteFSNode<SystemRootNode> (parentFsNode);
                 if (asSystemRoot != null) {
                     foreach (var childNode in asSystemRoot.Children) {
-                        ChildFSNodesViews.Add (new FSNodeView (childNode));
+                        //ChildFSNodesViews.Add (new FSNodeView (childNode));
+                        children.Add (new FSNodeView (childNode));
                     }
+                    ChildFSNodesViews = new ObservableCollection<FSNodeView> (children);
                 }
             } else {
                 if (parentFsNode.TypeTag == TypeTag.SubRoot) {
                     var asDrive = FSOps.FSOps.TryGetConcreteFSNode<DriveNode> (parentFsNode);
                     if (asDrive != null) {
                         foreach (var childNode in asDrive.Children) {
-                            ChildFSNodesViews.Add (new FSNodeView (childNode));
+                            children.Add (new FSNodeView (childNode));
                         }
+                        ChildFSNodesViews = new ObservableCollection<FSNodeView> (children);
                     }
                 } else {
                     if (parentFsNode.TypeTag == TypeTag.Internal) {
                         var asDirectory = FSOps.FSOps.TryGetConcreteFSNode<DirectoryLikeFSNode> (parentFsNode);
                         if (asDirectory != null) {
-                            foreach (var childNode in asDirectory.Children.AsParallel ()) {
-                                ChildFSNodesViews.Add (new FSNodeView (childNode));
+                            foreach (var childNode in asDirectory.Children) {
+                                children.Add (new FSNodeView (childNode));
                             }
+                            ChildFSNodesViews = new ObservableCollection<FSNodeView> (children);
                         }
                     }
                 }
