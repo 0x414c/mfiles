@@ -5,7 +5,7 @@ using FSOps;
 
 
 namespace Files {
-    public sealed class ClipboardWindowModel : INotifyPropertyChanged {
+    public sealed class ClipboardWindowViewModel : INotifyPropertyChanged {
         private ClipboardStack<FileLikeFSNode> _clipboardStack;
 
         public ClipboardStack<FileLikeFSNode> ClipboardStack {
@@ -19,7 +19,7 @@ namespace Files {
             }
         }
 
-        public ClipboardWindowModel () {
+        public ClipboardWindowViewModel () {
             ClipboardStack = new ClipboardStack<FileLikeFSNode> ();
         }
 

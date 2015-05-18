@@ -78,19 +78,19 @@ namespace Controls.UserControls {
             }
         }
 
+        // TODO: 
         private void childFSNodesListViewItem_OnMouseDoubleClick (object sender, MouseButtonEventArgs e) {
-            //var listViewItem = sender as ListViewItem;
-            //if (listViewItem != null) {
-            //    // TODO: ~
-            //    var fsNodeView = listViewItem.Content as FSNodeView;
-            //    if (fsNodeView != null) {
-            //        var fsNodeSelected = fsNodeView.ViewModel.FSNode;
-            //        var parentLayoutMgr = Utils.FindVisualParent<MillerColumnsLayout> (this);
-            //        if (parentLayoutMgr != null) {
-            //            parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId);
-            //        }
-            //    }
-            //}
+            var listViewItem = sender as ListViewItem;
+            if (listViewItem != null) {
+                var fsNodeView = listViewItem.Content as FSNodeView;
+                if (fsNodeView != null) {
+                    var fsNodeSelected = fsNodeView.ViewModel.FSNode;
+                    var parentLayoutMgr = Utils.FindVisualParent<MillerColumnsLayout> (this);
+                    if (parentLayoutMgr != null) {
+                        parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId);
+                    }
+                }
+            }
         }
 
         private void childFSNodesListView_OnSelectionChanged (object sender, SelectionChangedEventArgs e) {
@@ -109,11 +109,6 @@ namespace Controls.UserControls {
                     }
                 }
             }
-        }
-
-        // TODO: filter scrollbar clicks
-        private void childFSNodesListView_OnPreviewMouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
-            //ClearSelection ();
         }
         #endregion
     }

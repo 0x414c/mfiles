@@ -30,7 +30,7 @@ namespace Controls.UserControls {
        
         public ObservableCollection<FSNodeView> ChildFSNodesViews {
             get { return _childFSNodesViews; }
-            set {
+            private set {
                 if (Equals (value, _childFSNodesViews)) {
                     return;
                 }
@@ -90,28 +90,21 @@ namespace Controls.UserControls {
             if (parentFsNode.TypeTag == TypeTag.Root) {
                 var asSystemRoot = FSOps.FSOps.TryGetConcreteFSNode<SystemRootNode> (parentFsNode);
                 if (asSystemRoot != null) {
-                    foreach (var childNode in asSystemRoot.Children) {
-                        //ChildFSNodesViews.Add (new FSNodeView (childNode));
-                        children.Add (new FSNodeView (childNode));
-                    }
+                    children.AddRange (asSystemRoot.Children.Select (childNode => new FSNodeView (childNode)));
                     ChildFSNodesViews = new ObservableCollection<FSNodeView> (children);
                 }
             } else {
                 if (parentFsNode.TypeTag == TypeTag.SubRoot) {
                     var asDrive = FSOps.FSOps.TryGetConcreteFSNode<DriveNode> (parentFsNode);
                     if (asDrive != null) {
-                        foreach (var childNode in asDrive.Children) {
-                            children.Add (new FSNodeView (childNode));
-                        }
+                        children.AddRange (asDrive.Children.Select (childNode => new FSNodeView (childNode)));
                         ChildFSNodesViews = new ObservableCollection<FSNodeView> (children);
                     }
                 } else {
                     if (parentFsNode.TypeTag == TypeTag.Internal) {
                         var asDirectory = FSOps.FSOps.TryGetConcreteFSNode<DirectoryLikeFSNode> (parentFsNode);
                         if (asDirectory != null) {
-                            foreach (var childNode in asDirectory.Children) {
-                                children.Add (new FSNodeView (childNode));
-                            }
+                            children.AddRange (asDirectory.Children.Select (childNode => new FSNodeView (childNode)));
                             ChildFSNodesViews = new ObservableCollection<FSNodeView> (children);
                         }
                     }

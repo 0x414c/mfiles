@@ -6,7 +6,7 @@ namespace Controls.UserControls {
     /// <summary>
     /// Interaction logic for FSNodeView.xaml
     /// </summary>
-    public partial class FSNodeView : ContentControl {
+    public partial class FSNodeView : UserControl {
         #region props
         public FSNodeViewModel ViewModel { get; private set; }
         #endregion

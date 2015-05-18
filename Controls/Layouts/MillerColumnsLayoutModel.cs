@@ -6,12 +6,13 @@ using Controls.UserControls;
 
 
 namespace Controls.Layouts {
+    //[Serializable]
     public class MillerColumnsLayoutViewModel : INotifyPropertyChanged {
         private ObservableCollection<ColumnView> _columnViews;
 
         public ObservableCollection<ColumnView> ColumnViews {
             get { return _columnViews; }
-            set {
+            private set {
                 if (Equals (value, _columnViews)) {
                     return;
                 }
@@ -24,6 +25,7 @@ namespace Controls.Layouts {
             ColumnViews = new ObservableCollection<ColumnView> ();
         }
 
+        //[field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

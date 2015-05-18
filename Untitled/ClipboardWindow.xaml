@@ -2,7 +2,6 @@
         x:Class="Files.ClipboardWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:fsops="clr-namespace:FSOps;assembly=FSOps"
         xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
         
         Title="Clipboard" 
@@ -19,7 +18,7 @@
                     <DataTrigger.Binding>
                         <Binding Path="Items.Count" ElementName="clipboardContentsListView" Mode="OneWay" />
                     </DataTrigger.Binding>
-                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="Visibility" Value="Hidden" />
                 </DataTrigger>
 
                 <DataTrigger Value="False">
@@ -48,7 +47,6 @@
                     Background="LightGray" >
                 
                 <Grid>
-                    
                     <Thumb x:Name="headerThumb" 
                            Opacity="0" 
                            Background="{x:Null}" 
@@ -91,7 +89,6 @@
                                            BasedOn="{rl:GetRsrc ResourceKey=smallimg}">
                                        
                                         <Style.Triggers>
-                                            
                                             <DataTrigger Value="Cut">
                                                 <DataTrigger.Binding>
                                                     <Binding Path="Item2" />

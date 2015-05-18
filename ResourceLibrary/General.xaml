@@ -8,6 +8,7 @@
         <ResourceDictionary Source="Styles/MainWindowStyle.xaml" />
         <ResourceDictionary Source="Styles/Styles.xaml" />
         <ResourceDictionary Source="Styles/ListViewFix.xaml" />
+        <ResourceDictionary Source="Styles/ListViewItemFix.xaml" />
         <ResourceDictionary Source="Styles/TabControlFix.xaml" />
         <ResourceDictionary Source="Graphics/Graphics.xaml" />
         

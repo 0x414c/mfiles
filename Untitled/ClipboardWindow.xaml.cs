@@ -7,22 +7,24 @@ namespace Files {
     /// Interaction logic for Clipboard.xaml
     /// </summary>
     public partial class ClipboardWindow : Window {
-        public ClipboardWindowModel ViewModel { get; set; }
+        public ClipboardWindowViewModel ViewModel { get; private set; }
         
+
         public ClipboardWindow () {
             InitializeComponent ();
 
-            ViewModel = new ClipboardWindowModel ();
+            ViewModel = new ClipboardWindowViewModel ();
             DataContext = ViewModel;
         }
+
 
         private void clearButton_OnClick (object sender, RoutedEventArgs e) {
             ViewModel.ClipboardStack.Clear ();
         }
 
         private void headerThumb_OnDragDelta (object sender, DragDeltaEventArgs e) {
-            Left = Left + e.HorizontalChange;
-            Top = Top + e.VerticalChange;
+            Left += e.HorizontalChange;
+            Top += e.VerticalChange;
         }
     }
 }

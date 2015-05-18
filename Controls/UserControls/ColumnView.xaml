@@ -12,9 +12,10 @@
              d:DesignHeight="300" d:DesignWidth="200">
     
     <UserControl.Resources>
-        <auxiliary:FSNodeToBitmapSourceConverter x:Key="FSNodeToBitmapSourceConverter" />
-        <auxiliary:FileLikeFSNodeToDateConverter x:Key="FileLikeFsNodeToDateConverter" />
-        <auxiliary:FileLikeFSNodeToInfoConverter x:Key="FileLikeFsNodeToInfoConverter" />
+        <auxiliary:FilePathToBitmapSourceConverter x:Key="FSNodeToBitmapSourceConverter" />
+        <auxiliary:FileLikeFSNodeToDateConverter x:Key="FileLikeFSNodeToDateConverter" />
+        <auxiliary:FileLikeFSNodeToInfoConverter x:Key="FileLikeFSNodeToInfoConverter" />
+        <auxiliary:FSNodeTypeTagToIconSourcePathConverter x:Key="FSNodeTypeTagToIconSourcePathConverter" />
     </UserControl.Resources>
     
     <DockPanel x:Name="columnViewRootDockPanel"
@@ -61,42 +62,16 @@
                    RenderTransformOrigin="0.5,0.5" 
                    SnapsToDevicePixels="True">
 
+                <Image.Source>
+                    <Binding Path="ParentFSNode"
+                             Converter="{StaticResource FSNodeTypeTagToIconSourcePathConverter}"
+                             Mode="OneWay" />
+                </Image.Source>
+                
                 <Image.Style>
                     <Style BasedOn="{rl:GetRsrc ResourceKey=smallimg}" TargetType="{x:Type Image}">
                         <Style.Triggers>
                             
-                            <DataTrigger Value="8">
-                                <DataTrigger.Binding>
-                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
-                                </DataTrigger.Binding>
-                                <Setter Property="Source" 
-                                        Value="pack://application:,,,/Controls;component/Graphics/computersystemproduct.png" />
-                            </DataTrigger>
-                            
-                            <DataTrigger Value="4">
-                                <DataTrigger.Binding>
-                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
-                                </DataTrigger.Binding>
-                                <Setter Property="Source"
-                                        Value="pack://application:,,,/Controls;component/Graphics/Hardrive_v_5169_16xLG.png" />
-                            </DataTrigger>
-                            
-                            <DataTrigger Value="2">
-                                <DataTrigger.Binding>
-                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
-                                </DataTrigger.Binding>
-                                <Setter Property="Source" 
-                                        Value="pack://application:,,,/Controls;component/Graphics/folder_Closed_32xMD.png" />
-                            </DataTrigger>
-
-                            <DataTrigger Value="1">
-                                <DataTrigger.Binding>
-                                    <Binding Path="ParentFSNode.TypeTag" IsAsync="True" />
-                                </DataTrigger.Binding>
-                                <Setter Property="Source" 
-                                        Value="pack://application:,,,/Controls;component/Graphics/Textfile_818_32x.png" />
-                            </DataTrigger>
-
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
                                     <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" 
@@ -114,32 +89,38 @@
                 </Image.Style>
             </Image>
 
-            <TextBlock x:Name="parentFSNodeTitleTextBlock"
+            <ContentControl x:Name="parentFSNodeTitleDockPanel" 
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center" MaxWidth="300">
+                
+                <TextBlock x:Name="parentFSNodeTitleTextBlock"
                        DockPanel.Dock="Left"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        Margin="4,0,6,0"
                        FontWeight="Bold"
+                       MaxWidth="{Binding Width, ElementName=parentFSNodeTitleDockPanel}"
                        IsEnabled="{Binding IsEnabled, ElementName=columnViewControl}">
 
-                <TextBlock.Text>
-                    <Binding Path="ParentFSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
-                </TextBlock.Text>
-                
-                <TextBlock.Style>
-                    <Style BasedOn="{rl:GetRsrc ResourceKey=disableable}" TargetType="{x:Type TextBlock}">
-                        <Style.Triggers>
-                            <DataTrigger Value="True">
-                                <DataTrigger.Binding>
-                                    <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" 
+                    <TextBlock.Text>
+                        <Binding Path="ParentFSNode" IsAsync="True" UpdateSourceTrigger="PropertyChanged" />
+                    </TextBlock.Text>
+
+                    <TextBlock.Style>
+                        <Style BasedOn="{rl:GetRsrc ResourceKey=disableable}" TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <DataTrigger Value="True">
+                                    <DataTrigger.Binding>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=DockPanel}" 
                                              Path="IsMouseOver" IsAsync="True" />
-                                </DataTrigger.Binding>
-                                <Setter Property="TextDecorations" Value="Underline" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                                    </DataTrigger.Binding>
+                                    <Setter Property="TextDecorations" Value="Underline" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </ContentControl>
         </DockPanel>
 
         <Border DockPanel.Dock="Top"
@@ -157,8 +138,7 @@
                                   AlternationCount="2"
                                   Style="{rl:GetRsrc ResourceKey=listview_fix}"
                                   BorderThickness="0"
-                                  SelectionChanged="childFSNodesListView_OnSelectionChanged"
-                                  PreviewMouseLeftButtonDown="childFSNodesListView_OnPreviewMouseLeftButtonDown">
+                                  SelectionChanged="childFSNodesListView_OnSelectionChanged">
 
                                 <ListView.ItemsSource>
                                     <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=local:ColumnView}"
@@ -308,13 +288,14 @@
 
                                 <DockPanel x:Name="fileInfoDockPanel"
                                            HorizontalAlignment="Center"
-                                           VerticalAlignment="Center">
+                                           VerticalAlignment="Center"
+                                           Margin="8">
 
                                     <Image x:Name="fileIconImage"
                                            DockPanel.Dock="Top"
                                            HorizontalAlignment="Center" 
-                                           Width="192" Height="192" 
-                                           Margin="0,8,0,0">
+                                           Width="192" Height="192"
+                                           Margin="0,0,0,8">
 
                                         <Image.Source>
                                             <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
@@ -325,12 +306,14 @@
                                     </Image>
 
                                     <StackPanel x:Name="fileInfoStackPanel"
-                                                Orientation="Vertical"
-                                                Margin="8">
+                                                Orientation="Vertical" 
+                                                HorizontalAlignment="Center">
 
                                         <TextBlock x:Name="fileNameTextBlock"
                                                    HorizontalAlignment="Center"
-                                                   FontSize="14">
+                                                   FontSize="14" MaxWidth="192" 
+                                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis" 
+                                                   TextAlignment="Center">
 
                                             <TextBlock.Text>
                                                 <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
@@ -347,7 +330,7 @@
                                             <TextBlock.Text>
                                                 <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
                                                          Path="DataContext.(local:ColumnViewModel.ParentFSNode)" 
-                                                         Converter="{StaticResource FileLikeFsNodeToInfoConverter}"
+                                                         Converter="{StaticResource FileLikeFSNodeToInfoConverter}"
                                                          ConverterParameter="size"
                                                          IsAsync="True" 
                                                          UpdateSourceTrigger="PropertyChanged" />
@@ -361,7 +344,7 @@
                                             <TextBlock.Text>
                                                 <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
                                                          Path="DataContext.(local:ColumnViewModel.ParentFSNode)" 
-                                                         Converter="{StaticResource FileLikeFsNodeToInfoConverter}"
+                                                         Converter="{StaticResource FileLikeFSNodeToInfoConverter}"
                                                          ConverterParameter="attr"
                                                          IsAsync="True" 
                                                          UpdateSourceTrigger="PropertyChanged" />
@@ -378,7 +361,7 @@
                                     <Run>
                                         <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
                                                  Path="DataContext.(local:ColumnViewModel.ParentFSNode)"
-                                                 Converter="{StaticResource FileLikeFsNodeToDateConverter}"
+                                                 Converter="{StaticResource FileLikeFSNodeToDateConverter}"
                                                  ConverterParameter="created"
                                                  IsAsync="True" 
                                                  UpdateSourceTrigger="PropertyChanged" />
@@ -395,7 +378,7 @@
                                     <Run>
                                         <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
                                                  Path="DataContext.(local:ColumnViewModel.ParentFSNode)"
-                                                 Converter="{StaticResource FileLikeFsNodeToDateConverter}"
+                                                 Converter="{StaticResource FileLikeFSNodeToDateConverter}"
                                                  ConverterParameter="modified"
                                                  IsAsync="True" 
                                                  UpdateSourceTrigger="PropertyChanged" />
@@ -412,7 +395,7 @@
                                     <Run>
                                         <Binding RelativeSource="{RelativeSource AncestorType=UserControl}"
                                                  Path="DataContext.(local:ColumnViewModel.ParentFSNode)"
-                                                 Converter="{StaticResource FileLikeFsNodeToDateConverter}"
+                                                 Converter="{StaticResource FileLikeFSNodeToDateConverter}"
                                                  ConverterParameter="accessed"
                                                  IsAsync="True" 
                                                  UpdateSourceTrigger="PropertyChanged" />

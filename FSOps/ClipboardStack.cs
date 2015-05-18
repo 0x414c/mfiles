@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows;
 
-                                
+
 namespace FSOps {
     public enum ActionTag { Copy, Cut }
 
@@ -33,18 +34,37 @@ namespace FSOps {
             get { return _contents.Last (); }
         }
 
-        public void AddLast (ClipboardEntry<T> item) {
-            if (!_contents.Contains (item)) {
+        public void Add (ClipboardEntry<T> item) {
+            var idx = IndexOf (item);
+            if (idx > -1) {
+                if (_contents[idx].Item2 != item.Item2) {
+                    var prev = _contents[idx];
+                    _contents[idx] = item;
+                    OnCollectionChanged (
+                        new NotifyCollectionChangedEventArgs (
+                            NotifyCollectionChangedAction.Replace, item, prev, idx
+                        )
+                    );         
+                }
+            } else {
                 _contents.Add (item);
-
-                OnCollectionChanged (new NotifyCollectionChangedEventArgs (NotifyCollectionChangedAction.Add, Last));
+                OnCollectionChanged (new NotifyCollectionChangedEventArgs (NotifyCollectionChangedAction.Add, item));
             }
         }
 
-        public void RemoveLast (ClipboardEntry<T> item) {
+        public void Remove (ClipboardEntry<T> item) {
             _contents.Remove (item);
 
             OnCollectionChanged (new NotifyCollectionChangedEventArgs (NotifyCollectionChangedAction.Remove, item));
+        }
+
+        public int IndexOf (ClipboardEntry<T> entry) {
+            for (int i = 0; i < _contents.Count; i++) {
+                if (_contents[i].Item1.FullPath == entry.Item1.FullPath) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public void Clear () {
@@ -58,13 +78,13 @@ namespace FSOps {
         }
 
         public static ClipboardStack<T> operator+ (ClipboardStack<T> lhs, ClipboardEntry<T> rhs) { 
-            lhs.AddLast (rhs);
+            lhs.Add (rhs);
 
             return lhs;
         }
 
         public static ClipboardStack<T> operator- (ClipboardStack<T> lhs, ClipboardEntry<T> rhs) {
-            lhs.RemoveLast (rhs);
+            lhs.Remove (rhs);
             
             return lhs;
         }
@@ -98,7 +118,9 @@ namespace FSOps {
 
         private void OnCollectionChanged (NotifyCollectionChangedEventArgs e) {
             if (CollectionChanged != null) {
-                CollectionChanged (this, e);
+                //using (BlockReentrancy ()) {
+                    CollectionChanged (this, e);
+                //}
             }
         }
         #endregion

@@ -56,32 +56,16 @@
         </Style.Triggers>
     </Style>
 
-
-    <Style x:Key="stripedrow" TargetType="{x:Type ListViewItem}">
-        <Style.Resources>
-            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
-
-            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
-        </Style.Resources>
-
-        <Style.Triggers>
-            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                <Setter Property="Background" Value="WhiteSmoke" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    
-
-
+  
     <Style x:Key="placeholder" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <Grid>
-                        
                         <TextBox x:Name="textSource" 
                                  Background="Transparent" 
                                  Panel.ZIndex="2">
+                            
                             <TextBox.Text>
                                 <Binding Path="Text" RelativeSource="{RelativeSource TemplatedParent}" Mode="TwoWay"
                                          UpdateSourceTrigger="PropertyChanged" />
@@ -91,6 +75,7 @@
                         <TextBox Text="{TemplateBinding Tag}"
                                  Background="{TemplateBinding Background}"
                                  Panel.ZIndex="1">
+                            
                             <TextBox.Style>
                                 <Style TargetType="{x:Type TextBox}">
                                     <Setter Property="Foreground" Value="Transparent"/>
@@ -105,7 +90,6 @@
                                 </Style>
                             </TextBox.Style>
                         </TextBox>
-                        
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

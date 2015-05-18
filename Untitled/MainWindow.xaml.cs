@@ -23,12 +23,9 @@ using Shell32Interop;
     +o	Предпочтительно использовать свойства (возможно, автоматические), а не поля для хранения данных;
     +o	Переопределение операций.
     +•	Использование конструкций LINQ для работы с данными.
-    +-•	Работа с файлами, использование стандартных диалогов для их открытия.
-    •	Работа любым типом базы данных: SQL-сервер, файл SQL, XML и т.п.       
+    +•	Работа с файлами, использование стандартных диалогов для их открытия.
 */
 
-
-// TODO: to clpbrd -> for each item in selection
 
 namespace FilesApplication {
     /// <summary>
@@ -76,7 +73,7 @@ namespace FilesApplication {
             }
         }
 
-        private void UseFSNodeFor (ExecutedRoutedEventArgs e, Func<FSNode, bool> f) {
+        private static void UseFSNodeFor (ExecutedRoutedEventArgs e, Func<FSNode, bool> f) {
             var fsNodeView = e.Parameter as FSNodeView;
             if (fsNodeView != null) {
                 var fsNode = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (fsNodeView.ViewModel.FSNode);
@@ -179,7 +176,11 @@ namespace FilesApplication {
         }
 
         private void pasteCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-            CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal);
+            if (ClipboardWindow.ViewModel.ClipboardStack.Count > 0) {
+                CheckEventArgsType (e, TypeTag.SubRoot | TypeTag.Internal);
+            } else {
+                e.CanExecute = false;
+            }                        
         }
 
 

@@ -41,7 +41,7 @@ namespace FSOps {
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
             } catch (Exception ex) {
                 // TODO: _readable_ system errors (description instead of code)
-                // but I don't wanna fiddle w/ WinAPI here :C
+                // but I don't want to fiddle w/ WinAPI here :C
 
                 return false;
             }

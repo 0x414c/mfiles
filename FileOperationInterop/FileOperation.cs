@@ -80,7 +80,7 @@ namespace FileOperationInterop {
             try {
                 _fileOperation.PerformOperations ();
             } catch (COMException ex) {
-                MessageBox.Show (((CopyEngineResult) ex.ErrorCode).ToString ());
+                //MessageBox.Show (((CopyEngineResult) ex.ErrorCode).ToString ());
             }
         }
 

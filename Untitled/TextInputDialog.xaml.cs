@@ -7,13 +7,23 @@ namespace Files {
     /// Interaction logic for TextInputDialog.xaml
     /// </summary>
     public partial class TextInputDialog : Window {
+        private string Result {
+            get { return (string) GetValue (ResultProperty); }
+            set { SetValue (ResultProperty, value); }
+        }
+
+        public static readonly DependencyProperty ResultProperty =
+            DependencyProperty.Register ("Result", typeof (string), typeof (TextInputDialog), new PropertyMetadata (""));
+        
+
         public TextInputDialog () {
             InitializeComponent ();
         }
 
-        public TextInputDialog (string originalName, string windowTitle) : this () {
+        public TextInputDialog (string defaultText, string windowTitle) : this () {
             textInputDialogWindow.Title = windowTitle;
-            inputTextBox.Text = originalName;            
+            Result = defaultText;
+            //inputTextBox.Text = defaultText;            
             inputTextBox.SelectAll ();
         }
 

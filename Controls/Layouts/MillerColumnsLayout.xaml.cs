@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -87,7 +86,7 @@ namespace Controls.Layouts {
             );
 
                                      
-        public string ExtraStatus {
+        private string ExtraStatus {
             get { return (string) GetValue (ExtraStatusProperty); }
             set { SetValue (ExtraStatusProperty, value); }
         }

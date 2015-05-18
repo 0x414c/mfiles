@@ -8,17 +8,22 @@ namespace FilesApplication {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App: Application {
-        private List<MainWindow> AppWindows { get; set; }
+    public partial class App : Application {
+        public List<MainWindow> AppWindows { get; private set; }
+
 
         public App () {
             AppWindows = new List<MainWindow> (1);
         }
 
-        private void Bootstrap (object sender, StartupEventArgs e) {
+
+        private void App_OnStartup (object sender, StartupEventArgs e) {
             AppWindows.Add (new MainWindow ());
             InitWindow (0);
         }
+
+        private void App_OnExit (object sender, ExitEventArgs e) { }
+
 
         private void InitWindow (int index) {
             ReloadContents (index);
@@ -27,8 +32,6 @@ namespace FilesApplication {
 
         // TODO: remember last visited dirs in settings
         private void ReloadContents (int index) {
-            //AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new DirectoryNode (@"C:\Windows\System32")));
-            //AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new FileNode (@"C:\interbase.log")));
             AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
             AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
         }

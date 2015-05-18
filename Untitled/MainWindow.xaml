@@ -2,7 +2,6 @@
         x:Class="FilesApplication.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:FilesApplication"
         xmlns:layouts="clr-namespace:Controls.Layouts;assembly=Controls"
         xmlns:controls="clr-namespace:Controls.UserControls;assembly=Controls"
         xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
@@ -13,7 +12,8 @@
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextHintingMode="Fixed"
         Style="{rl:GetRsrc ResourceKey=mainwnd}"
         Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@256/floppy-512.ico" 
-        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Closing="mainWindow_OnClosing">
+        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" 
+        Closing="mainWindow_OnClosing">
     
     <Window.CommandBindings>
         <CommandBinding Command="Open"
@@ -81,7 +81,6 @@
                 <Binding Path="SelectedItem.(layouts:MillerColumnsLayout.ExtraStatus)"
                          ElementName="tabs" />
             </controls:Statusbar.ExtraStatus>
-
         </controls:Statusbar>
 
         <TabControl x:Name="tabs"
@@ -111,12 +110,8 @@
                     </Setter>
 
                     <Setter Property="Height" Value="23" />
-
                 </Style>
             </TabControl.ItemContainerStyle>
-
         </TabControl>
-
     </DockPanel>
-
 </Window>

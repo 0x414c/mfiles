@@ -37,6 +37,7 @@ namespace Controls.Auxiliary {
         //    return child;
         //}
 
+        // TODO: expression is always null? 
         public static T FindVisualChild<T> (DependencyObject obj) where T : DependencyObject {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount (obj); i++) {
                 var child = VisualTreeHelper.GetChild (obj, i);

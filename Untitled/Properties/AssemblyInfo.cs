@@ -9,11 +9,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle ("Files")]
-[assembly: AssemblyDescription ("Miller columns-based file manager")]
+[assembly: AssemblyDescription ("Miller columns-based file explorer")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Unatomic prods.")]
 [assembly: AssemblyProduct ("Files")]
-[assembly: AssemblyCopyright ("Copyright © Alexey Gorishny 2015")]
+[assembly: AssemblyCopyright ("Copyright © 2015, 0x414c!")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
