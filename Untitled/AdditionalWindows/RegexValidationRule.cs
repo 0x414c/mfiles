@@ -16,9 +16,11 @@ namespace Files {
             }
         }
 
+
         public RegexValidationRule () {
             Pattern = @"^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(\..+)?$)[^\x00-\x1f\\?*:\"";|/]+$";
         }
+
 
         public override ValidationResult Validate (object value, CultureInfo cultureInfo) {
             if (value == null || value.ToString () == "" || !_regex.Match (value.ToString ()).Success) {

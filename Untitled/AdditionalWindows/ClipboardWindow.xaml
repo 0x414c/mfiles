@@ -7,9 +7,8 @@
         Title="Clipboard" 
         Height="300" Width="200" MinWidth="100" MinHeight="100"
         WindowStyle="None" Background="Transparent" AllowsTransparency="True"
-        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@256/floppy-512.ico" 
+        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@512/floppy-512.ico" 
         ShowInTaskbar="False" ShowActivated="False" ResizeMode="NoResize">
-
 
     <Window.Style>
         <Style TargetType="{x:Type Window}">

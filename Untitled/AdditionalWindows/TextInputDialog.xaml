@@ -4,12 +4,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
         xmlns:files="clr-namespace:Files"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:props="clr-namespace:Files.Properties"
         
         Height="80" Width="300" MaxHeight="80" MaxWidth="600" MinHeight="80" MinWidth="200"
         Title="TextInputDialog"
-        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@256/floppy-512.ico" 
+        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@512/floppy-512.ico" 
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterOwner"
         FocusManager.FocusedElement="{Binding ElementName=inputTextBox}"
         Style="{rl:GetRsrc ResourceKey=mainwnd}">
@@ -24,7 +22,6 @@
     </Window.InputBindings>
 
     <DockPanel Margin="6,0,6,0">
-        
         <Button x:Name="doneButton"
                 DockPanel.Dock="Right"
                 Width="56" Height="25"
@@ -54,7 +51,8 @@
         	Height="25"
             FontSize="12"
             Margin="0,0,4,0" Padding="0,2,0,0"
-        	HorizontalAlignment="Stretch" VerticalAlignment="Center">
+        	HorizontalAlignment="Stretch" VerticalAlignment="Center"
+            MaxLength="260">
            
             <TextBox.Text>
                 <Binding Path="Result" ElementName="textInputDialogWindow"

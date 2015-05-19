@@ -47,17 +47,18 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>TestKey_1.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -100,7 +101,7 @@
     <Resource Include="Graphics\%40256\folder_open.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Graphics\%40256\floppy-512.ico" />
+    <Resource Include="Graphics\%40512\floppy-512.ico" />
     <Resource Include="Graphics\%4016\Cut_6523.png" />
     <Resource Include="Graphics\%4016\clipboard_16xLG.png" />
     <Resource Include="Graphics\%4016\Copy_6524.png" />
@@ -115,16 +116,9 @@
     <Resource Include="Graphics\%40256\document.png" />
     <Resource Include="Graphics\%40256\document_flat.png" />
     <Resource Include="Graphics\%40256\document_text.png" />
-    <Resource Include="Graphics\%4064\computer.png" />
-    <Resource Include="Graphics\%4064\document.png" />
-    <Resource Include="Graphics\%4064\folder-error.png" />
-    <Resource Include="Graphics\%4064\folder-new.png" />
-    <Resource Include="Graphics\%4064\folder-ok.png" />
-    <Resource Include="Graphics\%4064\folder.png" />
-    <Resource Include="Graphics\%4064\folder_open-error.png" />
-    <Resource Include="Graphics\%4064\folder_open-new.png" />
-    <Resource Include="Graphics\%4064\folder_open.png" />
-    <Resource Include="Graphics\%4064\hard_disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestKey_1.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

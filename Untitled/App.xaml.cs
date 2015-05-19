@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using Controls.Layouts;
+using Files;
 using FSOps;
 
 
@@ -9,31 +10,49 @@ namespace FilesApplication {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
-        public List<MainWindow> AppWindows { get; private set; }
+        private DependencyObject[] _appWindows;
 
+        public DependencyObject[] AppWindows {
+            get { return _appWindows; }
+            private set { _appWindows = value; }
+        }
+
+        public PropertiesManager PropertiesManager { get; private set; }
+        
 
         public App () {
-            AppWindows = new List<MainWindow> (1);
+            AppWindows = new DependencyObject[1];
+            PropertiesManager = new PropertiesManager ();
         }
 
 
         private void App_OnStartup (object sender, StartupEventArgs e) {
-            AppWindows.Add (new MainWindow ());
+            AppWindows[0] = new MainWindow ();
             InitWindow (0);
+            PropertiesManager.Restore (ref _appWindows, 0, "layoutSettings", new List<string>(4) { "Top", "Left", "Width", "Height" });
         }
 
-        private void App_OnExit (object sender, ExitEventArgs e) { }
+        private void App_OnExit (object sender, ExitEventArgs e) {
+            PropertiesManager.Save (ref _appWindows, 0, "layoutSettings", new List<string>(4) { "Top", "Left", "Width", "Height" });
+            PropertiesManager.Dispose ();
+        }
 
 
         private void InitWindow (int index) {
             ReloadContents (index);
-            AppWindows[index].Show ();
+            var window = AppWindows[index] as Window;
+            if (window != null) {
+                window.Show ();
+            }
         }
 
         // TODO: remember last visited dirs in settings
         private void ReloadContents (int index) {
-            AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
-            AppWindows[index].ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
+            var mainWindow = AppWindows[index] as MainWindow;
+            if (mainWindow != null) {
+                mainWindow.ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
+                mainWindow.ViewModel.Layouts.Add (new MillerColumnsLayout (new SystemRootNode ()));
+            }
         }
     }
 }

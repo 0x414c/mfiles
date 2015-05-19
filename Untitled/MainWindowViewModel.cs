@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows.Markup;
-using System.Xml.Serialization;
 using Controls.Annotations;
 using Controls.Layouts;
 
@@ -25,11 +22,12 @@ namespace FilesApplication {
             }
         }
 
+
         public MainWindowModel () {
             Layouts = new ObservableCollection<MillerColumnsLayout> ();
         }
 
-        [field: NonSerialized]
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

@@ -13,19 +13,23 @@ namespace Files {
         }
 
         public static readonly DependencyProperty ResultProperty =
-            DependencyProperty.Register ("Result", typeof (string), typeof (TextInputDialog), new PropertyMetadata (""));
+            DependencyProperty.Register (
+                "Result", typeof (string), 
+                typeof (TextInputDialog), new PropertyMetadata ("")
+            );
         
 
         public TextInputDialog () {
             InitializeComponent ();
         }
 
+
         public TextInputDialog (string defaultText, string windowTitle) : this () {
             textInputDialogWindow.Title = windowTitle;
             Result = defaultText;
-            //inputTextBox.Text = defaultText;            
             inputTextBox.SelectAll ();
         }
+
 
         private void closeCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
             DialogResult = false;

@@ -89,7 +89,7 @@
                 </Image.Style>
             </Image>
 
-            <ContentControl x:Name="parentFSNodeTitleDockPanel" 
+            <ContentControl x:Name="parentFSNodeTitleContentControl" 
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center" MaxWidth="300">
                 
@@ -99,7 +99,7 @@
                        HorizontalAlignment="Center"
                        Margin="4,0,6,0"
                        FontWeight="Bold"
-                       MaxWidth="{Binding Width, ElementName=parentFSNodeTitleDockPanel}"
+                       MaxWidth="{Binding MaxWidth, ElementName=parentFSNodeTitleContentControl}"
                        IsEnabled="{Binding IsEnabled, ElementName=columnViewControl}">
 
                     <TextBlock.Text>

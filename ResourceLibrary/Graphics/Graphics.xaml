@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <BitmapImage x:Key="app_icon" UriSource="@256/floppy-512.ico" />
+    <BitmapImage x:Key="app_icon" UriSource="@512/floppy-512.ico" />
     <BitmapImage x:Key="document_icon" UriSource="@256/document.png" />
     
     <BitmapImage x:Key="paperclip_icon" UriSource="@32/paperclip_5159_32xLG.png" />

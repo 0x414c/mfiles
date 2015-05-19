@@ -19,9 +19,11 @@ namespace Files {
             }
         }
 
+
         public ClipboardWindowViewModel () {
             ClipboardStack = new ClipboardStack<FileLikeFSNode> ();
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

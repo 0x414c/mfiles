@@ -8,12 +8,13 @@
         xmlns:fsops="clr-namespace:FSOps;assembly=FSOps"
 
         Title="Files"
-        Height="480" Width="640" MinWidth="600" MinHeight="400"
+        MinWidth="600" MinHeight="400"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextHintingMode="Fixed"
         Style="{rl:GetRsrc ResourceKey=mainwnd}"
-        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@256/floppy-512.ico" 
-        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" 
-        Closing="mainWindow_OnClosing">
+        Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@512/floppy-512.ico" 
+        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
+        Closing="mainWindow_OnClosing" Loaded="mainWindow_OnLoaded" Unloaded="mainWindow_OnUnloaded">
+    <!--Height="480" Width="640"-->
     
     <Window.CommandBindings>
         <CommandBinding Command="Open"
@@ -34,7 +35,6 @@
         <CommandBinding Command="Properties"
                         Executed="propertiesCommandBinding_OnExecuted"
                         CanExecute="propertiesCommandBinding_OnCanExecute" />
-
         <CommandBinding Command="Cut"
                         Executed="cutCommandBinding_OnExecuted" 
                         CanExecute="cutCommandBinding_OnCanExecute" />
@@ -44,19 +44,6 @@
         <CommandBinding Command="Paste" 
                         Executed="pasteCommandBinding_OnExecuted"
                         CanExecute="pasteCommandBinding_OnCanExecute" />
-        
-        <!--<CommandBinding Command="BrowseBack"
-                        Executed="backCommandBinding_OnExecuted"
-                        CanExecute="backCommandBinding_OnCanExecute" />
-        <CommandBinding Command="BrowseForward"
-                        Executed="forwardCommandBinding_OnExecuted"
-                        CanExecute="forwardCommandBinding_OnCanExecute" />
-        <CommandBinding Command="BrowseHome"
-                        Executed="homeCommandBinding_OnExecuted"
-                        CanExecute="homeCommandBinding_OnCanExecute" />
-        <CommandBinding Command="fsops:Commands.BrowseUpCommand"
-                        Executed="upCommandBinding_OnExecuted"
-                        CanExecute="upCommandBinding_OnCanExecute"/>-->
     </Window.CommandBindings>
     
     

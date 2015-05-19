@@ -59,14 +59,5 @@ namespace Files.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (^(PRN|AUX|NUL|CON|COM[1-9]|LPT[1-9]|(\\.+)$)(\\..*)?$)|(([\\x00-\\x1f\\\\?*:\&quot;;‌​|/&lt;&gt;])+)|(([\\. ]+).
-        /// </summary>
-        public static string ntfsfilename {
-            get {
-                return ResourceManager.GetString("ntfsfilename", resourceCulture);
-            }
-        }
     }
 }

@@ -45,8 +45,6 @@ namespace FilesApplication {
 
             ViewModel = new MainWindowModel ();
             DataContext = ViewModel;
-
-            ClipboardWindow = new ClipboardWindow ();
         }
 
         // TODO: for future use
@@ -62,6 +60,13 @@ namespace FilesApplication {
         private void mainWindow_OnClosing (object sender, System.ComponentModel.CancelEventArgs e) {
             ClipboardWindow.Close ();
         }
+
+        private void mainWindow_OnLoaded (object sender, RoutedEventArgs e) {
+            ClipboardWindow = new ClipboardWindow ();
+        }
+
+        private void mainWindow_OnUnloaded (object sender, RoutedEventArgs e) { }
+
 
         private static void ShellExecuteExOnFSNode (ExecutedRoutedEventArgs e, string lpVerb) {
             var fsNodeView = e.Parameter as FSNodeView;
@@ -278,42 +283,6 @@ namespace FilesApplication {
         private void renameCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
             CheckEventArgsType (e, TypeTag.Internal | TypeTag.Leaf);
         }
-
-
-        //private void backCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-        //private void backCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-
-        //private void forwardCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-        //private void forwardCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-
-        //private void homeCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-        //private void homeCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-
-        //private void upCommandBinding_OnExecuted (object sender, ExecutedRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
-
-        //private void upCommandBinding_OnCanExecute (object sender, CanExecuteRoutedEventArgs e) {
-        //    throw new System.NotImplementedException ();
-        //}
         #endregion
     }
 }
