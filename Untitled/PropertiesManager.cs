@@ -20,68 +20,70 @@ namespace Files {
         private IsolatedStorageFile _isolatedStorageFile;
         private XmlDocument _xmlDocument;
         private XmlTextWriter _xmlTextWriter;
+        private IsolatedStorageFileStream _settingsFileStream;
 
 
         public PropertiesManager () {
             _fullPath = Path.Combine (settingsFolderPath, settingsFilePath);
             try {
                 _isolatedStorageFile = IsolatedStorageFile.GetUserStoreForDomain ();
-                InitStorage ();
+                bool isEmpty = InitStorageContents ();
+                _settingsFileStream = _isolatedStorageFile.OpenFile (_fullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                _xmlTextWriter = new XmlTextWriter (_settingsFileStream, Encoding.UTF8) {
+                    Formatting = Formatting.Indented,
+                    Indentation = 2
+                };
+                if (isEmpty) {
+                    ResetSettingsFileContents ();
+                }
+                _xmlDocument = new XmlDocument ();
             } catch (Exception ex) {
                 MessageBox.Show (ex.Message);
             }
-            _xmlDocument = new XmlDocument ();
         }
 
         public void Dispose () {
             _xmlTextWriter.Close ();
+            _settingsFileStream.Close ();
             _isolatedStorageFile.Close ();
         }
 
-        public void InitStorage () {
+        public bool InitStorageContents () {
+            bool isEmpty = false;
             if (!_isolatedStorageFile.DirectoryExists (settingsFolderPath)) {
                 _isolatedStorageFile.CreateDirectory (settingsFolderPath);
+                isEmpty = true;
             }
             if (!_isolatedStorageFile.FileExists (_fullPath)) {
                 //_isolatedStorageFile.CreateFile (_fullPath);
-                ResetSettingsFile ();
+                isEmpty = true;
             }
+            
+            return isEmpty;
         }
 
-        public void ResetSettingsFile () {
-            using (_xmlTextWriter = new XmlTextWriter (
-                _isolatedStorageFile.OpenFile (_fullPath, FileMode.OpenOrCreate, FileAccess.Write),
-                Encoding.UTF8
-                )
-            ) 
-            {
-                _xmlTextWriter.WriteStartDocument ();
-                _xmlTextWriter.WriteStartElement ("head");
-                _xmlTextWriter.WriteFullEndElement ();
-                _xmlTextWriter.WriteEndDocument ();
-                _xmlTextWriter.Close ();
-            }
+        public void ResetSettingsFileContents () {
+            _xmlTextWriter.WriteStartDocument ();
+            _xmlTextWriter.WriteStartElement ("head");
+            _xmlTextWriter.WriteFullEndElement ();
+            _xmlTextWriter.WriteEndDocument ();
+            _xmlTextWriter.Flush ();
+            _settingsFileStream.Position = 0;
         }
 
         public void Restore (ref DependencyObject[] dependencyObjects, int objIdx, string cfgSection, IEnumerable<string> dpPropsNames) {
             try {
-                using (var file = _isolatedStorageFile.OpenFile (_fullPath, FileMode.Open, FileAccess.Read)) {
-                    _xmlDocument.Load (file);
+                _xmlDocument.Load (_settingsFileStream);
 
-                    if (_xmlDocument.DocumentElement != null) {
+                if (_xmlDocument.DocumentElement != null) {
+                    if (_xmlDocument.HasChildNodes) {
                         foreach (XmlNode cfgSectionNode in _xmlDocument.DocumentElement) {
                             if (cfgSectionNode.Name == cfgSection) {
                                 foreach (XmlNode cfgSectionEntry in cfgSectionNode) {
                                     foreach (string propertyName in dpPropsNames) {
                                         if (cfgSectionEntry.Name == propertyName) {
                                             var value = cfgSectionEntry.FirstChild.Value;
-                                            var property = dependencyObjects[objIdx].GetType ().GetProperty (propertyName);
-                                            var valueType = property.GetMethod.ReturnType;
-                                            var valueAsValueType = Convert.ChangeType (value, valueType);
-                                            property.SetValue (dependencyObjects[objIdx], valueAsValueType);
-
-                                            //var property = ReflectionUtils.GetDependencyPropertyByName (dependencyObject, propertyName);
-                                            //dependencyObject.SetValue (property, value);
+                                            SetValue (ref dependencyObjects, objIdx, propertyName, value);
                                         }
                                     }
                                 }
@@ -89,35 +91,73 @@ namespace Files {
                         }
                     }
                 }
-            } catch (Exception ex) { }
+                _settingsFileStream.Position = 0;
+            } catch (Exception ex) {
+                MessageBox.Show (ex.Message);
+            }
+        }
+
+        public static T ParseEnum<T> (string value) {
+            return (T) Enum.Parse (typeof (T), value, false);
+        }
+
+        private static void SetValue (ref DependencyObject[] dependencyObjects, int objectIdx, string propertyName, string propertyValue) {
+            var propertyInfo = dependencyObjects[objectIdx].GetType ().GetProperty (propertyName);
+            var returnType = propertyInfo.GetMethod.ReturnType;
+            object propertyValueAsReturnType;
+            if (returnType.BaseType == typeof (Enum)) {
+                propertyValueAsReturnType = Enum.Parse (returnType, propertyValue, false);
+            } else {
+                propertyValueAsReturnType = Convert.ChangeType (propertyValue, returnType);
+            } 
+            propertyInfo.SetValue (dependencyObjects[objectIdx], propertyValueAsReturnType);
         }
 
         public void Save (ref DependencyObject[] dependencyObjects, int objIdx, string cfgSectionName, IEnumerable<string> dpPropsNames) {
             try {
                 if (_xmlDocument.DocumentElement != null) {
-                    foreach (XmlNode section in _xmlDocument.DocumentElement) {
-                        if (section.Name == cfgSectionName) {
-                            section.RemoveAll ();
+                    bool sectionExists = false;
+                    //if (_xmlDocument.DocumentElement.HasChildNodes) {
+                        foreach (XmlNode sectionNode in _xmlDocument.DocumentElement) {
+                            if (sectionNode.Name == cfgSectionName) {
+                                sectionExists = true;
+                                sectionNode.RemoveAll ();
+                                foreach (string propertyName in dpPropsNames) {
+                                    var value = GetValue (ref dependencyObjects, objIdx, propertyName);
+
+                                    XmlNode newPropertyNode = _xmlDocument.CreateElement (propertyName);
+                                    newPropertyNode.InnerText = value.ToString ();
+                                    sectionNode.AppendChild (newPropertyNode);
+                                }
+                            }
+                        }
+                    //} else {
+                        if (!sectionExists) {
+                            XmlNode sectionNode = _xmlDocument.CreateElement (cfgSectionName);
                             foreach (string propertyName in dpPropsNames) {
-                                var property = dependencyObjects[objIdx].GetType ().GetProperty (propertyName);
-                                var value = property.GetValue (dependencyObjects[objIdx]);
+                                var value = GetValue (ref dependencyObjects, objIdx, propertyName);
 
                                 XmlNode newPropertyNode = _xmlDocument.CreateElement (propertyName);
                                 newPropertyNode.InnerText = value.ToString ();
-                                section.AppendChild (newPropertyNode);
+                                sectionNode.AppendChild (newPropertyNode);
                             }
+                            _xmlDocument.DocumentElement.AppendChild (sectionNode);
                         }
-                    }
-                    using (_xmlTextWriter = new XmlTextWriter (
-                        _isolatedStorageFile.OpenFile (_fullPath, FileMode.Create, FileAccess.Write),
-                        Encoding.UTF8
-                        )
-                    ) 
-                    {
-                        _xmlDocument.Save (_xmlTextWriter);
-                    }
+                    //}
+
+                    _settingsFileStream.SetLength (0);
+                    _settingsFileStream.Position = 0;
+                    _xmlDocument.Save (_xmlTextWriter);
                 }
-            } catch (Exception ex) { }
+            } catch (Exception ex) {
+                MessageBox.Show (ex.Message);
+            }
+        }
+
+        private static object GetValue (ref DependencyObject[] dependencyObjects, int objectIdx, string propertyName) {
+            var propertyInfo = dependencyObjects[objectIdx].GetType ().GetProperty (propertyName);
+            var value = propertyInfo.GetValue (dependencyObjects[objectIdx]);
+            return value;
         }
     }
 }

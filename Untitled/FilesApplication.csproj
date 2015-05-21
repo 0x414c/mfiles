@@ -60,7 +60,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>TestKey_1.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>FilesApplication_1_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -100,10 +100,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>F5BA567A4EC221789B650BEE52559531A2291FE0</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>AB6F39B1EAE6C7484D732FAE5362B046DB7A0443</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>FilesApplication_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>FilesApplication_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -172,6 +172,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="FilesApplication_1_TemporaryKey.pfx" />
     <None Include="FilesApplication_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
@@ -180,7 +181,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="TestKey_1.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

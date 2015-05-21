@@ -28,12 +28,18 @@ namespace FilesApplication {
 
         private void App_OnStartup (object sender, StartupEventArgs e) {
             AppWindows[0] = new MainWindow ();
+            PropertiesManager.Restore (
+                ref _appWindows, 0, "windowLayoutSettings", 
+                new List<string>(4) { "Top", "Left", "Width", "Height", "WindowState" }
+            );
             InitWindow (0);
-            PropertiesManager.Restore (ref _appWindows, 0, "layoutSettings", new List<string>(4) { "Top", "Left", "Width", "Height" });
         }
 
         private void App_OnExit (object sender, ExitEventArgs e) {
-            PropertiesManager.Save (ref _appWindows, 0, "layoutSettings", new List<string>(4) { "Top", "Left", "Width", "Height" });
+            PropertiesManager.Save (
+                ref _appWindows, 0, "windowLayoutSettings", 
+                new List<string> (4) { "Top", "Left", "Width", "Height", "WindowState" }
+            );
             PropertiesManager.Dispose ();
         }
 

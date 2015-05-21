@@ -4,7 +4,9 @@ using System.Windows;
 
 
 namespace Files {
-    public class ReflectionUtils {
+    public static class ReflectionUtils {
+
+        // the dpName parameter is the actual DependencyProperty name (ContentProperty) and not the property name (Content)
         public static DependencyProperty GetDependencyPropertyByName (DependencyObject dependencyObject, string dpName) {
             return GetDependencyPropertyByName (dependencyObject.GetType (), dpName);
         }
