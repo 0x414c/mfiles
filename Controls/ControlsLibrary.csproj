@@ -132,7 +132,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="TestKey_1.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="UserControls\ColumnView.xaml">

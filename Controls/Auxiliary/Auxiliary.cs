@@ -21,40 +21,42 @@ namespace Controls.Auxiliary {
             return null;
         }
 
-        //public static T GetVisualChild<T> (DependencyObject parent) where T : DependencyObject {
-        //    T child = default (T);
-        //    int numVisuals = VisualTreeHelper.GetChildrenCount (parent);
-        //    for (int i = 0; i < numVisuals; i++) {
-        //        DependencyObject v = VisualTreeHelper.GetChild (parent, i);
-        //        child = v as T;
-        //        if (child == null) {
-        //            child = GetVisualChild<T> (v);
-        //        }            
-        //        if (child != null) {
-        //            break;
-        //        }
-        //    }
-        //    return child;
-        //}
-
-        // TODO: expression is always null? 
-        public static T FindVisualChild<T> (DependencyObject obj) where T : DependencyObject {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount (obj); i++) {
-                var child = VisualTreeHelper.GetChild (obj, i);
-                if (child != null) {
-                    var childAsT = child as T;
-                    if (childAsT != null) {
-                        return childAsT;
-                    }
+        public static T FindVisualChild<T> (DependencyObject parent) where T : DependencyObject {
+            var child = default (T);
+            var childrenCount = VisualTreeHelper.GetChildrenCount (parent);
+            
+            for (int idx = 0; idx < childrenCount; idx++) {
+                var childAtIdx = VisualTreeHelper.GetChild (parent, idx);
+                child = childAtIdx as T;
+                if (child == null) {
+                    child = FindVisualChild<T> (childAtIdx);
                 } else {
-                    var childOfChild = FindVisualChild<T> (child);
-                    if (childOfChild != null) {
-                        return childOfChild;
-                    }
+                    break;
                 }
             }
-            return null;
+
+            return child;
         }
+
+        // TODO: expression is always null? 
+        //public static T FindVisualChild<T> (DependencyObject obj) where T : DependencyObject {
+        //    var childrenCount = VisualTreeHelper.GetChildrenCount (obj);
+        //    for (int i = 0; i < childrenCount; i++) {
+        //        var child = VisualTreeHelper.GetChild (obj, i);
+        //        if (child != null) {
+        //            var childAsT = child as T;
+        //            if (childAsT != null) {
+        //                return childAsT;
+        //            }
+        //        } else {
+        //            var childOfChild = FindVisualChild<T> (child);
+        //            if (childOfChild != null) {
+        //                return childOfChild;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
 
         public static int Remove<T> (this ObservableCollection<T> collection, Func<T, bool> condition) {
             var itemsToRemove = collection.Where (condition).ToList ();

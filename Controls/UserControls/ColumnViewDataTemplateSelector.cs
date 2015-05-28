@@ -20,10 +20,10 @@ namespace Controls.UserControls {
                 var itemAsFSNode = item as FSNode;
 
                 if (itemAsFSNode != null) {
-                    if (itemAsFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
-                        return element.FindResource ("directory") as DataTemplate;
-                    } else {
+                    if (itemAsFSNode.TypeTag == TypeTag.Leaf) {
                         return element.FindResource ("file") as DataTemplate;
+                    } else {
+                        return element.FindResource ("directory") as DataTemplate;
                     }
                 } else {
                     return null;

@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using Controls.Auxiliary;
 using Controls.Layouts;
@@ -27,12 +26,12 @@ namespace Controls.UserControls {
         public int SelectionSize {
             get {
                 if (ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
-                    var childFSNodesListView = Utils.FindVisualChild<ListView> (columnViewContentPresenter);
+                    var childFSNodesListView = Utils.FindVisualChild<ListView> (columnViewContentControl);
                     
                     if (childFSNodesListView != null) {
                         return childFSNodesListView.SelectedItems.Count;
                     } else {
-                        return 0;
+                        return -1;
                     }
                 } else {
                     return 1;
@@ -50,9 +49,9 @@ namespace Controls.UserControls {
             DataContext = ViewModel;
         }
 
-        public ColumnView (FSNode parentFsNode, int viewId) : this () {
+        public ColumnView (FSNode parentFSNode, int viewId) : this () {
             ViewId = viewId;
-            ViewModel.ParentFSNode = parentFsNode;
+            ViewModel.ParentFSNode = parentFSNode;
         }
         #endregion
 
