@@ -1,9 +1,10 @@
 // Stephen Toub
 
+
 using System.Runtime.InteropServices;
 
 
-namespace FileOperationInterop {
+namespace FileOperationInterop.Interop {
     [ComImport]
     [Guid ("04b0f1a7-9490-44bc-96e1-4296a31252e2")]
     [InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]

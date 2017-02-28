@@ -1,5 +1,6 @@
 // Stephen Toub
 
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -7,6 +8,9 @@ using System.Runtime.InteropServices;
 namespace FileOperationInterop {
     class ComReleaser<T> : IDisposable where T : class {
         private T _obj;
+
+        public T Item => _obj;
+
 
         public ComReleaser (T obj) {
             if (obj == null) {
@@ -18,9 +22,6 @@ namespace FileOperationInterop {
             _obj = obj;
         }
 
-        public T Item {
-            get { return _obj; }
-        }
 
         public void Dispose () {
             if (_obj != null) {

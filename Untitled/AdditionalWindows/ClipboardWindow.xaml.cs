@@ -6,9 +6,9 @@ namespace Files {
     /// <summary>
     /// Interaction logic for Clipboard.xaml
     /// </summary>
-    public partial class ClipboardWindow : Window {
-        public ClipboardWindowViewModel ViewModel { get; private set; }
-        
+    public partial class ClipboardWindow {
+        public ClipboardWindowViewModel ViewModel { get; }
+
 
         public ClipboardWindow () {
             InitializeComponent ();

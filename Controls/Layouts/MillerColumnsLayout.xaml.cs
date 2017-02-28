@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using Controls.Auxiliary;
 using Controls.UserControls;
 using FSOps;
@@ -11,27 +10,23 @@ namespace Controls.Layouts {
     /// <summary>
     /// Interaction logic for MillerColumnsLayout.xaml
     /// </summary>
-    public partial class MillerColumnsLayout : UserControl {
+    public partial class MillerColumnsLayout {
         #region props
         /**
-         \property  public MillerColumnsLayoutViewModel ViewModel        
-         \brief Gets or sets the model that acts as backing store for children Views.        
+         \property  public MillerColumnsLayoutViewModel ViewMode
+         \brief Gets or sets the model that acts as backing store for child Views.
          \return The model.
          */
         public MillerColumnsLayoutViewModel ViewModel { get; set; }
 
         /**
-         \property  public int ViewsCounter        
-         \brief Gets the views counter.            
+         \property  public int ViewsCounter
+         \brief Gets the views counter.
          \return The views counter.
          */
-        public int ViewsCounter {
-            get { return ViewModel.ColumnViews.Count; }
-        }
+        public int ViewsCounter => ViewModel.ColumnViews.Count;
 
-        public ColumnView LastColumnView {
-            get { return ViewModel.ColumnViews.Last (); }
-        }
+        public ColumnView LastColumnView => ViewModel.ColumnViews.Last ();
 
         public ColumnView LastButOneColumnView {
             get {
@@ -43,9 +38,7 @@ namespace Controls.Layouts {
             }
         }
 
-        public string CurrentTitle {
-            get { return LastColumnView.Title; }
-        }
+        public string CurrentTitle => LastColumnView.Title;
         #endregion
 
 
@@ -61,7 +54,7 @@ namespace Controls.Layouts {
                 typeof (MillerColumnsLayout), new PropertyMetadata ("<untitled>")
             );
 
-        
+
         private string CurrentItemInfo {
             get { return (string) GetValue (CurrentItemInfoProperty); }
             set { SetValue (CurrentItemInfoProperty, value); }
@@ -82,10 +75,10 @@ namespace Controls.Layouts {
         public static readonly DependencyProperty StatusProperty =
             DependencyProperty.Register (
                 "Status", typeof (string),
-                typeof (MillerColumnsLayout),new PropertyMetadata ("<status is unknown>")
+                typeof (MillerColumnsLayout), new PropertyMetadata ("<status is n/a>")
             );
 
-                                     
+
         private string ExtraStatus {
             get { return (string) GetValue (ExtraStatusProperty); }
             set { SetValue (ExtraStatusProperty, value); }
@@ -94,7 +87,7 @@ namespace Controls.Layouts {
         public static readonly DependencyProperty ExtraStatusProperty =
             DependencyProperty.Register (
                 "ExtraStatus", typeof (string),
-                typeof (MillerColumnsLayout), new PropertyMetadata ("<extra status is unknown>")
+                typeof (MillerColumnsLayout), new PropertyMetadata ("<extra status is n/a>")
             );
         #endregion
 
@@ -112,7 +105,7 @@ namespace Controls.Layouts {
         }
         #endregion
 
-                          
+
         #region navigation
         private void AddColumnAfter (FSNode fsNodeToAdd, int columnViewId) {
             if (columnViewId == ViewsCounter) {
@@ -146,50 +139,35 @@ namespace Controls.Layouts {
         private void RefreshDepProps () {
             Title = CurrentTitle;
 
-            ExtraStatus = string.Format ("{0} selected", LastButOneColumnView.SelectionSize);
+            ExtraStatus = $"{LastButOneColumnView.SelectionSize} selected";
 
             if (LastColumnView.ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
-                Status = string.Format (
-                    "{0}: {1} items total",
-                    CurrentTitle, LastColumnView.ItemsCount
-                );
+                Status = $"{CurrentTitle}: {LastColumnView.ItemsCount} items total";
             } else {
                 if (LastColumnView.ViewModel.ParentFSNode.TypeTag == TypeTag.Leaf) {
-                    var asFileLikeFSNode = LastColumnView.ViewModel.ParentFSNode as FileLikeFSNode;
+                    var asFileLikeFSNode = LastColumnView.ViewModel.ParentFSNode as FileFSNode;
                     if (asFileLikeFSNode != null) {
-                        Status = string.Format (
-                            "{0}: {1}",
-                            CurrentTitle,
-                            FSOps.FSOps.StrFormatByteSize (new FileInfo (asFileLikeFSNode.FullPath).Length)
-                        );
+                        Status = $"{CurrentTitle}: {FSOps.FSOps.StrFormatByteSize (new FileInfo (asFileLikeFSNode.FullPath).Length)}";
                     }
                 }
             }
-            
+
             if (LastColumnView.ViewModel.ParentFSNode.Is (TypeTag.SubRoot | TypeTag.Internal)) {
-                var asDirectoryLike = FSOps.FSOps.TryGetConcreteFSNode<DirectoryLikeFSNode> (LastColumnView.ViewModel.ParentFSNode);
-                if (asDirectoryLike != null) {
-                    CurrentItemInfo = string.Format (
-                        "{0}: {1} of {2} available", asDirectoryLike.RootDrive,
-                        FSOps.FSOps.StrFormatByteSize (asDirectoryLike.RootDrive.DriveInfo.AvailableFreeSpace),
-                        FSOps.FSOps.StrFormatByteSize (asDirectoryLike.RootDrive.DriveInfo.TotalSize)
-                    );
+                var asDirectoryLikeFSNode = FSOps.FSOps.TryGetConcreteFSNode<DirectoryFSNode> (LastColumnView.ViewModel.ParentFSNode);
+                if (asDirectoryLikeFSNode != null) {
+                    CurrentItemInfo = $"{asDirectoryLikeFSNode.RootDrive}: {FSOps.FSOps.StrFormatByteSize (asDirectoryLikeFSNode.RootDrive.DriveInfo.AvailableFreeSpace)} of {FSOps.FSOps.StrFormatByteSize (asDirectoryLikeFSNode.RootDrive.DriveInfo.TotalSize)} available";
                 }
             } else {
                 if (LastColumnView.ViewModel.ParentFSNode.TypeTag == TypeTag.Leaf) {
-                    var asFileLike = FSOps.FSOps.TryGetConcreteFSNode<FileLikeFSNode> (LastColumnView.ViewModel.ParentFSNode);
+                    var asFileLike = FSOps.FSOps.TryGetConcreteFSNode<FileFSNode> (LastColumnView.ViewModel.ParentFSNode);
                     if (asFileLike != null) {
-                        CurrentItemInfo = string.Format (
-                            "{0}: {1} of {2} available", asFileLike.RootDrive,
-                            FSOps.FSOps.StrFormatByteSize (asFileLike.RootDrive.DriveInfo.AvailableFreeSpace),
-                            FSOps.FSOps.StrFormatByteSize (asFileLike.RootDrive.DriveInfo.TotalSize)
-                        );
-                    }   
+                        CurrentItemInfo = $"{asFileLike.RootDrive}: {FSOps.FSOps.StrFormatByteSize (asFileLike.RootDrive.DriveInfo.AvailableFreeSpace)} of {FSOps.FSOps.StrFormatByteSize (asFileLike.RootDrive.DriveInfo.TotalSize)} available";
+                    }
                 } else {
                     if (LastColumnView.ViewModel.ParentFSNode.TypeTag == TypeTag.Root) {
                         CurrentItemInfo = CurrentTitle;
                     }
-                }                                  
+                }
             }
         }
 
@@ -201,7 +179,7 @@ namespace Controls.Layouts {
                         DeleteColumnsAfter (originColumnViewId);
 
                         MessageBox.Show (
-                            "File \"" + asFile + "\" isn't accessible!",
+                            $"File \"{asFile}\" isn\'t accessible.",
                             "File access error", MessageBoxButton.OK, MessageBoxImage.Error
                         );
 
@@ -216,7 +194,7 @@ namespace Controls.Layouts {
                             DeleteColumnsAfter (originColumnViewId);
 
                             MessageBox.Show (
-                                "Drive \"" + asDrive + "\" isn't ready or isn't accessible now.",
+                                $"Drive \"{asDrive}\" isn\'t ready or isn\'t accessible now.",
                                 "Drive access error", MessageBoxButton.OK, MessageBoxImage.Error
                             );
 
@@ -231,7 +209,7 @@ namespace Controls.Layouts {
                                 DeleteColumnsAfter (originColumnViewId);
 
                                 MessageBox.Show (
-                                    "Directory \"" + asDirectory + "\" isn't accessible.",
+                                    $"Directory \"{asDirectory}\" isn\'t accessible.",
                                     "Directory access error", MessageBoxButton.OK, MessageBoxImage.Error
                                 );
 

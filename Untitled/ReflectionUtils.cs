@@ -17,7 +17,7 @@ namespace Files {
             var fieldInfo = dependencyObjectType.GetField (
                 dpName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy
             );
-            
+
             if (fieldInfo != null) {
                 dp = fieldInfo.GetValue (null) as DependencyProperty;
             }

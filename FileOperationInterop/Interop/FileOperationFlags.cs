@@ -1,9 +1,10 @@
 // ReSharper disable InconsistentNaming
 
+
 using System;
 
 
-namespace FileOperationInterop {
+namespace FileOperationInterop.Interop {
     //Note  If this method is not called, the default value used by the operation is FOF_ALLOWUNDO | FOF_NOCONFIRMMKDIR.
 
     //FOF_ALLOWUNDO (0x0040)

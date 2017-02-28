@@ -1,15 +1,14 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-
 
 namespace Controls.UserControls {
     /// <summary>
     /// Interaction logic for Statusbar.xaml
     /// </summary>
-    public partial class Statusbar : UserControl {
-        public Statusbar () {             
+    public partial class Statusbar {
+        public Statusbar () {
             InitializeComponent ();
         }
+
 
         #region depProps
         public string CurrentItemInfo {
@@ -20,10 +19,10 @@ namespace Controls.UserControls {
         public static readonly DependencyProperty CurrentItemInfoProperty =
             DependencyProperty.Register (
                 "CurrentItemInfo", typeof (string),
-                typeof (Statusbar), new PropertyMetadata ("<no item is currently selected>")
+                typeof (Statusbar), new PropertyMetadata ("<current item is n/a>")
             );
 
-        
+
         public string Status {
             get { return (string) GetValue (StatusProperty); }
             set { SetValue (StatusProperty, value); }
@@ -31,8 +30,8 @@ namespace Controls.UserControls {
 
         public static readonly DependencyProperty StatusProperty =
             DependencyProperty.Register (
-                "Status", typeof (string), 
-                typeof (Statusbar), new PropertyMetadata ("<app is not ready>")
+                "Status", typeof (string),
+                typeof (Statusbar), new PropertyMetadata ("<status is n/a>")
             );
 
 
@@ -44,7 +43,7 @@ namespace Controls.UserControls {
         public static readonly DependencyProperty ExtraStatusProperty =
             DependencyProperty.Register (
                 "ExtraStatus", typeof (string),
-                typeof (Statusbar), new PropertyMetadata ("<current status is unknown>")
+                typeof (Statusbar), new PropertyMetadata ("<extra status is n/a>")
             );
         #endregion
     }

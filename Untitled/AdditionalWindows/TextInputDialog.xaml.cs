@@ -6,7 +6,7 @@ namespace Files {
     /// <summary>
     /// Interaction logic for TextInputDialog.xaml
     /// </summary>
-    public partial class TextInputDialog : Window {
+    public partial class TextInputDialog {
         private string Result {
             get { return (string) GetValue (ResultProperty); }
             set { SetValue (ResultProperty, value); }
@@ -14,10 +14,10 @@ namespace Files {
 
         public static readonly DependencyProperty ResultProperty =
             DependencyProperty.Register (
-                "Result", typeof (string), 
-                typeof (TextInputDialog), new PropertyMetadata ("")
+                "Result", typeof (string),
+                typeof (TextInputDialog), new PropertyMetadata ("<result is n/a>")
             );
-        
+
 
         public TextInputDialog () {
             InitializeComponent ();

@@ -3,7 +3,7 @@
 // ReSharper disable InconsistentNaming
 
 
-namespace FileOperationInterop {
+namespace FileOperationInterop.Interop {
     public enum CopyEngineResult : uint {
         COPYENGINE_OK = 0x0,
 

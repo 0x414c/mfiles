@@ -2,7 +2,8 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace FileOperationInterop {
+
+namespace FileOperationInterop.Interop {
     public enum SIGDN : uint {
         SIGDN_NORMALDISPLAY = 0x00000000,
         SIGDN_PARENTRELATIVEPARSING = 0x80018001,

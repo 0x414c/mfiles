@@ -16,9 +16,10 @@ namespace FilesApplication {
             private set {
                 if (Equals (value, _layouts)) {
                     return;
+                } else {
+                    _layouts = value;
+                    OnPropertyChanged ();
                 }
-                _layouts = value;
-                OnPropertyChanged ();
             }
         }
 
@@ -32,10 +33,7 @@ namespace FilesApplication {
 
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
-            var handler = PropertyChanged;
-            if (handler != null) {
-                handler (this, new PropertyChangedEventArgs (propertyName));
-            }
+            PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
         }
     }
 }

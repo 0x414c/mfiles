@@ -9,25 +9,21 @@ namespace Controls.UserControls {
     /// <summary>
     /// Interaction logic for ColumnView.xaml
     /// </summary>
-    public partial class ColumnView : UserControl {
+    public partial class ColumnView {
         #region fields & props
-        public ColumnViewModel ViewModel { get; private set; }
+        public ColumnViewModel ViewModel { get; }
 
-        public string Title {
-            get { return ViewModel.ParentFSNode.ToString (); }
-        }
+        public string Title => ViewModel.ParentFSNode.ToString ();
 
-        public int ItemsCount {
-            get { return ViewModel.ChildFSNodesViews.Count; }
-        }
+        public int ItemsCount => ViewModel.ChildFSNodesViews.Count;
 
-        public int ViewId { get; private set; }
+        public int ViewId { get; }
 
         public int SelectionSize {
             get {
                 if (ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
                     var childFSNodesListView = Utils.FindVisualChild<ListView> (columnViewContentControl);
-                    
+
                     if (childFSNodesListView != null) {
                         return childFSNodesListView.SelectedItems.Count;
                     } else {
@@ -60,10 +56,7 @@ namespace Controls.UserControls {
         public void ClearSelection () {
             if (ViewModel.ParentFSNode.Is (TypeTag.Root | TypeTag.SubRoot | TypeTag.Internal)) {
                 var childFSNodesListView = Utils.FindVisualChild<ListView> (columnViewContentPresenter);
-
-                if (childFSNodesListView != null) {
-                    childFSNodesListView.UnselectAll ();
-                }
+                childFSNodesListView?.UnselectAll ();
             }
         }
         #endregion
@@ -77,18 +70,14 @@ namespace Controls.UserControls {
             }
         }
 
-        // TODO: 
+        // TODO: [?;?].
         private void childFSNodesListViewItem_OnMouseDoubleClick (object sender, MouseButtonEventArgs e) {
             var listViewItem = sender as ListViewItem;
-            if (listViewItem != null) {
-                var fsNodeView = listViewItem.Content as FSNodeView;
-                if (fsNodeView != null) {
-                    var fsNodeSelected = fsNodeView.ViewModel.FSNode;
-                    var parentLayoutMgr = Utils.FindVisualParent<MillerColumnsLayout> (this);
-                    if (parentLayoutMgr != null) {
-                        parentLayoutMgr.NavigateTo (fsNodeSelected, ViewId);
-                    }
-                }
+            var fsNodeView = listViewItem?.Content as FSNodeView;
+            if (fsNodeView != null) {
+                var fsNodeSelected = fsNodeView.ViewModel.FSNode;
+                var parentLayoutMgr = Utils.FindVisualParent<MillerColumnsLayout> (this);
+                parentLayoutMgr?.NavigateTo (fsNodeSelected, ViewId);
             }
         }
 

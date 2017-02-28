@@ -10,38 +10,19 @@ using System.Text;
 
 namespace FSOps {
     public static class FSOps {
-        public static IEnumerable<DriveNode> EnumerateLocalDrives () {
-            return DriveInfo.GetDrives ().Select (
-                _ => new DriveNode (_)
-            );
-        }
+        public static IEnumerable<DriveNode> EnumerateLocalDrives () => DriveInfo.GetDrives ().Select (_ => new DriveNode (_));
 
-        // TODO: _
-        public static T TryGetConcreteFSNode<T> (FSNode fsNode) where T : FSNode {
-            T node = fsNode as T;
-
-            return node;
-        }
-
-        [DllImport ("Shlwapi.dll", CharSet = CharSet.Auto)]
-        private static extern long StrFormatByteSize (long fileSize, [MarshalAs (UnmanagedType.LPTStr)] StringBuilder buffer, int bufferSize);
-
-        public static string StrFormatByteSize (long filesize) {
-            StringBuilder sb = new StringBuilder (11);
-            StrFormatByteSize (filesize, sb, sb.Capacity);
-
-            return sb.ToString ();
-        }
+        // TODO: [?;?].
+        public static T TryGetConcreteFSNode<T> (FSNode fsNode) where T : FSNode => fsNode as T;
 
         public static bool HasRights (FileInfo fileInfo, FileSystemRights rightsToCheck) {
             try {
-                FileSecurity accessControl = fileInfo.GetAccessControl (AccessControlSections.Access);
-                AuthorizationRuleCollection authorizationRuleCollection = accessControl.GetAccessRules (true, true, typeof (NTAccount));
+                var accessControl = fileInfo.GetAccessControl (AccessControlSections.Access);
+                var authorizationRuleCollection = accessControl.GetAccessRules (true, true, typeof (NTAccount));
 
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
-            } catch (Exception ex) {
-                // TODO: _readable_ system errors (description instead of code)
-                // but I don't want to fiddle w/ WinAPI here :C
+            } catch (Exception/* ex*/) {
+                // TODO: [2;1] Readable system errors (description instead of error code).
 
                 return false;
             }
@@ -49,11 +30,11 @@ namespace FSOps {
 
         public static bool HasRights (DirectoryInfo directoryInfo, FileSystemRights rightsToCheck) {
             try {
-                DirectorySecurity accessControl = directoryInfo.GetAccessControl (AccessControlSections.Access);
-                AuthorizationRuleCollection authorizationRuleCollection = accessControl.GetAccessRules (true, true, typeof (NTAccount));
+                var accessControl = directoryInfo.GetAccessControl (AccessControlSections.Access);
+                var authorizationRuleCollection = accessControl.GetAccessRules (true, true, typeof (NTAccount));
 
                 return CheckRightsForCurrentUser (authorizationRuleCollection, rightsToCheck);
-            } catch (Exception ex) {
+            } catch (Exception/* ex*/) {
                 return false;
             }
         }
@@ -63,11 +44,11 @@ namespace FSOps {
             FileSystemRights prohibitiveFileSystemRights = 0;
 
             try {
-                WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent ();
-                WindowsPrincipal currentPrincipal = new WindowsPrincipal (currentIdentity);
+                var currentIdentity = WindowsIdentity.GetCurrent ();
+                var currentPrincipal = new WindowsPrincipal (currentIdentity);
 
                 foreach (
-                    FileSystemAccessRule asFileSystemAccessRule in
+                    var asFileSystemAccessRule in
                     from asFileSystemAccessRule in authorizationRuleCollection.OfType<FileSystemAccessRule> ()
                     let asNTAccount = asFileSystemAccessRule.IdentityReference as NTAccount
                     where asNTAccount != null
@@ -87,9 +68,20 @@ namespace FSOps {
                 prohibitiveFileSystemRights = 0;
             }
 
-            FileSystemRights effectiveRights = permissiveFileSystemRights & ~prohibitiveFileSystemRights;
+            var effectiveRights = permissiveFileSystemRights & ~prohibitiveFileSystemRights;
 
             return (effectiveRights & rightsToCheck) == rightsToCheck;
+        }
+
+        [DllImport ("Shlwapi.dll", CharSet = CharSet.Auto)]
+        private static extern long StrFormatByteSize (long fileSize, [MarshalAs (UnmanagedType.LPTStr)] StringBuilder buffer, int bufferSize);
+
+        public static string StrFormatByteSize (long filesize)
+        {
+            var sb = new StringBuilder (11);
+            StrFormatByteSize (filesize, sb, sb.Capacity);
+
+            return sb.ToString ();
         }
     }
 }
