@@ -6,22 +6,23 @@ using FSOps;
 
 namespace Files {
     public sealed class ClipboardWindowViewModel : INotifyPropertyChanged {
-        private ClipboardStack<FileLikeFSNode> _clipboardStack;
+        private ClipboardStack<FileFSNode> _clipboardStack;
 
-        public ClipboardStack<FileLikeFSNode> ClipboardStack {
+        public ClipboardStack<FileFSNode> ClipboardStack {
             get { return _clipboardStack; }
             set {
                 if (Equals (value, _clipboardStack)) {
                     return;
+                } else {
+                    _clipboardStack = value;
+                    OnPropertyChanged ();
                 }
-                _clipboardStack = value;
-                OnPropertyChanged ();
             }
         }
 
 
         public ClipboardWindowViewModel () {
-            ClipboardStack = new ClipboardStack<FileLikeFSNode> ();
+            ClipboardStack = new ClipboardStack<FileFSNode> ();
         }
 
 
@@ -29,10 +30,7 @@ namespace Files {
 
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
-            var handler = PropertyChanged;
-            if (handler != null) {
-                handler (this, new PropertyChangedEventArgs (propertyName));
-            }
+            PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
         }
     }
 }

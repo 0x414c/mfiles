@@ -1,15 +1,15 @@
-﻿using System.Windows.Controls;
-using FSOps;
+﻿using FSOps;
 
 
 namespace Controls.UserControls {
     /// <summary>
     /// Interaction logic for FSNodeView.xaml
     /// </summary>
-    public partial class FSNodeView : UserControl {
+    public partial class FSNodeView {
         #region props
-        public FSNodeViewModel ViewModel { get; private set; }
+        public FSNodeViewModel ViewModel { get; }
         #endregion
+
 
         #region ctors
         private FSNodeView () {

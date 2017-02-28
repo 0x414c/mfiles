@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:rl="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
         xmlns:files="clr-namespace:Files"
-        
+
         Height="80" Width="300" MaxHeight="80" MaxWidth="600" MinHeight="80" MinWidth="200"
         Title="TextInputDialog"
         Icon="pack://application:,,,/ResourceLibrary;component/Graphics/@512/floppy-512.ico" 
@@ -53,7 +53,7 @@
             Margin="0,0,4,0" Padding="0,2,0,0"
         	HorizontalAlignment="Stretch" VerticalAlignment="Center"
             MaxLength="260">
-           
+
             <TextBox.Text>
                 <Binding Path="Result" ElementName="textInputDialogWindow"
                          Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" IsAsync="True"

@@ -21,7 +21,8 @@ namespace Controls.Auxiliary {
         public object Convert (object value, Type targetType, object parameter, CultureInfo culture) {
             var filePath = value as string;
             if (filePath != null) {
-                return ShellFile.FromFilePath (filePath).Thumbnail.ExtraLargeBitmapSource;
+                return ShellFile.FromFilePath(filePath).Thumbnail.ExtraLargeBitmapSource;
+                //return null;
             } else {
                 return null;
             }
@@ -40,7 +41,7 @@ namespace Controls.Auxiliary {
         #endregion
     }
 
-    [ValueConversion (typeof (FileLikeFSNode), typeof (string))]
+    [ValueConversion (typeof (FileFSNode), typeof (string))]
     public class FileLikeFSNodeToDateConverter : IValueConverter {
         #region Implementation of IValueConverter
         /// <summary>
@@ -51,7 +52,7 @@ namespace Controls.Auxiliary {
         /// </returns>
         /// <param name="value">The value produced by the binding source.</param><param name="targetType">The type of the binding target property.</param><param name="parameter">The converter parameter to use.</param><param name="culture">The culture to use in the converter.</param>
         public object Convert (object value, Type targetType, object parameter, CultureInfo culture) {
-            var fileLikeFSNode = value as FileLikeFSNode;
+            var fileLikeFSNode = value as FileFSNode;
             if (fileLikeFSNode != null) {
                 var param = parameter as string;
                 if (parameter != null) {
@@ -79,7 +80,7 @@ namespace Controls.Auxiliary {
         #endregion
     }
 
-    [ValueConversion (typeof (FileLikeFSNode), typeof (string))]
+    [ValueConversion (typeof (FileFSNode), typeof (string))]
     public class FileLikeFSNodeToInfoConverter : IValueConverter {
         #region Implementation of IValueConverter
         /// <summary>
@@ -90,7 +91,7 @@ namespace Controls.Auxiliary {
         /// </returns>
         /// <param name="value">The value produced by the binding source.</param><param name="targetType">The type of the binding target property.</param><param name="parameter">The converter parameter to use.</param><param name="culture">The culture to use in the converter.</param>
         public object Convert (object value, Type targetType, object parameter, CultureInfo culture) {
-            var fileLikeFSNode = value as FileLikeFSNode;
+            var fileLikeFSNode = value as FileFSNode;
             if (fileLikeFSNode != null) {
                 var param = parameter as string;
                 if (param != null) {

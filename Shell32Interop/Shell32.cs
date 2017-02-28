@@ -1,8 +1,11 @@
 ﻿// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Local
+// ReSharper disable FieldCanBeMadeReadOnly.Local
+
 
 using System;
 using System.Runtime.InteropServices;
-                                       
+
 
 namespace Shell32Interop {
     public static class Shell32 {
@@ -35,7 +38,8 @@ namespace Shell32Interop {
 
         private const int SW_SHOW = 5;
         private const uint SEE_MASK_INVOKEIDLIST = 12;
-        
+
+
         public static bool ShellExecuteEx (string lpFile, string lpVerb) {
             var shellexecuteinfo = new SHELLEXECUTEINFO ();
             shellexecuteinfo.cbSize = Marshal.SizeOf (shellexecuteinfo);
@@ -45,6 +49,6 @@ namespace Shell32Interop {
             shellexecuteinfo.fMask = SEE_MASK_INVOKEIDLIST;
 
             return ShellExecuteEx (ref shellexecuteinfo);
-        }   
+        }
     }
 }

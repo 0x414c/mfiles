@@ -1,11 +1,8 @@
-﻿using System.Windows.Controls;
-
-
-namespace Controls.UserControls {
+﻿namespace Controls.UserControls {
     /// <summary>
     /// Interaction logic for Menubar.xaml
     /// </summary>
-    public partial class Menubar : UserControl {
+    public partial class Menubar {
         public Menubar () {
             InitializeComponent ();
         }

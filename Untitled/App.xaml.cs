@@ -9,7 +9,7 @@ namespace FilesApplication {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application {
+    public partial class App {
         private DependencyObject[] _appWindows;
 
         public DependencyObject[] AppWindows {
@@ -17,8 +17,8 @@ namespace FilesApplication {
             private set { _appWindows = value; }
         }
 
-        public PropertiesManager PropertiesManager { get; private set; }
-        
+        public PropertiesManager PropertiesManager { get; }
+
 
         public App () {
             AppWindows = new DependencyObject[1];
@@ -29,15 +29,15 @@ namespace FilesApplication {
         private void App_OnStartup (object sender, StartupEventArgs e) {
             AppWindows[0] = new MainWindow ();
             PropertiesManager.Restore (
-                ref _appWindows, 0, "windowLayoutSettings", 
-                new List<string>(4) { "Top", "Left", "Width", "Height", "WindowState" }
+                ref _appWindows, 0, "windowLayoutSettings",
+                new List<string> (4) { "Top", "Left", "Width", "Height", "WindowState" }
             );
             InitWindow (0);
         }
 
         private void App_OnExit (object sender, ExitEventArgs e) {
             PropertiesManager.Save (
-                ref _appWindows, 0, "windowLayoutSettings", 
+                ref _appWindows, 0, "windowLayoutSettings",
                 new List<string> (4) { "Top", "Left", "Width", "Height", "WindowState" }
             );
             PropertiesManager.Dispose ();
@@ -47,12 +47,10 @@ namespace FilesApplication {
         private void InitWindow (int index) {
             ReloadContents (index);
             var window = AppWindows[index] as Window;
-            if (window != null) {
-                window.Show ();
-            }
+            window?.Show ();
         }
 
-        // TODO: remember last visited dirs in settings
+        // TODO: [1;1] remember last visited dirs in settings.
         private void ReloadContents (int index) {
             var mainWindow = AppWindows[index] as MainWindow;
             if (mainWindow != null) {

@@ -15,25 +15,25 @@ namespace Controls.Layouts {
             private set {
                 if (Equals (value, _columnViews)) {
                     return;
+                } else {
+                    _columnViews = value;
+                    OnPropertyChanged ();
                 }
-                _columnViews = value;
-                OnPropertyChanged ();
             }
         }
+
 
         public MillerColumnsLayoutViewModel () {
             ColumnViews = new ObservableCollection<ColumnView> ();
         }
+
 
         //[field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
-            var handler = PropertyChanged;
-            if (handler != null) {
-                handler (this, new PropertyChangedEventArgs (propertyName));
-            }
+            PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
         }
     }
 }

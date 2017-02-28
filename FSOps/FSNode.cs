@@ -31,40 +31,30 @@ namespace FSOps {
 
         public virtual string FullPath { get; protected set; }
 
-        public bool Is (TypeTag compareTo) {
-            return (TypeTag & compareTo) == TypeTag;
-        }
 
-        public override string ToString () {
-            return Name;
-        }
+        public bool Is (TypeTag compareTo) => (TypeTag & compareTo) == TypeTag;
+
+
+        public override string ToString () => Name;
     }
 
 
     /**
-     \class FileLikeFSNode
+     \class FileFSNode
      \brief A file-like file system node: DriveNode, DirectoryNode or FileNode.      
      */
-    public abstract class FileLikeFSNode : FSNode {
+    public abstract class FileFSNode : FSNode {
+        public override string Name => FileSystemInfo.Name;
+
+        public override string FullPath => FileSystemInfo.FullName;
+
         public virtual FileSystemInfo FileSystemInfo { get; protected set; }
 
-        public override string Name {
-            get { return FileSystemInfo.Name; }
-        }
+        public virtual bool IsAccessible => FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData);
 
-        public override string FullPath {
-            get { return FileSystemInfo.FullName; }
-        }
+        public DriveNode RootDrive => new DriveNode (Path.GetPathRoot (FileSystemInfo.FullName));
 
-        public bool IsAccessible {
-            get { return FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as FileInfo, FileSystemRights.ReadData); }
-        }
-
-        public DriveNode RootDrive {
-            get { return new DriveNode (Path.GetPathRoot (FileSystemInfo.FullName)); }
-        }
-
-        public DirectoryLikeFSNode Parent {
+        public DirectoryFSNode Parent {
             get {
                 var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
                 if (asDirectoryInfo != null) {
@@ -87,25 +77,21 @@ namespace FSOps {
 
 
     /**
-     \class DirectoryLikeFSNode    
+     \class DirectoryFSNode    
      \brief A directory-like file system node: DriveNode or DirectoryNode that can have Children
      */
-    public abstract class DirectoryLikeFSNode : FileLikeFSNode {
-        public new bool IsAccessible {
-            get { return FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory); }
-        }
+    public abstract class DirectoryFSNode : FileFSNode {
+        public override bool IsAccessible => FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.ListDirectory);
 
-        public bool IsTraversable {
-            get { return FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse); }
-        }
+        public bool IsTraversable => FileSystemInfo.Exists && FSOps.HasRights (FileSystemInfo as DirectoryInfo, FileSystemRights.Traverse);
 
-        public virtual IEnumerable<FileLikeFSNode> Children {
+        public virtual IEnumerable<FileFSNode> Children {
             get {
                 if (IsAccessible && IsTraversable) {
                     var asDirectoryInfo = FileSystemInfo as DirectoryInfo;
                     
                     if (asDirectoryInfo != null) {
-                        var children = new LinkedList<FileLikeFSNode> ();
+                        var children = new LinkedList<FileFSNode> ();
 
                         foreach (var directoryInfo in asDirectoryInfo.EnumerateDirectories ()) {
                             children.AddLast (new DirectoryNode (directoryInfo));
@@ -132,51 +118,40 @@ namespace FSOps {
      \brief A system root node.
      */
     public sealed class SystemRootNode : FSNode {
-        // TODO: derive from DirectoryLike? 
-        public IEnumerable<FSNode> Children {
-            get { return new List<FSNode> (FSOps.EnumerateLocalDrives ()); }
-        }
+        // TODO: [0;0] Derive from DirectoryNode? 
+        public IEnumerable<FSNode> Children => new List<FSNode> (FSOps.EnumerateLocalDrives ());
 
         public SystemRootNode () : this ("This PC", Networking.GetLocalFQDN ()) { }
 
-        // TODO: for future use
+
+        // TODO: [?;?] For future use.
         private SystemRootNode (string fullPath, string name) {
             Name = name;
             TypeTag = TypeTag.Root;
             FullPath = fullPath;
         }
 
-        public override string ToString () {
-            return String.Format ("{0} ({1})", Name, FullPath);
-        }
+
+        public override string ToString () => $"{Name} ({FullPath})";
     }
 
 
     /// <summary>
     /// Represents particular Drive
     /// </summary>
-    public sealed class DriveNode : DirectoryLikeFSNode {
-        public DriveInfo DriveInfo { get; private set; }
+    public sealed class DriveNode : DirectoryFSNode {
+        public DriveInfo DriveInfo { get; }
 
-        public override FileSystemInfo FileSystemInfo {
-            get { return DriveInfo.RootDirectory; }
-        }
+        public override FileSystemInfo FileSystemInfo => DriveInfo.RootDirectory;
 
-        public override string Name {
-            get { return DriveInfo.IsReady ? DriveInfo.VolumeLabel : "<no label>"; }
-        }
+        public override string Name => DriveInfo.IsReady ? DriveInfo.VolumeLabel : "<no label>";
 
-        public override string FullPath {
-            get { return DriveInfo.Name; }
-        }
+        public override string FullPath => DriveInfo.Name;
 
-        public bool IsReady {
-            get { return DriveInfo.IsReady; }
-        }
+        public bool IsReady => DriveInfo.IsReady;
 
-        public override IEnumerable<FileLikeFSNode> Children {
-            get { return IsReady ? base.Children : null; }
-        }
+        public override IEnumerable<FileFSNode> Children => IsReady ? base.Children : null;
+
 
         public DriveNode (DriveInfo driveInfo) {
             TypeTag = TypeTag.SubRoot;
@@ -185,13 +160,12 @@ namespace FSOps {
 
         public DriveNode (string fullPath) : this (new DriveInfo (fullPath.ToUpperInvariant ())) { }
 
-        public override string ToString () {
-            return String.Format ("{0} ({1})", Name, FullPath);
-        }
+
+        public override string ToString () => $"{Name} ({FullPath})";
     }
 
     
-    public sealed class DirectoryNode : DirectoryLikeFSNode {
+    public sealed class DirectoryNode : DirectoryFSNode {
         public DirectoryNode (DirectoryInfo directoryInfo) {
             TypeTag = TypeTag.Internal;
             FileSystemInfo = directoryInfo;
@@ -201,7 +175,7 @@ namespace FSOps {
     }
 
 
-    public sealed class FileNode : FileLikeFSNode {
+    public sealed class FileNode : FileFSNode {
         public FileNode (FileInfo fileInfo) {
             TypeTag = TypeTag.Leaf;
             FileSystemInfo = fileInfo;
